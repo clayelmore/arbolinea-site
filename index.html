@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Hard requirement: declare dark color scheme so in-app browsers do not paint white -->
+  <meta name="color-scheme" content="dark">
+
+  <title>Arbolinea - Ideas above the treeline</title>
+  <meta name="description" content="Arbolinea is an app development studio that has become AI enabled: apps shipped to the app stores, real objects built in a wood shop, and a method that finishes things.">
+  <link rel="canonical" href="https://arbolinea.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Arbolinea">
+  <meta property="og:title" content="Arbolinea - Ideas above the treeline">
+  <meta property="og:description" content="The idea is no longer the barrier. Finishing is. A one-person studio shipping apps and building real objects.">
+  <meta property="og:url" content="https://arbolinea.com/">
+  <!-- TODO: add og:image once a social card graphic exists (1200x630) -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Arbolinea - Ideas above the treeline">
+  <meta name="twitter:description" content="The idea is no longer the barrier. Finishing is.">
+
+  <!-- Favicon: simplified two-frond version of the mark, inline SVG data URI.
+       Open item: generate proper .ico / .png sizes from the final hand-drawn mark. -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230E1411%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%238FC6E8%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%2054%20C30%2040%2022%2032%2016%2024%20l8%200%20l0%20-8%20l-10%200%20l0%206%22%2F%3E%3Cpath%20d%3D%22M32%2054%20C34%2038%2042%2030%2048%2022%20l-8%200%20l0%20-8%20l10%200%20l0%206%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Public+Sans:wght@400;500&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ============ Nav ============ -->
+  <nav class="nav" aria-label="Main">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="Arbolinea home">
+        <!-- LOGO SWAP POINT ---------------------------------------------
+             Placeholder mark: a tree drawn as a fan of continuous-line
+             fronds, each ending in an open squarish spiral.
+             The final mark is a hand-drawn pencil original traced to SVG.
+             Replace the <svg class="mark"> below with the traced paths.
+             Keep fill="none" stroke="currentColor" so it recolors with
+             context (ice in nav, snow in hero).
+             ------------------------------------------------------------- -->
+        <svg class="mark" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M32 60 C32 44 32 30 32 16 l5 0 l0 -6 l-9 0 l0 7 l5 0"/>
+          <path d="M32 60 C30 46 22 36 14 28 l6 -1 l-2 -6 l-8 3 l2 5"/>
+          <path d="M32 60 C34 46 42 36 50 28 l-6 -1 l2 -6 l8 3 l-2 5"/>
+          <path d="M32 60 C29 50 20 46 10 44 l5 -3 l-4 -5 l-7 5 l3 4"/>
+          <path d="M32 60 C35 50 44 46 54 44 l-5 -3 l4 -5 l7 5 l-3 4"/>
+        </svg>
+        <span class="wordmark">arbolinea</span>
+      </a>
+      <div class="nav-links">
+        <a href="#apps">Apps</a>
+        <a href="#woodworking">Woodworking</a>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <!-- /skills page exists as a stub (skills/index.html).
+             Link it here once it has content:
+             <a href="skills/">Skills</a> -->
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+
+    <!-- ============ Hero ============ -->
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow">An app development studio, AI enabled</p>
+        <h1>The idea is no longer the barrier. <span class="grad">Finishing is.</span></h1>
+        <p class="tagline">Arbolinea - Ideas above the treeline</p>
+        <p class="thesis">
+          Arbolinea ships finished things: an app in the App Store, a drum
+          designed by machine and built by hand, a saw brought to market from
+          the shop, number theory published on GitHub. The mix is deliberate.
+          We are an app development studio that has become AI enabled, and we
+          are finding out how much that lets us finish.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="#services">Work with us</a>
+          <a class="btn btn-secondary" href="#apps">See what we ship</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Apps ============ -->
+    <section class="section section-alt" id="apps">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Software</p>
+          <h2>Apps</h2>
+          <p>Shipped through the stores and maintained for real users.</p>
+        </div>
+        <div class="grid">
+          <article class="card card-ice">
+            <span class="pill pill-live">In the App Store</span>
+            <h3>PLUed</h3>
+            <p>Trains grocery cashiers on produce PLU codes with spaced
+               repetition and a verified code library.</p>
+            <p class="meta">Flutter · Firebase</p>
+          </article>
+          <article class="card card-ice">
+            <span class="pill pill-ice">Rebuild</span>
+            <h3>Timed Math Pro</h3>
+            <p>Arithmetic drilling that rewards speed and accuracy. A ground-up
+               rebuild of a paid app customers have used for over a decade.</p>
+          </article>
+          <article class="card card-ice">
+            <span class="pill pill-ice">In development</span>
+            <h3>Tetradec</h3>
+            <p>In development. More soon.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Woodworking ============ -->
+    <!-- Open item: make this section photo-led once real photography of the
+         cajon and saw exists. These cards are the no-photo version. -->
+    <section class="section" id="woodworking">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-timber">Physical</p>
+          <h2>Woodworking</h2>
+          <p>Real objects, cut and assembled by hand. The machines draft; the shop finishes.</p>
+        </div>
+        <div class="grid">
+          <article class="card card-timber">
+            <span class="pill pill-timber">Machine-designed, hand-built</span>
+            <h3>"Be Better" cajon</h3>
+            <p>A box drum designed and engineered by machine, cut and assembled
+               by hand. Baltic birch.</p>
+          </article>
+          <article class="card card-timber">
+            <span class="pill pill-timber">Machine-marketed</span>
+            <h3>Folding bow saw</h3>
+            <p>A shop-made saw brought to market with generated product
+               photography, copy, and campaign material.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Services ============ -->
+    <section class="section section-alt" id="services">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">App development</p>
+          <h2>Services</h2>
+          <p>Imagine taking the ideas you have always had and turning them
+             into real products. The question was never what you wanted to
+             build. You have always known that; the wanting is yours, not
+             the machine's.
+             Every barrier was a how: knowledge (how do I?), cost (if I do
+             not know how, who do I pay?), and time (how long to learn, and
+             what does it cost if it takes too long?). The hows just fell.
+             Finishing is what is left, and finishing is what we do. Two
+             ways to work together, each one ending with something you can
+             use without us.</p>
+        </div>
+        <div class="grid">
+          <!-- PARKED SERVICE - restore when the templates and infrastructure
+               to deliver it exist. Claim only the work we do today.
+          <article class="card card-ice">
+            <p class="num">0X</p>
+            <h3>Set up AI for your work</h3>
+            <p>What this studio does - take an idea and make it into
+               something - you can do too. We show you the setup we use
+               every day, on your own idea. Everything on this page came out
+               of it. Enablement is the deliverable, not a slide deck: you,
+               using real tools on real work, by the time we are done.</p>
+          </article>
+          -->
+          <article class="card card-ice">
+            <p class="num">01</p>
+            <h3>Take an idea to shipped</h3>
+            <p>Honest validation first: what already exists, where you differ,
+               and whether the idea deserves the money. Then we build it, ship
+               it, and hand you a product built to be maintained with AI at
+               low cost, sometimes even on a free tier.</p>
+          </article>
+          <article class="card card-ice">
+            <p class="num">02</p>
+            <h3>Revive an existing app</h3>
+            <p>Modernize an aging app, make it maintainable with an affordable
+               AI workflow, and hand your team the method.</p>
+          </article>
+        </div>
+
+        <div class="doctrine">
+          <p class="label">Doctrine</p>
+          <div class="doctrine-grid">
+            <div>
+              <p class="sublabel">On the tool</p>
+              <p>Ideas come easy now. The machine can generate them, design
+                 the piece, and suggest a better one. We will not pretend it
+                 cannot. We also will not pretend we have its memory or its
+                 speed. What we have are wants: we know what we like, we know
+                 the future we want, and we build what makes us and others
+                 measurably better. The machine has no wants. We do. So when
+                 we say AI, we mean exactly what an engineer means by a
+                 calculator, or a woodworker means by a table saw. A tool.</p>
+            </div>
+            <div>
+              <p class="sublabel">On the market</p>
+              <p>The tool is not free. There is a monthly bill, and a harder
+                 question under it: which one? Grok, Codex, Kimi, Claude, all
+                 of them, or whatever ships next week? Then which model,
+                 which mode, which plan? Is the new one better? Better at
+                 what: writing, code, price? The answers change month to
+                 month, sometimes day to day. We watch the landscape
+                 constantly and pick what fits the work. We will not pretend
+                 that choice is settled. It never stays settled.</p>
+            </div>
+            <div>
+              <p class="sublabel">On platforms</p>
+              <p>Every project starts on the web unless it earns native. Most
+                 do not. The ones that do, we take through the stores
+                 properly.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ About ============ -->
+    <section class="section" id="about">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">The studio</p>
+          <h2>About</h2>
+        </div>
+        <div class="about-grid">
+          <div>
+            <p>Arbolinea is run by Clay Elmore, after nearly three decades in
+               enterprise learning and analytics at Nokia, Lucent, and
+               Alcatel-Lucent. The studio exists to prove a simple point: one
+               person can now take an idea all the way to finished - in
+               software or in wood.</p>
+          </div>
+          <aside class="contact-card">
+            <h3>Contact</h3>
+            <ul>
+              <!-- hello@arbolinea.com removed until the mailbox exists; support@ is live -->
+              <li><span class="k">Support</span> <a href="mailto:support@arbolinea.com">support@arbolinea.com</a></li>
+              <!-- Two further Kaprekar repos are private; link them here if they go public -->
+              <li><span class="k">Research</span> <a href="https://clayelmore.github.io/Kaprekar-60714/">Kaprekar 60714</a></li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ Footer ============ -->
+  <footer>
+    <div class="wrap footer-inner">
+      <!-- Open item: confirm legal entity name -->
+      <p class="entity">© 2026 Arbolinea LLC</p>
+      <p class="tag">Ideas above the treeline</p>
+    </div>
+  </footer>
+
+</body>
+</html>
