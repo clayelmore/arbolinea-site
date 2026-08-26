@@ -104,7 +104,7 @@ h1, h2, h3 {
   letter-spacing: 0.02em;
 }
 .brand:hover { text-decoration: none; }
-.brand .mark { width: 30px; height: 30px; flex: none; }
+.brand .mark { width: 28px; height: 42px; flex: none; }
 .brand .wordmark { color: var(--text); }
 
 .nav-links {
