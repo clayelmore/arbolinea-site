@@ -104,7 +104,7 @@ h1, h2, h3 {
   letter-spacing: 0.02em;
 }
 .brand:hover { text-decoration: none; }
-.brand .mark { width: 28px; height: 42px; flex: none; }
+.brand .mark { width: 34px; height: 51px; flex: none; }
 .brand .wordmark { color: var(--text); }
 
 .nav-links {
@@ -388,8 +388,9 @@ footer {
 
 /* ---------- Responsive (down to 380px) ---------- */
 @media (max-width: 640px) {
-  /* Keep nav on one row: mark only, tighter mono links */
-  .brand .wordmark { display: none; }
+  /* Nav has three links since Woodworking is parked, so the wordmark
+     stays visible on small screens; re-hide it if links return. */
+  .brand { font-size: 1rem; }
   .nav-links { gap: 14px; font-size: 0.72rem; }
   .hero { padding: 72px 0 64px; }
   .section { padding: 64px 0; }
