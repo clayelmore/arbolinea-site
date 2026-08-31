@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>
+  html,body{margin:0;padding:0;background:#0E1411;width:300px;height:300px;overflow:hidden}
+  .wrap{width:300px;height:300px;display:flex;align-items:center;justify-content:center}
+  svg{width:296px;height:259px}
+</style></head><body>
+<div class="wrap">
+  <!-- Arbolinea mark: tree fan above the treeline, mirrored roots below -->
+  <svg viewBox="-16 6 96 84" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- the treeline -->
+    <path d="M-14 60 H78" stroke="#8FC6E8" stroke-width="1.6"/>
+    <!-- crown -->
+    <g stroke="#EFF3EE" stroke-width="2.5">
+      <path d="M32 60 C32 44 32 30 32 16 l5 0 l0 -6 l-9 0 l0 7 l5 0"/>
+      <path d="M32 60 C30 46 22 36 14 28 l6 -1 l-2 -6 l-8 3 l2 5"/>
+      <path d="M32 60 C34 46 42 36 50 28 l-6 -1 l2 -6 l8 3 l-2 5"/>
+      <path d="M32 60 C29 50 20 46 10 44 l5 -3 l-4 -5 l-7 5 l3 4"/>
+      <path d="M32 60 C35 50 44 46 54 44 l-5 -3 l4 -5 l7 5 l-3 4"/>
+    </g>
+    <!-- roots: mirrored crown, compressed, faint -->
+    <g stroke="#EFF3EE" stroke-width="2.5" opacity="0.5"
+       transform="translate(0,60) scale(1,-0.52) translate(0,-60)">
+      <path d="M32 60 C32 44 32 30 32 16 l5 0 l0 -6 l-9 0 l0 7 l5 0"/>
+      <path d="M32 60 C30 46 22 36 14 28 l6 -1 l-2 -6 l-8 3 l2 5"/>
+      <path d="M32 60 C34 46 42 36 50 28 l-6 -1 l2 -6 l8 3 l-2 5"/>
+      <path d="M32 60 C29 50 20 46 10 44 l5 -3 l-4 -5 l-7 5 l3 4"/>
+      <path d="M32 60 C35 50 44 46 54 44 l-5 -3 l4 -5 l7 5 l-3 4"/>
+    </g>
+  </svg>
+</div>
+</body></html>
+
+
