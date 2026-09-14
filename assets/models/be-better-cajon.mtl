@@ -1,0 +1,36 @@
+# Elmore Be Better
+newmtl ply
+Ka 0.24 0.18 0.12
+Kd 0.82 0.68 0.47
+Ks 0.09 0.09 0.09
+Ns 22
+
+newmtl tapa
+Ka 0.26 0.20 0.13
+Kd 0.87 0.74 0.53
+Ks 0.07 0.07 0.07
+Ns 16
+
+newmtl hardwood
+Ka 0.10 0.06 0.03
+Kd 0.31 0.19 0.10
+Ks 0.12 0.12 0.12
+Ns 34
+
+newmtl brass
+Ka 0.18 0.13 0.04
+Kd 0.72 0.53 0.16
+Ks 0.72 0.66 0.42
+Ns 120
+
+newmtl steel
+Ka 0.06 0.06 0.06
+Kd 0.20 0.20 0.21
+Ks 0.55 0.55 0.58
+Ns 150
+
+newmtl rubber
+Ka 0.02 0.02 0.02
+Kd 0.11 0.10 0.09
+Ks 0.02 0.02 0.02
+Ns 6

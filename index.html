@@ -7,14 +7,14 @@
   <meta name="color-scheme" content="dark">
 
   <title>Arbolinea - Ideas above the treeline</title>
-  <meta name="description" content="Arbolinea is a product studio, AI enabled: apps shipped to the app stores, published research, and a method that finishes things.">
+  <meta name="description" content="Arbolinea designs and builds apps and makes objects in the workshop. We use AI tools every day, and we finish what we start. Ideas above the treeline.">
   <link rel="canonical" href="https://arbolinea.com/">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Arbolinea">
   <meta property="og:title" content="Arbolinea - Ideas above the treeline">
-  <meta property="og:description" content="The idea was never the barrier. Finishing is. A product studio, AI enabled.">
+  <meta property="og:description" content="The idea was never the barrier. Finishing is. A studio that designs and builds apps and makes objects in the workshop.">
   <meta property="og:url" content="https://arbolinea.com/">
   <meta property="og:image" content="https://arbolinea.com/assets/og.png">
   <meta property="og:image:width" content="1200">
@@ -24,58 +24,72 @@
   <meta name="twitter:title" content="Arbolinea - Ideas above the treeline">
   <meta name="twitter:description" content="The idea was never the barrier. Finishing is.">
 
-  <!-- Favicon: simplified two-frond version of the mark, inline SVG data URI.
-       Open item: generate proper .ico / .png sizes from the final hand-drawn mark. -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230E1411%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%238FC6E8%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2054%20H54%22%20stroke-width%3D%222.5%22%2F%3E%3Cpath%20d%3D%22M32%2054%20C30%2040%2022%2032%2016%2024%20l8%200%20l0%20-8%20l-10%200%20l0%206%22%2F%3E%3Cpath%20d%3D%22M32%2054%20C34%2038%2042%2030%2048%2022%20l-8%200%20l0%20-8%20l10%200%20l0%206%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Public+Sans:wght@400;500&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Public+Sans:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
+
+  <!-- three.js for the workshop models: pinned version, integrity-checked.
+       Only loaded when the workshop section nears the screen (see the end of body). -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+      "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js"
+    },
+    "integrity": {
+      "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+      "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+      "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9"
+    }
+  }
+  </script>
 </head>
 <body>
 
+  <!-- The mark, defined once. LOGO SWAP POINT: a treeline with a frond-fan
+       crown above and mirrored roots below. Placeholder for the hand-drawn
+       pencil original; replace these paths with the traced SVG and every
+       <use href="#mark"> updates. Keep fill none and stroke currentColor. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="mark" viewBox="0 0 64 96">
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 60 H60" stroke-width="1.6"/>
+        <g stroke-width="2.5">
+          <path d="M32 60 C32 44 32 30 32 16 l5 0 l0 -6 l-9 0 l0 7 l5 0"/>
+          <path d="M32 60 C30 46 22 36 14 28 l6 -1 l-2 -6 l-8 3 l2 5"/>
+          <path d="M32 60 C34 46 42 36 50 28 l-6 -1 l2 -6 l8 3 l-2 5"/>
+          <path d="M32 60 C29 50 20 46 10 44 l5 -3 l-4 -5 l-7 5 l3 4"/>
+          <path d="M32 60 C35 50 44 46 54 44 l-5 -3 l4 -5 l7 5 l-3 4"/>
+        </g>
+        <g stroke-width="2.5" opacity="0.5" transform="translate(0,60) scale(1,-0.52) translate(0,-60)">
+          <path d="M32 60 C32 44 32 30 32 16 l5 0 l0 -6 l-9 0 l0 7 l5 0"/>
+          <path d="M32 60 C30 46 22 36 14 28 l6 -1 l-2 -6 l-8 3 l2 5"/>
+          <path d="M32 60 C34 46 42 36 50 28 l-6 -1 l2 -6 l8 3 l-2 5"/>
+          <path d="M32 60 C29 50 20 46 10 44 l5 -3 l-4 -5 l-7 5 l3 4"/>
+          <path d="M32 60 C35 50 44 46 54 44 l-5 -3 l4 -5 l7 5 l-3 4"/>
+        </g>
+      </g>
+    </symbol>
+  </svg>
+
   <!-- ============ Nav ============ -->
-  <nav class="nav" aria-label="Main">
+  <nav class="site-nav" aria-label="Main">
     <div class="wrap nav-inner">
       <a class="brand" href="#top" aria-label="Arbolinea home">
-        <!-- LOGO SWAP POINT ---------------------------------------------
-             Placeholder mark: a tree drawn as a fan of continuous-line
-             fronds, each ending in an open squarish spiral.
-             The final mark is a hand-drawn pencil original traced to SVG.
-             Replace the <svg class="mark"> below with the traced paths.
-             Keep fill="none" stroke="currentColor" so it recolors with
-             context (ice in nav, snow in hero).
-             ------------------------------------------------------------- -->
-        <svg class="mark" viewBox="0 0 64 96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M4 60 H60" stroke-width="1.6"/>
-          <g stroke-width="2.5">
-            <path d="M32 60 C32 44 32 30 32 16 l5 0 l0 -6 l-9 0 l0 7 l5 0"/>
-            <path d="M32 60 C30 46 22 36 14 28 l6 -1 l-2 -6 l-8 3 l2 5"/>
-            <path d="M32 60 C34 46 42 36 50 28 l-6 -1 l2 -6 l8 3 l-2 5"/>
-            <path d="M32 60 C29 50 20 46 10 44 l5 -3 l-4 -5 l-7 5 l3 4"/>
-            <path d="M32 60 C35 50 44 46 54 44 l-5 -3 l4 -5 l7 5 l-3 4"/>
-          </g>
-          <g stroke-width="2.5" opacity="0.5" transform="translate(0,60) scale(1,-0.52) translate(0,-60)">
-            <path d="M32 60 C32 44 32 30 32 16 l5 0 l0 -6 l-9 0 l0 7 l5 0"/>
-            <path d="M32 60 C30 46 22 36 14 28 l6 -1 l-2 -6 l-8 3 l2 5"/>
-            <path d="M32 60 C34 46 42 36 50 28 l-6 -1 l2 -6 l8 3 l-2 5"/>
-            <path d="M32 60 C29 50 20 46 10 44 l5 -3 l-4 -5 l-7 5 l3 4"/>
-            <path d="M32 60 C35 50 44 46 54 44 l-5 -3 l4 -5 l7 5 l-3 4"/>
-          </g>
-        </svg>
+        <svg class="mark" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
         <span class="wordmark">arbolinea</span>
       </a>
       <div class="nav-links">
         <a href="#apps">Apps</a>
-        <!-- Woodworking link parked with its section:
-        <a href="#woodworking">Woodworking</a> -->
+        <a href="#workshop">Workshop</a>
         <a href="#services">Services</a>
         <a href="#about">About</a>
         <!-- /skills page exists as a stub (skills/index.html).
-             Link it here once it has content:
-             <a href="skills/">Skills</a> -->
+             Link it here once it has content: <a href="skills/">Skills</a> -->
       </div>
     </div>
   </nav>
@@ -84,32 +98,23 @@
 
     <!-- ============ Hero ============ -->
     <section class="hero">
-      <!-- Front Range ridgeline, Boulder's perspective: jagged Divide peaks
-           on the far horizon, Sugarloaf's rounded dome in the nearer ridge.
-           Decorative white outline behind the hero text. -->
-      <svg class="hero-range" viewBox="0 0 1440 340" preserveAspectRatio="xMidYMax slice" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
-        <!-- far ridge: the Divide -->
-        <!-- Longs Peak is the high point: flat summit block above the Diamond -->
-        <path stroke-width="1.5" opacity="0.55" d="M-10 240 L45 205 L85 222 L130 178 L165 200 L210 150 L245 184 L290 132 L320 160 L355 118 L372 98 L398 94 L412 118 L438 134 L470 112 L505 140 L540 146 L585 120 L625 158 L670 136 L715 170 L765 148 L810 182 L860 160 L905 192 L955 172 L1005 204 L1060 182 L1110 212 L1165 194 L1220 222 L1280 204 L1340 230 L1400 216 L1450 238"/>
-        <!-- near ridge: foothills with Sugarloaf's dome -->
-        <path stroke-width="2" d="M-10 300 L60 282 L130 292 L200 268 L260 280 L330 258 Q400 226 470 258 L520 272 L590 252 L660 268 L730 250 L800 266 L870 252 L940 268 L1010 254 L1080 270 L1150 258 L1220 272 L1300 262 L1380 276 L1450 268"/>
+      <!-- Front Range ridgeline from Boulder: the Divide on the far horizon,
+           with Longs Peak's flat summit picked out in ice; foothills and
+           Sugarloaf's dome in the nearer line. Same ridgeline as og.png and the banners. -->
+      <svg class="hero-range" viewBox="0 0 1440 340" preserveAspectRatio="xMidYMax slice" fill="none" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <path stroke="#4E86AC" stroke-width="1.25" opacity="0.85" d="M-10 240 L45 205 L85 222 L130 178 L165 200 L210 150 L245 184 L290 132 L320 160 L355 118 L372 98 L398 94 L412 118 L438 134 L470 112 L505 140 L540 146 L585 120 L625 158 L670 136 L715 170 L765 148 L810 182 L860 160 L905 192 L955 172 L1005 204 L1060 182 L1110 212 L1165 194 L1220 222 L1280 204 L1340 230 L1400 216 L1450 238"/>
+        <path stroke="#8FC6E8" stroke-width="1.75" d="M372 98 L398 94"/>
+        <path stroke="#26302A" stroke-width="1.5" d="M-10 300 L60 282 L130 292 L200 268 L260 280 L330 258 Q400 226 470 258 L520 272 L590 252 L660 268 L730 250 L800 266 L870 252 L940 268 L1010 254 L1080 270 L1150 258 L1220 272 L1300 262 L1380 276 L1450 268"/>
       </svg>
-      <div class="wrap">
-        <p class="eyebrow">A product studio, AI enabled</p>
+      <div class="wrap hero-inner">
+        <p class="label">A studio that finishes things</p>
         <h1>The idea was never the barrier. <span class="grad">Finishing is.</span></h1>
-        <p class="tagline">Arbolinea - Ideas above the treeline</p>
-        <p class="thesis">
-          <!-- "Objects from the workshop." parked here with the Woodworking
-               section; restore both together. -->
-          Arbolinea ships finished things. Learning apps. Published research.
-          The ideas are ours, and the machine does the heavy lifting. Then
-          the part we care about most: getting it right the first time, or
-          in far fewer tries.
-        </p>
+        <p class="hero-lede">Arbolinea designs and builds apps, and makes objects in the workshop. We use AI tools all day, the way a woodworker uses a table saw: they do the heavy lifting, we decide what the thing should be. Then the part we care about most, getting it right the first time, or in far fewer tries.</p>
         <div class="btn-row">
-          <a class="btn btn-primary" href="#services">Work with us</a>
+          <a class="btn btn-primary" href="mailto:support@arbolinea.com?subject=An%20idea%20I%20have%20been%20carrying%20around">Work with us</a>
           <a class="btn btn-secondary" href="#apps">See what we ship</a>
         </div>
+        <p class="treeline-rule"><span>Ideas above the treeline</span><span aria-hidden="true"></span></p>
       </div>
     </section>
 
@@ -117,89 +122,170 @@
     <section class="section section-alt" id="apps">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">Software</p>
-          <h2>Apps</h2>
-          <p>Taken through the stores properly, and maintained for real users.</p>
+          <div>
+            <p class="label">Software</p>
+            <h2>Apps</h2>
+          </div>
+          <p class="section-lede">Taken through the stores properly, and maintained for real users.</p>
         </div>
-        <div class="grid">
-          <article class="card card-ice">
-            <span class="pill pill-live">Live in three stores</span>
-            <h3>PLUed</h3>
-            <p>Trains grocery cashiers on produce PLU codes with spaced
-               repetition and a verified code library.</p>
-            <p class="store-links">
-              <a href="https://apps.apple.com/app/id6759439888" aria-label="PLUed on the App Store">App Store</a>
-              <a href="https://play.google.com/store/apps/details?id=com.elmoreapps.plued" aria-label="PLUed on Google Play">Google Play</a>
-              <a href="https://www.amazon.com/dp/B0HFKPWKK4" aria-label="PLUed on the Amazon Appstore">Amazon Appstore</a>
-            </p>
-            <p class="meta">Flutter · Firebase</p>
+
+        <div class="grid-2">
+          <article class="card">
+            <div class="app-head">
+              <div class="app-id">
+                <img class="app-icon" src="assets/icons/plued.png" alt="PLUed app icon" width="48" height="48">
+                <h3>PLUed</h3>
+              </div>
+              <span class="pill pill-live">Live in three stores</span>
+            </div>
+            <p>Trains grocery cashiers on produce PLU codes with spaced repetition and a verified code library.</p>
+            <div class="store-links">
+              <a href="https://apps.apple.com/app/id6759439888" target="_blank" rel="noopener" aria-label="PLUed on the App Store">App Store</a>
+              <a href="https://play.google.com/store/apps/details?id=com.elmoreapps.plued" target="_blank" rel="noopener" aria-label="PLUed on Google Play">Google Play</a>
+              <a href="https://www.amazon.com/dp/B0HFKPWKK4" target="_blank" rel="noopener" aria-label="PLUed on the Amazon Appstore">Amazon Appstore</a>
+            </div>
+            <p class="card-meta">Flutter, Firebase</p>
           </article>
-          <article class="card card-ice">
-            <span class="pill pill-ice">Coming back</span>
-            <h3>Timed Math Pro</h3>
-            <p>Arithmetic drilling that rewards speed and accuracy. The
-               company's first app, in the stores for over a decade until it
-               was pulled for being out of date. We are rebuilding it from the
-               ground up.</p>
+
+          <article class="card">
+            <div class="app-head">
+              <div class="app-id">
+                <img class="app-icon" src="assets/icons/crab-math-run.png" alt="Crab Math Run app icon" width="48" height="48">
+                <h3>Crab Math Run</h3>
+              </div>
+              <span class="pill">In development</span>
+            </div>
+            <p>Math practice built to keep kids playing. A crab runs a pier over the sea, and a parrot drops a plank across each gap as the problems get answered. No ads, no accounts, nothing collected.</p>
+            <p class="card-meta">iPhone, iPad, Android</p>
           </article>
-          <article class="card card-ice">
-            <span class="pill pill-ice">In development</span>
-            <h3>Tetradec</h3>
+
+          <article class="card">
+            <div class="app-head">
+              <div class="app-id">
+                <img class="app-icon" src="assets/icons/timed-math-pro.png" alt="Timed Math Pro app icon" width="48" height="48">
+                <h3>Timed Math Pro</h3>
+              </div>
+              <span class="pill">Coming back</span>
+            </div>
+            <p>Arithmetic drilling that rewards speed and accuracy. Built in 2012 to help kids get more confident with basic arithmetic, and in the stores for over a decade until it was pulled for being out of date. We are rebuilding it from the ground up.</p>
+            <p class="card-meta">The company's first app</p>
+          </article>
+
+          <article class="card">
+            <div class="app-head">
+              <div class="app-id">
+                <img class="app-icon" src="assets/icons/tetradec.png" alt="Tetradec app icon" width="48" height="48">
+                <h3>Tetradec</h3>
+              </div>
+              <span class="pill">In development</span>
+            </div>
             <p>A merge puzzle game built from regular polygons.</p>
+            <p class="card-meta">Fourteen sides, one rule</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ============ Woodworking - PARKED ============
-         Section removed from the page for now (2026-08-22). Restore by
-         uncommenting when ready, ideally photo-led once real photography of
-         the cajon and saw exists; these cards are the no-photo version.
-         Also restore the Woodworking nav links here and in skills/index.html.
-    <section class="section" id="woodworking">
+    <!-- ============ Workshop ============
+         The models turn in <three-d-stage> (js/workshop-3d.js). No photos yet:
+         swap a real photo in when one exists, and keep the copy honest about
+         which pieces are built. -->
+    <section class="section" id="workshop">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow-timber">Physical</p>
-          <h2>Woodworking</h2>
-          <p>Real objects, cut and assembled by hand. The machines draft; the shop finishes.</p>
+          <div>
+            <p class="label label-timber">Physical</p>
+            <h2>The workshop</h2>
+          </div>
+          <p class="section-lede section-lede-wide">AI helps design and engineer each piece, and the shop builds it by hand. The saw is built. The cajon is still a model.</p>
         </div>
-        <div class="grid">
-          <article class="card card-timber">
-            <span class="pill pill-timber">Machine-designed, hand-built</span>
-            <h3>"Be Better" cajon</h3>
-            <p>A box drum designed and engineered by machine, cut and assembled
-               by hand. Baltic birch.</p>
+
+        <div class="grid-2">
+          <article class="object-card">
+            <div class="stage-wrap">
+              <three-d-stage data-model="cajon" autorotate role="img" aria-label="3D model of the Be Better cajon, a box drum"></three-d-stage>
+              <span class="stage-badge">The model</span>
+            </div>
+            <div class="object-body">
+              <div class="app-head">
+                <h3>"Be Better" cajon</h3>
+                <span class="object-status">Designed, not yet cut</span>
+              </div>
+              <p>A box drum, designed and engineered with AI. It will be cut and assembled by hand from Baltic birch.</p>
+              <p class="card-meta">Baltic birch</p>
+            </div>
           </article>
-          <article class="card card-timber">
-            <span class="pill pill-timber">Machine-marketed</span>
-            <h3>Folding bow saw</h3>
-            <p>A shop-made saw brought to market with generated product
-               photography, copy, and campaign material.</p>
+
+          <article class="object-card">
+            <div class="stage-wrap">
+              <three-d-stage data-model="saw" autorotate role="img" aria-label="3D model of the Elmore Buck Saw, assembled"></three-d-stage>
+              <span class="stage-badge">In three dimensions</span>
+            </div>
+            <div class="object-body">
+              <div class="app-head">
+                <h3>Elmore Buck Saw</h3>
+                <span class="object-status">Shop-made</span>
+              </div>
+              <p>A bucksaw that folds into itself: two handles, a stretcher, a blade, and a cord tightened by a toggle. Folded, it fits a canvas pouch. We built it in the shop, and the product photos and copy were made with AI.</p>
+              <p class="card-meta">Wood, steel, canvas</p>
+            </div>
           </article>
         </div>
       </div>
     </section>
-    ============ end parked Woodworking ============ -->
+
+    <!-- ============ How we work ============ -->
+    <section class="section section-alt" id="how">
+      <div class="wrap">
+        <div class="intro">
+          <p class="label">The practice</p>
+          <h2>How we work</h2>
+          <p>These tools are part of every day here. Using them well is a craft of its own, and it is the part we work hardest at.</p>
+        </div>
+        <ol class="practice">
+          <li>
+            <span class="num" aria-hidden="true">01</span>
+            <h3>Many tools, chosen per job</h3>
+            <p>We keep several AI tools running and move between them depending on the work. One writes better prose, another is stronger at code, another is cheaper for a long research pass. Which one is best changes month to month, so we keep testing the new ones as they ship and we watch what each one costs.</p>
+          </li>
+          <li>
+            <span class="num" aria-hidden="true">02</span>
+            <h3>We write our own skills</h3>
+            <p>A skill is a set of reusable instructions that teaches an AI tool how we design, write and build, so we are not starting from scratch every time. Writing a good one is instructional design for a machine, and it takes the same care. We keep ours and refine them as the work teaches us something.</p>
+          </li>
+          <li>
+            <span class="num" aria-hidden="true">03</span>
+            <h3>We design with them, not only code</h3>
+            <p>The product and the interface get the same treatment as the code, and so does a physical piece. The cajon is the plainest example: AI helped design and engineer it, and the cutting and assembly will be done by hand. The same goes for the brand assets and for this page.</p>
+          </li>
+          <li>
+            <span class="num" aria-hidden="true">04</span>
+            <h3>Built on how people learn</h3>
+            <p>The studio comes out of nearly thirty years in training and data analysis, so when an app teaches something we use what works. PLUed drills produce codes with spaced repetition, because spaced practice is how codes like these stick. Crab Math Run never ends a run on a miss in its default mode, because a kid who is afraid of being wrong can stop trying.</p>
+          </li>
+          <li>
+            <span class="num" aria-hidden="true">05</span>
+            <h3>Validation first, then release</h3>
+            <p>We start by finding out whether the idea deserves the money: what already exists, where you differ, what it would take. Nearly every project starts as a website, the cheapest way to find out if an idea is real. The few that need more become apps, and we take them properly through the App Store, Google Play and the Amazon Appstore.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
 
     <!-- ============ Services ============ -->
-    <section class="section section-alt" id="services">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow">App development</p>
-          <h2>Services</h2>
-          <p>Maybe you have carried an idea around for years. Having the idea
-             was never the problem. Making it real is. That used to run into
-             three hard questions. How do I build it? Who do I pay if I
-             cannot? How long would it take to learn? AI took those barriers
-             down. What remains is finishing, and finishing is what we do.
-             Two ways to work together, each one ending with something you
-             can use without us.</p>
+    <section class="section" id="services">
+      <div class="wrap split">
+        <div class="split-copy">
+          <p class="label">App development</p>
+          <h2 class="split-title">Services</h2>
+          <p>Maybe you have carried an idea around for years. Having the idea was never the problem. Making it real is. That used to run into three hard questions. How do I build it? Who do I pay if I cannot? How long would it take to learn?</p>
+          <p>AI took those barriers down. What remains is finishing, and finishing is what we do. Two ways to work together, each one ending with something you can use without us.</p>
         </div>
-        <div class="grid">
+        <div class="stack">
           <!-- PARKED SERVICE - restore when the templates and infrastructure
                to deliver it exist. Claim only the work we do today.
-          <article class="card card-ice">
-            <p class="num">0X</p>
+          <article class="card">
+            <p class="num-label">0X</p>
             <h3>Set up AI for your work</h3>
             <p>What this studio does - take an idea and make it into
                something - you can do too. We show you the setup we use
@@ -208,55 +294,43 @@
                using real tools on real work, by the time we are done.</p>
           </article>
           -->
-          <article class="card card-ice">
-            <p class="num">01</p>
+          <article class="card">
+            <p class="num-label">01</p>
             <h3>Take an idea to shipped</h3>
-            <p>Honest validation first: what already exists, where you differ,
-               and whether the idea deserves the money. Then we build it, ship
-               it, and hand you something you can maintain with AI at low
-               cost, sometimes even on a free tier.</p>
+            <p>Honest validation first: what already exists, where you differ, and whether the idea deserves the money. Then we design it, build it, ship it, and hand you something you can maintain with AI at low cost, sometimes even on a free tier.</p>
           </article>
-          <article class="card card-ice">
-            <p class="num">02</p>
+          <article class="card">
+            <p class="num-label">02</p>
             <h3>Revive an existing app</h3>
-            <p>Modernize an aging app, make it cheap to maintain, and hand
-               your team the method.</p>
+            <p>Modernize an aging app, make it cheap to maintain, and hand your team the method so the next round does not need us.</p>
           </article>
         </div>
+      </div>
+    </section>
 
-        <div class="doctrine">
-          <p class="label">Doctrine</p>
-          <div class="doctrine-grid">
-            <div>
-              <p class="sublabel">On the tool</p>
-              <p>Ideas come easy now. The machine can generate them, design
-                 the piece, and suggest a better one. We will not pretend it
-                 cannot. We also will not pretend we have its memory or its
-                 speed. What we have are wants: we know what we like, we know
-                 the future we want, and we build what makes us and others
-                 better. The machine has no wants. We do. So when we say AI,
-                 we mean exactly what an engineer means by a calculator, or
-                 a woodworker means by a table saw. A tool.</p>
-            </div>
-            <div>
-              <p class="sublabel">On the market</p>
-              <p>The tool is not free. There is a monthly bill, and a harder
-                 question under it: which one? Grok, Codex, Kimi, Claude, all
-                 of them, or whatever ships next week? Then which model,
-                 which mode, which plan? Is the new one better? Better at
-                 what: writing, code, price? The answers change month to
-                 month, sometimes day to day. We watch the landscape
-                 constantly and pick what fits the work. We will not pretend
-                 that choice is settled. It never stays settled.</p>
-            </div>
-            <div>
-              <p class="sublabel">On platforms</p>
-              <p>Nearly every project starts as a website: the cheapest,
-                 fastest way to find out if an idea is real. Most never need
-                 to be more than that. The few that do, we build as apps you
-                 install from the App Store, Google Play, or the Amazon
-                 Appstore, and we take them through those stores properly.</p>
-            </div>
+    <!-- ============ Doctrine ============
+         The worldview. Edit only with Clay, line by line. -->
+    <section class="section section-alt" id="doctrine">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="label label-muted">What we hold</p>
+            <h2>The Doctrine</h2>
+          </div>
+          <p class="refrain">we will not pretend</p>
+        </div>
+        <div class="grid-3">
+          <div class="tenet">
+            <p class="sublabel">On the tool</p>
+            <p>Ideas come easy now. The machine can generate them, design the piece, and suggest a better one. We will not pretend it cannot. We also will not pretend we have its memory or its speed. What we have are wants: we know what we like, we know the future we want, and we build what makes us and others better. The machine has no wants. We do. So when we say AI, we mean exactly what an engineer means by a calculator, or a woodworker means by a table saw. A tool.</p>
+          </div>
+          <div class="tenet">
+            <p class="sublabel">On the market</p>
+            <p>The tool is not free. There is a monthly bill, and a harder question under it: which one? Grok, Codex, Kimi, Claude, all of them, or whatever ships next week? Then which model, which mode, which plan? Is the new one better? Better at what: writing, code, price? The answers change month to month, sometimes day to day. We watch the landscape constantly and pick what fits the work. We will not pretend that choice is settled. It never stays settled.</p>
+          </div>
+          <div class="tenet">
+            <p class="sublabel">On platforms</p>
+            <p>Nearly every project starts as a website: the cheapest, fastest way to find out if an idea is real. Most never need to be more than that. The few that do, we build as apps you install from the App Store, Google Play, or the Amazon Appstore, and we take them through those stores properly.</p>
           </div>
         </div>
       </div>
@@ -264,35 +338,47 @@
 
     <!-- ============ About ============ -->
     <section class="section" id="about">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow">The studio</p>
-          <h2>About</h2>
+      <div class="wrap about">
+        <div>
+          <p class="label">The studio</p>
+          <h2 class="split-title">About</h2>
+          <svg class="about-mark" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+          <p class="about-name">arbor + linea<br>the tree line</p>
         </div>
-        <div class="about-grid">
-          <div>
-            <p>Arbolinea started with a problem - a math homework problem. In
-               2012 Clay Elmore built the company's first app, Timed Math, to
-               help his kids be more confident with their basic arithmetic
-               skills.</p>
-            <p>He spent nearly thirty years in training and data analysis. He
-               is also a woodworker and a lifetime outdoorsman.</p>
-            <p>The treeline in the name is a real place. It is the line where
-               the trees stop and the view begins. He first saw that view on a
-               summit attempt on Longs Peak. When you cannot see the forest
-               for the trees, get above them.</p>
-            <p>Every project since has started the same way. With a problem
-               worth solving.</p>
-          </div>
-          <aside class="contact-card">
-            <h3>Contact</h3>
-            <ul>
-              <!-- hello@arbolinea.com removed until the mailbox exists; support@ is live -->
-              <li><span class="k">Support</span> <a href="mailto:support@arbolinea.com">support@arbolinea.com</a></li>
-              <!-- Two further Kaprekar repos are private; link them here if they go public -->
-              <li><span class="k">Research</span> <a href="https://clayelmore.github.io/Kaprekar-60714/">Kaprekar 60714</a></li>
-            </ul>
-          </aside>
+        <div class="about-copy">
+          <p>Arbolinea started with a problem - a math homework problem. In 2012 Clay Elmore built the company's first app, Timed Math, to help his kids be more confident with their basic arithmetic skills.</p>
+          <p>He spent nearly thirty years in training and data analysis, including learning programs at Nokia, where his work included launch calendars, the learning platforms, content reviews, testing with real users, translation, and dashboards that tracked who finished and what they thought of it. He has also taught people the basics of using AI tools and writing prompts. It is where the studio's instinct for teaching comes from, and it is the same instinct we use when we write a skill for an AI tool.</p>
+          <p>He is also a woodworker and a lifetime outdoorsman. The treeline in the name is a real place. It is the line where the trees stop and the view begins. He first saw that view on a summit attempt on Longs Peak, in Colorado. When you cannot see the forest for the trees, get above them. Every project since has started the same way. With a problem worth solving.</p>
+          <ul class="chips">
+            <li>Nearly thirty years in training and data analysis</li>
+            <li>Learning programs at Nokia</li>
+            <li>Woodworker</li>
+            <li>Number theory research</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Contact ============ -->
+    <section class="section section-alt" id="contact">
+      <div class="wrap contact">
+        <div class="contact-copy">
+          <h2>Tell us what you have been carrying around.</h2>
+          <p>Write to us and say what the idea is. We will tell you honestly whether it is worth building, and what it would take.</p>
+        </div>
+        <div class="contact-side">
+          <!-- hello@arbolinea.com removed until the mailbox exists; support@ is live -->
+          <p class="contact-row">
+            <span class="label">Support</span>
+            <a href="mailto:support@arbolinea.com">support@arbolinea.com</a>
+          </p>
+          <!-- Two further Kaprekar repos are private; link them here if they go public -->
+          <a class="research" href="https://clayelmore.github.io/Kaprekar-60714/" target="_blank" rel="noopener">
+            <span class="kicker">Research</span>
+            <span class="title">Kaprekar 60714</span>
+            <span class="desc">A number theory paper on a new Kaprekar-style constant: 60714, which holds at every digit length from five digits up. Written with extensive help from AI.</span>
+            <span class="cta">Read it</span>
+          </a>
         </div>
       </div>
     </section>
@@ -303,10 +389,27 @@
   <footer>
     <div class="wrap footer-inner">
       <!-- Open item: confirm legal entity name -->
-      <p class="entity">© 2026 Arbolinea LLC</p>
-      <p class="tag">Ideas above the treeline</p>
+      <p class="footer-brand">
+        <svg class="footer-mark" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+        <span>© 2026 Arbolinea LLC</span>
+      </p>
+      <p>Ideas above the treeline</p>
     </div>
   </footer>
+
+  <!-- Load the 3D workshop only when it is about to scroll into view. -->
+  <script type="module">
+    const workshop = document.getElementById('workshop');
+    const load = () => import('./js/workshop-3d.js');
+    if (workshop && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) { io.disconnect(); load(); }
+      }, { rootMargin: '800px 0px' });
+      io.observe(workshop);
+    } else {
+      load();
+    }
+  </script>
 
 </body>
 </html>

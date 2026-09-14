@@ -1,0 +1,42 @@
+# Elmore bucksaw materials
+newmtl oak
+Ka 0.22 0.16 0.05
+Kd 0.74 0.53 0.16
+Ks 0.10 0.10 0.10
+Ns 24
+
+newmtl oak_end
+Ka 0.19 0.13 0.04
+Kd 0.62 0.44 0.13
+Ks 0.06 0.06 0.06
+Ns 12
+
+newmtl steel
+Ka 0.20 0.20 0.21
+Kd 0.66 0.67 0.69
+Ks 0.60 0.60 0.62
+Ns 160
+
+newmtl pin
+Ka 0.03 0.03 0.03
+Kd 0.10 0.10 0.11
+Ks 0.30 0.30 0.30
+Ns 80
+
+newmtl hole
+Ka 0.01 0.01 0.01
+Kd 0.04 0.03 0.02
+Ks 0.02 0.02 0.02
+Ns 4
+
+newmtl cord
+Ka 0.29 0.09 0.03
+Kd 0.96 0.30 0.10
+Ks 0.15 0.15 0.15
+Ns 10
+
+newmtl canvas
+Ka 0.17 0.17 0.16
+Kd 0.58 0.57 0.52
+Ks 0.03 0.03 0.03
+Ns 4
