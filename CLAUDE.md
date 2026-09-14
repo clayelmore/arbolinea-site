@@ -67,7 +67,7 @@ the working context for maintaining it - read it fully before editing.
 
 - Name: arbor + linea, the tree line. Tagline: "Ideas above the treeline". The treeline
   means perspective: when you can't see the forest for the trees, get above them.
-- Headline: "The idea was never the barrier. Finishing is." - mirrors the Services turn
+- Headline: "The idea was never the barrier. Finishing is." - mirrors the (parked) Services turn
   "Having the idea was never the problem. Making it real is." "Finishing is." carries
   the ice-to-timber gradient (`.grad`), software fading into the workshop. Keep it.
 - Doctrine panel (three tenets: On the tool / On the market / On platforms) is the
@@ -85,7 +85,8 @@ the working context for maintaining it - read it fully before editing.
   Fonts: Space Grotesk (headings), Public Sans (body), Spline Sans Mono (labels/pills).
   Cards 16px radius, hairline border, 3px hover lift. Wordmark is lowercase "arbolinea".
 - The page structure came from a Claude Design redesign (September 2026): Hero, Apps,
-  Workshop, How we work, Services, Doctrine, About, Contact.
+  Workshop, How we work, Doctrine, About, Contact. Services is parked (see Parked).
+  Nav: Apps, Workshop, How we work, About.
 
 ## Hard requirements (regressions that already happened once)
 
@@ -106,8 +107,14 @@ the working context for maintaining it - read it fully before editing.
   Workshop intro) when it is built. The Elmore Buck Saw is built.
 - No marketing campaign for the saw yet; do not claim one.
 - Skills library link (nav and page) - `skills/index.html` stays a noindex stub.
-- "Set up AI for your work" service card (0X in the Services grid) - returns when the
-  templates/infrastructure to deliver it exist.
+- The whole Services section, parked 2026-09-14 before sharing the site on LinkedIn:
+  there is no client work yet, so the page shows what is built rather than selling.
+  Restoring it means three edits together: the Services section comment in index.html,
+  a nav link, and a hero "Work with us" button (mailto support@ with a subject), plus
+  contact copy that invites ideas. The "Set up AI for your work" card sits inside it
+  and returns only when the templates/infrastructure to deliver it exist.
+- Stripe's business description (client invoicing) does not match a site with no
+  services; revisit before taking payments.
 - Confirm the legal entity name in the footer (currently "Arbolinea LLC").
 - Hand-drawn mark trace; then regenerate all assets from it.
 

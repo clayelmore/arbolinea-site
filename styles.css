@@ -185,8 +185,13 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 500; color: var(--te
 .btn-primary:hover { background: var(--ice); color: var(--bg); }
 .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
 .treeline-rule {
-  /* Grows with the ridgeline so its peaks stay below the buttons at every width. */
-  margin-top: clamp(48px, 13vw - 40px, 160px);
+  /* Keeps the ridgeline's highest peak below the buttons at every width.
+     The ridge is drawn in a 1440x340 viewBox, sliced to fill a box
+     clamp(220px, 29vw, 420px) tall, so its peak (viewBox y 94) rises
+     246/340 of the box height, or 246/1440 of the width when the width
+     governs. That height, plus a gap, minus the hero's bottom padding and
+     this rule's own line, is the space needed above the rule. */
+  margin-top: max(48px, calc(max(17.1vw, clamp(220px, 29vw, 420px) * 0.7236) + 10px - clamp(96px, 9.2vw, 132px)));
   display: flex;
   align-items: center;
   gap: 16px;
