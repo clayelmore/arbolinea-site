@@ -7,7 +7,7 @@
   <meta name="color-scheme" content="dark">
 
   <title>Arbolinea - Ideas above the treeline</title>
-  <meta name="description" content="Arbolinea designs and builds apps and makes objects in the workshop. We use AI tools every day, and we finish what we start. Ideas above the treeline.">
+  <meta name="description" content="Arbolinea designs and builds apps and makes objects in the workshop, using AI tools every day. Ideas above the treeline.">
   <link rel="canonical" href="https://arbolinea.com/">
 
   <!-- Open Graph -->
@@ -126,7 +126,7 @@
             <p class="label">Software</p>
             <h2>Apps</h2>
           </div>
-          <p class="section-lede">Taken through the stores properly, and maintained for real users.</p>
+          <p class="section-lede">One app live in three stores, and three more on the way.</p>
         </div>
 
         <div class="grid-2">
@@ -168,7 +168,7 @@
               <span class="pill">Coming back</span>
             </div>
             <p>Arithmetic drilling that rewards speed and accuracy. Built in 2012 to help kids get more confident with basic arithmetic, and in the stores for over a decade until it was pulled for being out of date. We are rebuilding it from the ground up.</p>
-            <p class="card-meta">The company's first app</p>
+            <p class="card-meta">The company's first app, rebuilt</p>
           </article>
 
           <article class="card">
@@ -197,7 +197,7 @@
             <p class="label label-timber">Physical</p>
             <h2>The workshop</h2>
           </div>
-          <p class="section-lede section-lede-wide">AI helps design and engineer each piece, and the shop builds it by hand. The saw is built. The cajon is still a model.</p>
+          <p class="section-lede section-lede-wide">Objects built by hand, with AI in the process. The saw is built. The cajon is still a model.</p>
         </div>
 
         <div class="grid-2">
@@ -208,7 +208,7 @@
             </div>
             <div class="object-body">
               <div class="app-head">
-                <h3>"Be Better" cajon</h3>
+                <h3>“Be Better” cajon</h3>
                 <span class="object-status">Designed, not yet cut</span>
               </div>
               <p>A box drum, designed and engineered with AI. It will be cut and assembled by hand from Baltic birch.</p>
@@ -226,7 +226,7 @@
                 <h3>Elmore Buck Saw</h3>
                 <span class="object-status">Shop-made</span>
               </div>
-              <p>A bucksaw that folds into itself: two handles, a stretcher, a blade, and a cord tightened by a toggle. Folded, it fits a canvas pouch. We built it in the shop, and the product photos and copy were made with AI.</p>
+              <p>A bucksaw that folds into itself: two handles, a stretcher, a blade, and a cord tightened by a toggle. Folded, it fits a canvas pouch. We built it in the shop.</p>
               <p class="card-meta">Wood, steel, canvas</p>
             </div>
           </article>
@@ -276,7 +276,7 @@
     <section class="section" id="services">
       <div class="wrap split">
         <div class="split-copy">
-          <p class="label">App development</p>
+          <p class="label">Work with us</p>
           <h2 class="split-title">Services</h2>
           <p>Maybe you have carried an idea around for years. Having the idea was never the problem. Making it real is. That used to run into three hard questions. How do I build it? Who do I pay if I cannot? How long would it take to learn?</p>
           <p>AI took those barriers down. What remains is finishing, and finishing is what we do. Two ways to work together, each one ending with something you can use without us.</p>
@@ -295,12 +295,10 @@
           </article>
           -->
           <article class="card">
-            <p class="num-label">01</p>
             <h3>Take an idea to shipped</h3>
             <p>Honest validation first: what already exists, where you differ, and whether the idea deserves the money. Then we design it, build it, ship it, and hand you something you can maintain with AI at low cost, sometimes even on a free tier.</p>
           </article>
           <article class="card">
-            <p class="num-label">02</p>
             <h3>Revive an existing app</h3>
             <p>Modernize an aging app, make it cheap to maintain, and hand your team the method so the next round does not need us.</p>
           </article>
@@ -321,15 +319,15 @@
         </div>
         <div class="grid-3">
           <div class="tenet">
-            <p class="sublabel">On the tool</p>
+            <h3 class="sublabel">On the tool</h3>
             <p>Ideas come easy now. The machine can generate them, design the piece, and suggest a better one. We will not pretend it cannot. We also will not pretend we have its memory or its speed. What we have are wants: we know what we like, we know the future we want, and we build what makes us and others better. The machine has no wants. We do. So when we say AI, we mean exactly what an engineer means by a calculator, or a woodworker means by a table saw. A tool.</p>
           </div>
           <div class="tenet">
-            <p class="sublabel">On the market</p>
+            <h3 class="sublabel">On the market</h3>
             <p>The tool is not free. There is a monthly bill, and a harder question under it: which one? Grok, Codex, Kimi, Claude, all of them, or whatever ships next week? Then which model, which mode, which plan? Is the new one better? Better at what: writing, code, price? The answers change month to month, sometimes day to day. We watch the landscape constantly and pick what fits the work. We will not pretend that choice is settled. It never stays settled.</p>
           </div>
           <div class="tenet">
-            <p class="sublabel">On platforms</p>
+            <h3 class="sublabel">On platforms</h3>
             <p>Nearly every project starts as a website: the cheapest, fastest way to find out if an idea is real. Most never need to be more than that. The few that do, we build as apps you install from the App Store, Google Play, or the Amazon Appstore, and we take them through those stores properly.</p>
           </div>
         </div>
@@ -400,7 +398,15 @@
   <!-- Load the 3D workshop only when it is about to scroll into view. -->
   <script type="module">
     const workshop = document.getElementById('workshop');
-    const load = () => import('./js/workshop-3d.js');
+    // If three.js cannot load (blocked host, very old browser), say so in the
+    // stage instead of leaving two empty boxes.
+    const load = () => import('./js/workshop-3d.js').catch((err) => {
+      console.warn('workshop 3D unavailable:', err);
+      document.querySelectorAll('three-d-stage').forEach((stage) => {
+        stage.dataset.state = 'error';
+        stage.innerHTML = '<p class="stage-fallback">The 3D model could not load here.</p>';
+      });
+    });
     if (workshop && 'IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         if (entries.some((e) => e.isIntersecting)) { io.disconnect(); load(); }
