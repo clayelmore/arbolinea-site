@@ -548,3 +548,6 @@ footer { background: var(--bg); border-top: 1px solid var(--hairline); }
   *, *::before, *::after { transition: none !important; animation: none !important; }
   .card:hover, .object-card:hover, .research:hover { transform: none; }
 }
+
+/* An inline link inside running text is underlined, so it is not told apart by color alone. */
+.contact-copy p a { text-decoration: underline; text-underline-offset: 3px; }
