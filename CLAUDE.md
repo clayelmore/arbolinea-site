@@ -130,3 +130,11 @@ After any edit: check locally (a static server on the folder), confirm no em das
 crept in, no horizontal overflow at 380px, backgrounds still painted, every link
 returns 200, and the two workshop models still render. Then show Clay
 the wording, get the OK, push, and confirm the change is live on arbolinea.com.
+
+## Unlisted samples
+
+- `samples/rise-demo-7k3q/` is an Articulate Rise web export (a generalized "How to use Rise"
+  demo) shared by direct link only: https://arbolinea.com/samples/rise-demo-7k3q/
+  Never link it from the site, the nav, or a sitemap; its index.html carries noindex.
+  It is exported third-party runtime, so the copy rules and dash checks do not apply to it.
+  Unlisted is not private: the repo is public.
