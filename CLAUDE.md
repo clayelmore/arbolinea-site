@@ -133,6 +133,15 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
 
 ## Unlisted samples
 
+- `samples/index.html` lists the samples below at https://arbolinea.com/samples/ . This is the
+  link Clay shares. It is unlisted: noindex, and nothing on the site links to it.
+
+- `samples/course-design-5r2k/` is a page Clay's session built by hand: six slides and one
+  short screen recording from a Storyline training module he made, with captions.
+  Direct link only: https://arbolinea.com/samples/course-design-5r2k/
+  The module itself is NOT published: it carries an identifiable presenter's face and voice
+  from footage the client paid for, and its title naming would identify the client. Only
+  these presenter-free pages go out. The site's copy rules DO apply to this page's own words.
 - `samples/rise-demo-7k3q/` is an Articulate Rise web export (a generalized "How to use Rise"
   demo) shared by direct link only: https://arbolinea.com/samples/rise-demo-7k3q/
   Never link it from the site, the nav, or a sitemap; its index.html carries noindex.

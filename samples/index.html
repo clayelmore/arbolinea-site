@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <!-- Unlisted index of work samples: shared by direct link only, never linked from the site. -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Work samples - Clay Elmore</title>
+  <meta name="description" content="Learning design and development samples by Clay Elmore.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Public+Sans:wght@400;500&family=Spline+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0E1411; --bg-alt: #131A16; --panel: #182019; --hairline: #26302A;
+      --text: #EFF3EE; --text-2: #DDE4DE; --muted: #B8C2BA;
+      --ice: #8FC6E8; --ice-deep: #4E86AC;
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "Public Sans", system-ui, sans-serif;
+      --font-mono: "Spline Sans Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); }
+    body { color: var(--text-2); font-family: var(--font-body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    main { background: var(--bg); display: block; min-height: 100vh; }
+    .wrap { width: min(880px, 100% - 40px); margin: 0 auto; }
+    a { color: var(--ice); }
+    a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+
+    header { padding: clamp(48px, 9vw, 104px) 0 clamp(28px, 4vw, 44px); }
+    .label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ice); margin: 0; }
+    h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(30px, 5.4vw, 44px); line-height: 1.12; letter-spacing: -0.01em; color: var(--text); margin: 16px 0 0; }
+    .lede { max-width: 60ch; margin: 18px 0 0; }
+
+    ul.samples { list-style: none; margin: 0; padding: 0 0 clamp(48px, 7vw, 88px); display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      display: block; background: var(--panel); border: 1px solid var(--hairline); border-radius: 16px;
+      padding: 26px 24px; color: var(--text-2); text-decoration: none;
+      transition: transform 160ms ease, border-color 160ms ease;
+    }
+    .card:hover { transform: translateY(-3px); border-color: var(--ice-deep); }
+    .card h2 { font-family: var(--font-display); font-weight: 500; font-size: 23px; color: var(--text); margin: 8px 0 0; }
+    .card p { margin: 10px 0 0; color: var(--muted); font-size: 16px; max-width: 62ch; }
+    .kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ice); }
+    .meta { margin-top: 16px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted); }
+
+    footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); padding: 28px 0; }
+    .foot { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted); }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } .card:hover { transform: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="wrap">
+        <p class="label">Work samples</p>
+        <h1>Learning design and development</h1>
+        <p class="lede">A few things I have built, kept here so I can share them directly.
+          Each one opens in the browser, with nothing to install.</p>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <ul class="samples">
+        <li>
+          <a class="card" href="course-design-5r2k/">
+            <span class="kind">Storyline 360</span>
+            <h2>Evolving Technology Capabilities</h2>
+            <p>Pages from an internal training module on industrial automation, Industry 4.0 and 5G:
+              an animated timeline, a set of diagrams built one piece at a time, and a drag-and-drop
+              knowledge check.</p>
+            <p class="meta">Slides and a short recording</p>
+          </a>
+        </li>
+        <li>
+          <a class="card" href="rise-demo-7k3q/">
+            <span class="kind">Rise 360</span>
+            <h2>How to use Rise</h2>
+            <p>A short course that teaches Articulate Rise itself: lessons, blocks, knowledge checks,
+              and how to publish and share. Built from a course I wrote, shortened for sharing.</p>
+            <p class="meta">The full course, in your browser</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <footer>
+      <div class="wrap foot">
+        <span>Built by Clay Elmore</span>
+        <span><a href="https://arbolinea.com/">arbolinea.com</a></span>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
