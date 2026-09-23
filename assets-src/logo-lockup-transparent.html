@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!-- Horizontal lockup (mark + wordmark) on a transparent background, for
+     places like the Articulate Rise cover logo. Render one colorway per run:
+     logo-lockup-transparent.html?ink=light  (for dark covers / dark overlays)
+     logo-lockup-transparent.html?ink=dark   (for white or light covers)
+     Render with a transparent default background, then trim to the ink:
+     chrome --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1
+       --default-background-color=00000000 --virtual-time-budget=8000
+       --window-size=2400x800 --screenshot=out.png "file:///.../logo-lockup-transparent.html?ink=light" -->
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=block" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:transparent;width:2400px;height:800px;overflow:hidden}
+  .wrap{position:absolute;left:100px;top:100px;display:flex;align-items:flex-start;gap:56px}
+  svg{width:420px;height:560px;display:block}
+  .word{font-family:"Space Grotesk",sans-serif;font-weight:500;font-size:236px;letter-spacing:0.01em;line-height:1;
+        margin-top:163px}
+  body.light .word{color:#EFF3EE} body.light .ink{stroke:#EFF3EE} body.light .line{stroke:#8FC6E8}
+  body.dark .word{color:#0E1411}  body.dark .ink{stroke:#0E1411}  body.dark .line{stroke:#4E86AC}
+</style></head><body>
+<script>document.body.className=(new URLSearchParams(location.search).get('ink')==='dark')?'dark':'light'</script>
+<div class="wrap">
+  <!-- same mark as the site and brand assets; viewBox trimmed to the drawn extent -->
+  <svg viewBox="1 7 62 82" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path class="line" d="M4 60 H60" stroke-width="1.6"/>
+    <g class="ink" stroke-width="2.5">
+      <path d="M32 60 C32 44 32 30 32 16 l5 0 l0 -6 l-9 0 l0 7 l5 0"/>
+      <path d="M32 60 C30 46 22 36 14 28 l6 -1 l-2 -6 l-8 3 l2 5"/>
+      <path d="M32 60 C34 46 42 36 50 28 l-6 -1 l2 -6 l8 3 l-2 5"/>
+      <path d="M32 60 C29 50 20 46 10 44 l5 -3 l-4 -5 l-7 5 l3 4"/>
+      <path d="M32 60 C35 50 44 46 54 44 l-5 -3 l4 -5 l7 5 l-3 4"/>
+    </g>
+    <g class="ink" stroke-width="2.5" opacity="0.5" transform="translate(0,60) scale(1,-0.52) translate(0,-60)">
+      <path d="M32 60 C32 44 32 30 32 16 l5 0 l0 -6 l-9 0 l0 7 l5 0"/>
+      <path d="M32 60 C30 46 22 36 14 28 l6 -1 l-2 -6 l-8 3 l2 5"/>
+      <path d="M32 60 C34 46 42 36 50 28 l-6 -1 l2 -6 l8 3 l-2 5"/>
+      <path d="M32 60 C29 50 20 46 10 44 l5 -3 l-4 -5 l-7 5 l3 4"/>
+      <path d="M32 60 C35 50 44 46 54 44 l-5 -3 l4 -5 l7 5 l-3 4"/>
+    </g>
+  </svg>
+  <div class="word">arbolinea</div>
+</div>
+</body></html>
