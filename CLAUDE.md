@@ -140,6 +140,19 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
   down the same day at Clay's request; he did not like the sample. The built page is kept at
   ~/Documents/Arbolinea/unpublished/course-design-sample-2026-09-23/ . Do not republish it
   without his say-so. The module it came from stays unpublished for the reasons below.
+- `samples/making-a-video-4m8t/` is an Articulate Rise web export of "Making a Video",
+  shared by direct link only: https://arbolinea.com/samples/making-a-video-4m8t/
+  It came from an internal module Clay built in a previous job. Everything identifying that
+  employer was removed before publishing: the "Additional Information" lesson (both its videos
+  were unfixable), account names and classification bars painted out of the recordings,
+  internal folder names covered in every file dialog, and the spoken employer name spliced
+  out of the Introduction narration. Dates were removed too, at Clay's request: captions,
+  "Camtasia 2018" in text and narration, Explorer date columns, the taskbar clock, and the
+  closing credits roll of the sample video. Deliberately kept: Google Earth's own
+  "©2020 Google" watermark, and clip filenames like "Rec 02-25-20" in the Camtasia media bin.
+  Verified by OCR of every frame of all 20 videos (~57,000 frames) and transcription of all
+  22 audio tracks. **If this export is ever rebuilt from the original, all of that work must
+  be redone.** The repair spec is not in this repo; the method is described in the handoff.
 - `samples/rise-demo-7k3q/` is an Articulate Rise web export (a generalized "How to use Rise"
   demo) shared by direct link only: https://arbolinea.com/samples/rise-demo-7k3q/
   Never link it from the site, the nav, or a sitemap; its index.html carries noindex.
