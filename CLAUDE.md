@@ -140,6 +140,25 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
   down the same day at Clay's request; he did not like the sample. The built page is kept at
   ~/Documents/Arbolinea/unpublished/course-design-sample-2026-09-23/ . Do not republish it
   without his say-so. The module it came from stays unpublished for the reasons below.
+- `samples/business-imperative-2v9x/` is an Articulate Storyline web export of "The Business
+  Imperative", one module of a 5G certification program Clay built in a previous job, shared by
+  direct link only: https://arbolinea.com/samples/business-imperative-2v9x/
+  Scrubbing done before publishing: the on-camera presenter (a real former colleague) was removed
+  from the two videos he appeared in, by covering his side of the frame with imagery from the
+  module's own library and keeping the text panels live so their animation survives; all 19 minutes
+  of narration across 26 files were regenerated in Clay's cloned ElevenLabs voice, each track
+  length-matched to its slot so Storyline's animation and caption timings still hold; the author
+  metadata (which named a colleague) now reads Clay Elmore; agency file paths embedded as image alt
+  text were rewritten as real descriptions; the search index entry naming the employer's learning
+  brand was removed; 494 corporate font references were replaced with Open Sans, which is what the
+  export actually ships. Nine caption files were re-timed to the new audio; three others are
+  orphans from a different course and were left alone. An icon overlapping the closing title was
+  moved up 28px. Verified: every audio file compared byte-wise against the original export, the
+  8 unchanged ones confirmed to contain no speech; both rebuilt videos scanned every half second
+  for any trace of the presenter. **Redo all of this if the export is ever rebuilt from the
+  original.** The number/label spacing in the navigation boxes could NOT be fixed from the export
+  (the player ignores the spacing values in the slide data); that needs the .story source, which
+  is not on this machine.
 - `samples/making-a-video-4m8t/` is an Articulate Rise web export of "Making a Video",
   shared by direct link only: https://arbolinea.com/samples/making-a-video-4m8t/
   It came from an internal module Clay built in a previous job. Everything identifying that
