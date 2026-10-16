@@ -552,11 +552,14 @@ footer { background: var(--bg); border-top: 1px solid var(--hairline); }
 .contact-topics .card .btn { align-self: flex-start; margin-top: auto; }
 .contact-topics .card p:not([class]) { margin-bottom: 10px; }
 
-/* ---------- Policy pages (crab-math-run/privacy) ---------- */
+/* ---------- Policy pages (crab-math-run/privacy, timed-math-dash/privacy) ---------- */
 .policy h2 { margin-top: 44px; font-size: clamp(22px, 1vw + 14px, 26px); line-height: 1.25; }
 .policy h2:first-child { margin-top: 0; }
 .policy p { margin-top: 12px; max-width: 68ch; font-size: 17px; line-height: 1.65; color: var(--text-2); overflow-wrap: anywhere; }
 .policy p a { text-decoration: underline; text-underline-offset: 3px; }
+.policy ul { margin-top: 12px; padding-left: 1.25em; max-width: 68ch; }
+.policy li { margin-top: 8px; font-size: 17px; line-height: 1.65; color: var(--text-2); overflow-wrap: anywhere; }
+.policy li a { text-decoration: underline; text-underline-offset: 3px; }
 /* An owner entry not filled in yet. A page never ships with one showing. */
 .placeholder { color: var(--timber); border: 1px dashed var(--timber-deep); border-radius: 6px; padding: 1px 6px; }
 
