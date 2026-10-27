@@ -273,3 +273,4 @@ pre.codeblock, .ph-src pre.xml { max-width: 100%; }
   thead th { border-bottom: 2px solid var(--line); }
   .ph-src table td:first-child { overflow-wrap: anywhere; }
 }
+.ph-contents .ph-shell main[role="main"] { grid-column: 2 / -1; }
