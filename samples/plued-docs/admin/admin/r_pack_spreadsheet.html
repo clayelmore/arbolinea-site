@@ -70,7 +70,8 @@
         <dt class="dt dlterm">A missing required column</dt><dd class="dd">Nothing is imported. The message names the
             missing column.</dd>
       </dl>
-      <p class="p">Row numbers in the messages count the header row as row 1 and leave out blank rows. In an
+      <p class="p">Row numbers in the messages count the header row as row 1 and skip blank rows, so after a
+        blank row they run one lower than the spreadsheet's own row numbers. In an
         Excel workbook only the first sheet is read. Excel drops a zero at the start of a number, so
         format the code column as Text before you type or paste codes that start with 0.</p>
     </section>
