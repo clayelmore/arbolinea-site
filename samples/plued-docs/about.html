@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+  <title>How I built PLUed Help</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Public+Sans:wght@400;500&family=Spline+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0E1411; --panel: #182019; --hairline: #26302A;
+      --text: #EFF3EE; --text-2: #DDE4DE; --muted: #B8C2BA; --ice: #8FC6E8;
+      --tag: #8FC6E8; --att: #D7B4F0; --val: #A8D8A0; --com: #7F8A82;
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "Public Sans", system-ui, sans-serif;
+      --font-mono: "Spline Sans Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); }
+    body { color: var(--text-2); font-family: var(--font-body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    main { padding: clamp(48px, 8vw, 96px) clamp(20px, 6vw, 96px) clamp(48px, 7vw, 88px); }
+    a { color: var(--ice); }
+    .label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ice); margin: 0; }
+    h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(30px, 5.4vw, 44px); line-height: 1.12; color: var(--text); margin: 16px 0 0; }
+    h2 { font-family: var(--font-display); font-weight: 500; font-size: 24px; color: var(--text); margin: 48px 0 8px; }
+    h3 { font-family: var(--font-display); font-weight: 500; font-size: 18px; color: var(--text); margin: 28px 0 6px; }
+    p, li { max-width: 78ch; }
+    .lede { margin: 18px 0 0; }
+    code { font-family: var(--font-mono); font-size: .88em; color: var(--text); background: var(--panel); border: 1px solid var(--hairline); border-radius: 4px; padding: 0 4px; }
+    pre { font-family: var(--font-mono); font-size: 13.5px; line-height: 1.6; color: var(--text-2); background: var(--panel);
+      border: 1px solid var(--hairline); border-radius: 12px; padding: 16px 18px; overflow-x: auto; max-width: 100%; }
+    pre .t { color: var(--tag); } pre .a { color: var(--att); } pre .v { color: var(--val); } pre .c { color: var(--com); font-style: italic; }
+    table { border-collapse: collapse; max-width: 100%; font-size: 16px; margin: 8px 0 0; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--hairline); padding: 8px 12px; text-align: left; vertical-align: top; }
+    th { color: var(--text); font-weight: 500; background: var(--panel); }
+    ul { padding-left: 22px; } li { margin: 0 0 8px; }
+    b { color: var(--text); font-weight: 500; }
+    .back { display: inline-block; margin-top: 48px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="label">PLUed Help - write-up</p>
+    <h1>How I built PLUed Help</h1>
+    <p class="lede">PLUed is an app I built that teaches grocery cashiers the PLU codes they type at the
+      register. Its help started as two long Markdown files. For this sample I rebuilt it as
+      structured DITA 1.3: short topics, one source, and separate help for each audience.</p>
+
+    <h2>The brief</h2>
+    <ul>
+      <li><b>Audiences.</b> Cashiers and shoppers use the app. Store managers and trainers prepare a
+        store's own codes. Each group gets help that holds only what it needs.</li>
+      <li><b>Task first.</b> Most topics are tasks: what to do, one action per step, what you see
+        after, and a decision table where the path splits.</li>
+      <li><b>House style.</b> Plain, short sentences in US English, no marketing words, notes only
+        where they earn their place, and the app's exact labels.</li>
+      <li><b>True to the product.</b> Every statement had to match what the app does today.</li>
+      <li><b>Look.</b> A help-site layout like the ones AEM Guides publishes: a contents tree,
+        breadcrumbs, search and an "On this page" list, without anyone's branding.</li>
+    </ul>
+
+    <h2>How the work was done</h2>
+    <p>I followed the same process I use for course drafts: I write the brief and the rules, AI
+      produces a first draft, and a person checks it before it goes out.</p>
+    <ul>
+      <li><b>Brief.</b> I set the audiences, the topic list, the style rules and the look.</li>
+      <li><b>Draft.</b> An AI model (Claude, from Anthropic) read the app and its old help, drafted
+        the topics in DITA, and wrote the build scripts and the toolkit plugin.</li>
+      <li><b>Review.</b> Every topic was checked against the app's code. I reviewed the published
+        help on a phone and on a wide screen, and directed the changes until it met the brief.</li>
+    </ul>
+
+    <h2>The structure</h2>
+    <p>Every topic is its own file. A root map pulls in one submap per guide, so each guide can be
+      maintained on its own.</p>
+    <table>
+      <thead><tr><th>Part</th><th>Topics</th></tr></thead>
+      <tbody>
+        <tr><td>Overview</td><td>3 concepts: what PLUed is, how PLU codes work, who uses the app</td></tr>
+        <tr><td>User Guide</td><td>15 topics: 9 tasks, 2 concepts, 4 references</td></tr>
+        <tr><td>Admin Guide</td><td>8 topics: 5 tasks, 2 concepts, 1 reference</td></tr>
+        <tr><td>Glossary</td><td>11 glossary entries</td></tr>
+      </tbody>
+    </table>
+    <p>The same source also holds a Developer Guide for building and releasing the app. It is left
+      out of this sample.</p>
+
+    <h3>Keys: write a label once</h3>
+    <p>The product name, the version and every on-screen label are keys in the root map. A topic
+      points at the key, so when a label changes in the app, one line changes here.</p>
+<pre><span class="c">&lt;!-- plued.ditamap --&gt;</span>
+<span class="t">&lt;keydef</span> <span class="a">keys</span>=<span class="v">"ui-library"</span><span class="t">&gt;&lt;topicmeta&gt;&lt;keywords&gt;</span>
+  <span class="t">&lt;keyword&gt;</span>Library<span class="t">&lt;/keyword&gt;</span>
+<span class="t">&lt;/keywords&gt;&lt;/topicmeta&gt;&lt;/keydef&gt;</span>
+
+<span class="c">&lt;!-- in a topic --&gt;</span>
+<span class="t">&lt;cmd&gt;</span>At the bottom of the screen, tap <span class="t">&lt;uicontrol</span> <span class="a">keyref</span>=<span class="v">"ui-library"</span><span class="t">/&gt;</span>.<span class="t">&lt;/cmd&gt;</span></pre>
+
+    <h3>Reuse: write a step or note once</h3>
+    <p>Steps and notes that several topics need live in one shared topic and are pulled in by
+      reference.</p>
+<pre><span class="c">&lt;!-- reuse/shared.dita --&gt;</span>
+<span class="t">&lt;note</span> <span class="a">id</span>=<span class="v">"note-organic"</span> <span class="a">type</span>=<span class="v">"note"</span><span class="t">&gt;</span>For the organic version of any code, add a 9 in front
+  of it. For example, 4011 becomes 94011.<span class="t">&lt;/note&gt;</span>
+
+<span class="c">&lt;!-- in "How PLU codes work" and "Look up a PLU code" --&gt;</span>
+<span class="t">&lt;note</span> <span class="a">conkeyref</span>=<span class="v">"shared/note-organic"</span><span class="t">/&gt;</span></pre>
+
+    <h3>Decisions as tables</h3>
+    <p>Where the path splits, the step holds a decision table with one row per case.</p>
+<pre><span class="t">&lt;step&gt;</span>
+  <span class="t">&lt;cmd&gt;</span>Decide how you received the pack.<span class="t">&lt;/cmd&gt;</span>
+  <span class="t">&lt;choicetable&gt;</span>
+    <span class="t">&lt;chhead&gt;&lt;choptionhd&gt;</span>If<span class="t">&lt;/choptionhd&gt;&lt;chdeschd&gt;</span>Then<span class="t">&lt;/chdeschd&gt;&lt;/chhead&gt;</span>
+    <span class="t">&lt;chrow&gt;</span>
+      <span class="t">&lt;choption&gt;</span>A QR code<span class="t">&lt;/choption&gt;</span>
+      <span class="t">&lt;chdesc&gt;</span>Tap <span class="t">&lt;uicontrol&gt;</span>Scan QR<span class="t">&lt;/uicontrol&gt;</span> and point the camera at the QR code.
+        The import starts when the code is read. Continue with step 5.<span class="t">&lt;/chdesc&gt;</span>
+    <span class="t">&lt;/chrow&gt;</span>
+    <span class="c">&lt;!-- one row each for a link and a .plupack file --&gt;</span>
+  <span class="t">&lt;/choicetable&gt;</span>
+<span class="t">&lt;/step&gt;</span></pre>
+
+    <h3>Audience filtering</h3>
+    <p>Admin topics are marked <code>audience="admin"</code>. A DITAVAL file decides what each build
+      includes, so the user help and the admin help come from the same files.</p>
+<pre><span class="c">&lt;!-- ditaval/admin.ditaval --&gt;</span>
+<span class="t">&lt;val&gt;</span>
+  <span class="t">&lt;prop</span> <span class="a">att</span>=<span class="v">"audience"</span> <span class="a">val</span>=<span class="v">"user"</span> <span class="a">action</span>=<span class="v">"include"</span><span class="t">/&gt;</span>
+  <span class="t">&lt;prop</span> <span class="a">att</span>=<span class="v">"audience"</span> <span class="a">val</span>=<span class="v">"admin"</span> <span class="a">action</span>=<span class="v">"include"</span><span class="t">/&gt;</span>
+  <span class="t">&lt;prop</span> <span class="a">att</span>=<span class="v">"audience"</span> <span class="a">val</span>=<span class="v">"developer"</span> <span class="a">action</span>=<span class="v">"exclude"</span><span class="t">/&gt;</span>
+<span class="t">&lt;/val&gt;</span></pre>
+    <p>Filtering also works inside a topic. The "About PLUed" page lists only the guides that are in
+      the help you are reading.</p>
+
+    <h3>Related links from one table</h3>
+    <p>Links between topics are not typed into the text. A relationship table in the root map links
+      each concept to the tasks and references that go with it, and a filtered build drops the links
+      to topics it leaves out.</p>
+
+    <h2>Publishing</h2>
+    <ul>
+      <li>The DITA Open Toolkit 4.4.1 publishes both help sites as HTML5, with the full table of
+        contents on every page.</li>
+      <li>A small toolkit plugin replaces the page frame with the top bar, the three-column layout and
+        the topic type label. A stylesheet and one script add the collapsible contents, breadcrumbs,
+        search, "On this page", and previous and next links.</li>
+      <li>Each help site opens on a Contents page that lists every topic with its short description.</li>
+      <li>The pages fill the screen they are on, from a phone to a wide monitor.</li>
+    </ul>
+
+    <h2>How it was checked</h2>
+    <ul>
+      <li>Every file validates against the DITA 1.3 DTDs.</li>
+      <li>Every build completes with no toolkit warnings or messages, including the key and
+        reference checks.</li>
+      <li>Every statement was checked against the app's code.</li>
+      <li>Every link resolves, and every page fits the screen at widths from 360 to 2560 pixels.</li>
+    </ul>
+
+    <a class="back" href="index.html">Back to PLUed Help</a>
+  </main>
+</body>
+</html>

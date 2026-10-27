@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+  <title>PLUed Help - DITA documentation sample</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Public+Sans:wght@400;500&family=Spline+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0E1411; --panel: #182019; --hairline: #26302A;
+      --text: #EFF3EE; --text-2: #DDE4DE; --muted: #B8C2BA; --ice: #8FC6E8; --ice-deep: #4E86AC;
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "Public Sans", system-ui, sans-serif;
+      --font-mono: "Spline Sans Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); }
+    body { color: var(--text-2); font-family: var(--font-body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    main { padding: clamp(48px, 9vw, 104px) clamp(20px, 6vw, 96px) clamp(48px, 7vw, 88px); }
+    a { color: var(--ice); }
+    a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+    .label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ice); margin: 0; }
+    h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(30px, 5.4vw, 44px); line-height: 1.12; color: var(--text); margin: 16px 0 0; }
+    .lede { margin: 18px 0 0; max-width: 72ch; }
+    ul.links { list-style: none; margin: 36px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+    .card { display: block; height: 100%; background: var(--panel); border: 1px solid var(--hairline); border-radius: 16px;
+      padding: 24px; color: var(--text-2); text-decoration: none; transition: transform 160ms ease, border-color 160ms ease; }
+    .card:hover { transform: translateY(-3px); border-color: var(--ice-deep); }
+    .card h2 { font-family: var(--font-display); font-weight: 500; font-size: 22px; color: var(--text); margin: 8px 0 0; }
+    .card p { margin: 10px 0 0; color: var(--muted); font-size: 16px; }
+    .kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ice); }
+    .back { display: inline-block; margin-top: 40px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; }
+    @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="label">Documentation sample - DITA 1.3</p>
+    <h1>PLUed Help</h1>
+    <p class="lede">Online help for PLUed, an app I built that teaches grocery cashiers the PLU codes
+      for fresh produce. It is written in DITA XML and published with the DITA Open Toolkit. One
+      source produces two help sites: one for cashiers and shoppers, and one that adds the topics
+      for store managers and trainers.</p>
+
+    <ul class="links">
+      <li><a class="card" href="user/index.html">
+        <span class="kind">Online help</span>
+        <h2>User help</h2>
+        <p>For cashiers and shoppers: look up a code, scan a sticker, study, practice and set up the app.</p>
+      </a></li>
+      <li><a class="card" href="admin/index.html">
+        <span class="kind">Online help</span>
+        <h2>Admin help</h2>
+        <p>Everything in the user help, plus building and sharing a store's codes and managing store codes.</p>
+      </a></li>
+      <li><a class="card" href="about.html">
+        <span class="kind">Write-up</span>
+        <h2>How I built it</h2>
+        <p>The brief, the DITA structure with real excerpts, how it is published, and how it was checked.</p>
+      </a></li>
+    </ul>
+
+    <a class="back" href="../">All work samples</a>
+  </main>
+</body>
+</html>
