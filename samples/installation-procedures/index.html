@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Installation procedures - documentation sample</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Public+Sans:wght@400;500&family=Spline+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0E1411; --panel: #182019; --hairline: #26302A;
+      --text: #EFF3EE; --text-2: #DDE4DE; --muted: #B8C2BA; --ice: #8FC6E8; --ice-deep: #4E86AC;
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "Public Sans", system-ui, sans-serif;
+      --font-mono: "Spline Sans Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); }
+    body { color: var(--text-2); font-family: var(--font-body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    main { padding: clamp(48px, 9vw, 104px) clamp(20px, 6vw, 96px) clamp(48px, 7vw, 88px); }
+    a { color: var(--ice); }
+    a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+    .label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ice); margin: 0; }
+    h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(30px, 5.4vw, 44px); line-height: 1.12; color: var(--text); margin: 16px 0 0; }
+    .lede { margin: 18px 0 0; max-width: 72ch; }
+    ul.links { list-style: none; margin: 36px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+    .card { display: block; height: 100%; background: var(--panel); border: 1px solid var(--hairline); border-radius: 16px;
+      padding: 24px; color: var(--text-2); text-decoration: none; transition: transform 160ms ease, border-color 160ms ease; }
+    .card:hover { transform: translateY(-3px); border-color: var(--ice-deep); }
+    .card h2 { font-family: var(--font-display); font-weight: 500; font-size: 22px; color: var(--text); margin: 8px 0 0; }
+    .card p { margin: 10px 0 0; color: var(--muted); font-size: 16px; }
+    .kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ice); }
+    .back { display: inline-block; margin-top: 40px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; }
+    @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="label">Documentation sample - Installation procedures</p>
+    <h1>Installation procedures</h1>
+    <p class="lede">Two installation procedures I wrote for telephone switching equipment. Installers
+      follow them step by step in a working switch, so each one has safe stop points, the commands to
+      enter and the responses to expect, and checks before moving on.</p>
+    <p class="lede">These are excerpts. Selected sections, figures, and one table are shown, and step,
+      figure, and table numbers are kept from the full procedure. Company names, the product brand,
+      and document numbers have been removed.</p>
+
+    <ul class="links">
+      <li><a class="card" href="../cm3-nli-reassignment-excerpt.pdf">
+        <span class="kind">Procedure excerpt - PDF, 16 pages</span>
+        <h2>Secondary Network Link Interface Reassignment</h2>
+        <p>Moving network links in a working switch to a new cabinet, one block at a time, with safe stop points and a table to track the work.</p>
+      </a></li>
+      <li><a class="card" href="../sm-xc-growth-excerpt.pdf">
+        <span class="kind">Procedure excerpt - PDF, 14 pages</span>
+        <h2>Switching Module Growth</h2>
+        <p>Adding a switching module to a working switch without interrupting customer calls: test equipment, prerequisites, entering the module's data, and link tests.</p>
+      </a></li>
+    </ul>
+
+    <a class="back" href="../">All work samples</a>
+  </main>
+</body>
+</html>

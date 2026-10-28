@@ -143,6 +143,11 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
 
 - `samples/index.html` lists the samples below at https://arbolinea.com/samples/ . This is the
   link Clay shares. It is unlisted: noindex, and nothing on the site links to it.
+- `samples/installation-procedures/index.html` is the landing page for two installation
+  procedures Clay wrote (`samples/cm3-nli-reassignment-excerpt.pdf`,
+  `samples/sm-xc-growth-excerpt.pdf`), added 2026-10-27. Clay removed company names, the product
+  brand and document numbers; never name the company on these cards or pages (Clay's call,
+  2026-10-27).
 
 - A Storyline slides page (`samples/course-design-5r2k/`) was published 2026-09-23 and taken
   down the same day at Clay's request; he did not like the sample. The built page is kept at
