@@ -563,7 +563,7 @@ window.COURSE = {
       ] },
 
     /* ---------- 11 ---------- */
-    { id: "handoff", title: "Hand it off", apps: ["Chat", "Word", "Excel", "PowerPoint", "Outlook"], minutes: 5, madeWith: "copilot",
+    { id: "handoff", title: "Hand it off", apps: ["Copilot Chat", "Word", "Excel", "PowerPoint", "Outlook"], minutes: 5, madeWith: "copilot",
       intro: "One fun job, carried across every app: organize a one-day team offsite for 20 people. The skill is the handoff. Start in one place, then give the result to the next app instead of starting over.",
       blocks: [
         { type: "audio", src: "audio/handoff.mp3", title: "Listen: a word from Clay", length: "35 sec", transcript: "This one is my favorite, because it is the part people do not think to try. You have one job - organize a one-day offsite for twenty people. Instead of starting over in every app, you hand the work along. Chat interviews you. Word turns the answers into a plan. Excel turns the plan into a budget. PowerPoint shows it, and Outlook sends it. Then go backwards. A table becomes three sentences. A deck becomes a handout. The demo is real, and so is the moment where the budget lands exactly on the number." },
