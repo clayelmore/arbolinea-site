@@ -1,3 +1,3 @@
-8d6b9cd25ca9360493469d00e0d4a8a1cd59ec695ab28f25352f332b69cc206e  arbolinea-site/samples/copilot-at-work-3n7p/cheat-sheet.html
-eb0e731a6422bcc8e25d37ab019c2322167e7427de2c761e3df84194a4dd9e50  arbolinea-site/samples/copilot-at-work-3n7p/content.js
-2026-11-11 18:32 -0600
+0bf6e18a0da453b516d303f0ce7ceaf11286094d34d0efcbd2c594d33a81ffd1  arbolinea-site/samples/copilot-at-work-3n7p/cheat-sheet.html
+b0cd24cb256d55b45c189f7d31e36a969492edd99cab196a32a03f666fb3ee42  arbolinea-site/samples/copilot-at-work-3n7p/content.js
+2026-11-11 23:05 -0600

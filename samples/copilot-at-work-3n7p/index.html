@@ -177,6 +177,33 @@
 
     .link-row { display: flex; gap: 12px; flex-wrap: wrap; }
 
+    /* Reveal: a small collapsed item that opens to the prompt and the capture */
+    .reveal { }
+    .rev-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 999px; padding: 8px 16px 8px 12px; cursor: pointer; font-family: var(--font-display); font-size: 15px; color: var(--accent-ink); }
+    .rev-btn:hover { background: var(--tint); }
+    .rev-btn svg { width: 16px; height: 16px; color: var(--accent); transition: transform 200ms ease; }
+    .rev-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .rev-panel { margin-top: 14px; display: flex; flex-direction: column; gap: 16px; }
+    .rev-intro { font-size: 15px; color: var(--ink-3); }
+    .rev-prompt { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; }
+    .rev-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .rev-prompt p { font-size: 15px; white-space: pre-wrap; }
+    .rev-blocks { display: flex; flex-direction: column; gap: 16px; }
+
+    /* Narration */
+    .narration { display: flex; gap: 14px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+    .narration .play { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--accent); color: #fff; display: grid; place-items: center; cursor: pointer; }
+    .narration .play svg { width: 22px; height: 22px; }
+    .narration .play:hover { background: var(--accent-ink); }
+    .nar-body { flex: 1; min-width: 0; }
+    .nar-title { font-family: var(--font-display); font-size: 17px; color: var(--ink); display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+    .nar-len { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); letter-spacing: 0.04em; }
+    .narration audio { display: none; }
+    .narration .transcript { margin-top: 8px; }
+    .nar-text { margin-top: 10px; font-size: 16px; }
+    .nar-text p + p { margin-top: 8px; }
+    .demo .step-nar { margin-top: 10px; }
+
     /* Buttons */
     .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 10px 20px; font-weight: 500; cursor: pointer; text-decoration: none; font-size: 16px; }
     .btn:hover { background: var(--accent-ink); }
@@ -304,6 +331,7 @@
     .cover .cover-outline .n { font-family: var(--font-mono); font-size: 12px; color: var(--accent); min-width: 22px; }
     .cover .cover-outline .d { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); }
     .cover .madeline { margin-top: 20px; font-size: 15px; color: var(--ink-3); max-width: 62ch; }
+    .cover .cover-audio { margin-top: 22px; max-width: 620px; }
 
     /* Audit mode: every lesson stacked for the headless check */
     body.audit .outline { display: none; }
@@ -349,7 +377,7 @@
     <main id="main"></main>
   </div>
 
-  <script src="content.js?v=20261111a"></script>
+  <script src="content.js?v=20261112a"></script>
   <script>
   (function () {
     "use strict";
@@ -549,7 +577,8 @@
         steps.forEach(s => { if (!s.src || !s.alt || !s.source) throw new Error("each demo step needs src, alt, and source"); });
         const num = root.querySelector(".num"), h = root.querySelector("h3"), img = root.querySelector("img"), body = root.querySelector(".demo-body"), lab = root.querySelector(".mk-drawn"), dots = root.querySelector(".dots"), prev = root.querySelector(".prev"), next = root.querySelector(".next");
         steps.forEach(() => dots.appendChild(el(`<span></span>`)));
-        function show() { const s = steps[i]; num.textContent = i + 1; h.textContent = s.title; img.src = s.src; img.alt = s.alt; body.innerHTML = inline(s.body); lab.textContent = `Real capture of ${s.source}, cropped.`; [...dots.children].forEach((d, k) => d.classList.toggle("on", k === i)); prev.disabled = i === 0; next.textContent = i === steps.length - 1 ? "Start over" : "Next step"; }
+        const nar = el(`<div class="step-nar"></div>`); root.querySelector(".demo .step-nav").before(nar);
+        function show() { const s = steps[i]; num.textContent = i + 1; h.textContent = s.title; img.src = s.src; img.alt = s.alt; body.innerHTML = inline(s.body); lab.textContent = `Real capture of ${s.source}, cropped.`; [...dots.children].forEach((d, k) => d.classList.toggle("on", k === i)); prev.disabled = i === 0; next.textContent = i === steps.length - 1 ? "Start over" : "Next step"; nar.innerHTML = ""; document.querySelectorAll(".demo audio").forEach(a => a.pause()); if (s.audio) nar.appendChild(RENDER.audio({ src: s.audio, transcript: s.transcript || s.body, title: "Listen to this step", length: s.length })); }
         prev.addEventListener("click", () => { if (i > 0) { i--; show(); } });
         next.addEventListener("click", () => { i = i < steps.length - 1 ? i + 1 : 0; show(); });
         show();
@@ -574,6 +603,28 @@
 
       links(b) {
         return el(`<div class="block link-row">${b.items.map(i => `<a class="btn${i.ghost ? " ghost" : ""}" href="${esc(i.href)}">${inline(i.label)}</a>`).join("")}</div>`);
+      },
+
+      audio(b) {
+        if (!b.src || !b.transcript) throw new Error("an audio block needs src and transcript");
+        const root = el(`<div class="block"><div class="narration"><button class="play" aria-label="Play narration"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></button><div class="nar-body"><div class="nar-title">${inline(b.title || "Listen")}<span class="nar-len">${esc(b.length || "")}</span></div><audio preload="none" src="${esc(b.src)}"></audio><button class="btn ghost small transcript" aria-expanded="false">Transcript</button><div class="nar-text" hidden>${paras(b.transcript)}</div></div></div></div>`);
+        const audio = root.querySelector("audio"), play = root.querySelector(".play"), tbtn = root.querySelector(".transcript"), text = root.querySelector(".nar-text");
+        const icon = on => { play.innerHTML = on ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>'; play.setAttribute("aria-label", on ? "Pause narration" : "Play narration"); };
+        play.addEventListener("click", () => { if (audio.paused) { document.querySelectorAll("audio").forEach(a => { if (a !== audio) a.pause(); }); audio.play(); } else audio.pause(); });
+        audio.addEventListener("play", () => icon(true)); audio.addEventListener("pause", () => icon(false)); audio.addEventListener("ended", () => icon(false));
+        tbtn.addEventListener("click", () => { const open = tbtn.getAttribute("aria-expanded") === "true"; tbtn.setAttribute("aria-expanded", String(!open)); text.hidden = open; });
+        if (AUDIT) text.hidden = false;
+        return root;
+      },
+
+      reveal(b) {
+        const pid = id("rev");
+        const root = el(`<div class="block reveal"><button class="rev-btn" aria-expanded="false" aria-controls="${pid}"><svg><use href="#chev"/></svg><span>${inline(b.label || "Show me the prompt used")}</span></button><div class="rev-panel" id="${pid}" hidden>${b.intro ? `<p class="rev-intro">${inline(b.intro)}</p>` : ""}${b.prompt ? `<div class="rev-prompt"><div class="rev-label">The prompt</div><p>${inline(b.prompt)}</p></div>` : ""}<div class="rev-blocks"></div></div></div>`);
+        const btn = root.querySelector(".rev-btn"), panel = root.querySelector(".rev-panel"), inner = root.querySelector(".rev-blocks");
+        (b.blocks || []).forEach(nb => { const fn = RENDER[nb.type]; if (!fn) throw new Error(`reveal holds an unknown block ${nb.type}`); inner.appendChild(fn(nb)); });
+        btn.addEventListener("click", () => { const open = btn.getAttribute("aria-expanded") === "true"; btn.setAttribute("aria-expanded", String(!open)); panel.hidden = open; });
+        if (AUDIT) { panel.hidden = false; btn.setAttribute("aria-expanded", "true"); }
+        return root;
       },
 
       divider() { return el(`<hr class="divider block">`); }
@@ -652,7 +703,7 @@
     }
 
     function renderLesson(l, i, standalone) {
-      const sec = el(`<section class="lesson" data-lesson="${esc(l.id)}" aria-labelledby="h-${esc(l.id)}"><header class="lesson-head"><div class="count">Lesson ${i + 1} of ${lessons.length}</div><h1 id="h-${esc(l.id)}">${esc(l.title)}</h1>${l.intro ? `<p class="intro">${inline(l.intro)}</p>` : ""}${l.madeWith === "copilot" ? `<p class="made">${inline(l.madeLine || course.madeWithShort || "Lesson text drafted with Copilot Chat, then edited by hand. See the last lesson.")}</p>` : ""}</header><div class="blocks"></div></section>`);
+      const sec = el(`<section class="lesson" data-lesson="${esc(l.id)}" aria-labelledby="h-${esc(l.id)}"><header class="lesson-head"><div class="count">Lesson ${i + 1} of ${lessons.length}</div><h1 id="h-${esc(l.id)}">${esc(l.title)}</h1>${l.intro ? `<p class="intro">${inline(l.intro)}</p>` : ""}${l.madeWith === "copilot" ? `<p class="made">${inline(l.madeLine || course.madeWithShort || "Lesson text drafted with Copilot Chat. See the last lesson.")}</p>` : ""}</header><div class="blocks"></div></section>`);
       const blocks = sec.querySelector(".blocks");
       (l.blocks || []).forEach((b, k) => {
         const fn = RENDER[b.type];
@@ -678,7 +729,8 @@
       const total = lessons.reduce((n, l) => n + (l.minutes || 3), 0);
       const first = lessons.find(l => !progress[l.id]) || lessons[0];
       const started = doneCount() > 0;
-      const sec = el(`<section class="cover"><div class="kicker">${esc(course.kicker || "A short course")}</div><h1>${esc(course.title)}</h1><p class="sub">${inline(course.description)}</p><div class="facts"><span>${lessons.length} lessons</span><span>About ${total} minutes</span><span>${esc(course.author || "")}</span></div><div class="start"><a class="btn" href="#${esc(first.id)}">${started ? "Resume" : "Start the course"}</a></div><p class="madeline">${inline(course.madeLine || "")}</p><div class="cover-outline"><h2>What is inside</h2><ol>${lessons.map((l, i) => `<li><a href="#${esc(l.id)}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span>${esc(l.title)}</span><span class="d">${l.minutes || 3} min</span></a></li>`).join("")}</ol></div></section>`);
+      const sec = el(`<section class="cover"><div class="kicker">${esc(course.kicker || "A short course")}</div><h1>${esc(course.title)}</h1><p class="sub">${inline(course.description)}</p><div class="facts"><span>${lessons.length} lessons</span><span>About ${total} minutes</span><span>${esc(course.author || "")}</span></div><div class="start"><a class="btn" href="#${esc(first.id)}">${started ? "Resume" : "Start the course"}</a></div><p class="madeline">${inline(course.madeLine || "")}</p>${course.welcome ? '<div class="cover-audio"></div>' : ""}<div class="cover-outline"><h2>What is inside</h2><ol>${lessons.map((l, i) => `<li><a href="#${esc(l.id)}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span>${esc(l.title)}</span><span class="d">${l.minutes || 3} min</span></a></li>`).join("")}</ol></div></section>`);
+      if (course.welcome) sec.querySelector(".cover-audio").appendChild(RENDER.audio(course.welcome));
       return sec;
     }
 
