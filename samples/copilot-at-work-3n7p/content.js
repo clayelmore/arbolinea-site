@@ -190,7 +190,7 @@ window.COURSE = {
       ] },
 
     /* ---------- 3 ---------- */
-    { id: "catch-up", title: "Catch up", minutes: 4, madeWith: "copilot",
+    { id: "catch-up", title: "Catch up", apps: ["Outlook", "Teams"], minutes: 4, madeWith: "copilot",
       intro: "Catching up is the easiest win. Instead of reading a 40-message thread, ask Copilot what was decided and what you need to do.",
       blocks: [
         { type: "audio", src: "audio/catch-up.mp3", title: "Listen: a word from Clay", length: "25 sec", transcript: "This is the easiest win in the whole course. A forty-message thread lands while you were out. You could read it top to bottom. Or you could ask Copilot what was decided, what is still open, and what has your name on it. That last part matters. Do not just ask for a summary - ask for the decisions and the actions. You get a list you can act on, instead of a paragraph you have to read twice." },
@@ -233,7 +233,7 @@ window.COURSE = {
       ] },
 
     /* ---------- 4 ---------- */
-    { id: "meetings", title: "Meetings", minutes: 4, madeWith: "copilot",
+    { id: "meetings", title: "Meetings", apps: ["Teams"], minutes: 4, madeWith: "copilot",
       intro: "Meetings move fast and details slip. Copilot can recap one you missed, prepare you for the next one, and answer questions while a meeting is still going.",
       blocks: [
         { type: "audio", src: "audio/meetings.mp3", title: "Listen: a word from Clay", length: "31 sec", transcript: "I have missed my share of meetings, and the catch-up afterward used to cost more than the meeting itself. If a meeting was recorded or transcribed, Copilot can recap it. Ask for the decisions, the action items with owners, and the open questions. That is the part you need before your next meeting starts. You can also ask Copilot to prepare you before a meeting, from the invite, the thread, and last time's notes. Try the scenario in this lesson - ten minutes, three choices." },
@@ -268,7 +268,7 @@ window.COURSE = {
       ] },
 
     /* ---------- 5 ---------- */
-    { id: "write", title: "Write", minutes: 5, madeWith: "copilot",
+    { id: "write", title: "Write", apps: ["Outlook", "Word"], minutes: 5, madeWith: "copilot",
       intro: "Copilot gets you off the blank page. You decide what to keep, change, or cut, and every change it makes in Word can be reviewed and undone.",
       blocks: [
         { type: "audio", src: "audio/write.mp3", title: "Listen: a word from Clay", length: "32 sec", transcript: "The blank page is where Copilot earns its keep. In Outlook, tell it what the reply should say, the tone, and the length, and you get a draft to edit instead of a cursor to stare at. In Word, point it at your notes and ask for a first draft. Then the part I care about most - you read it. Every change Copilot makes can be reviewed and undone. Nothing is final until you say so. The demo in this lesson is real. Watch what Copilot did with four sentences of notes." },
@@ -316,7 +316,7 @@ window.COURSE = {
       ] },
 
     /* ---------- 6 ---------- */
-    { id: "find", title: "Find", minutes: 3, madeWith: "copilot",
+    { id: "find", title: "Find", apps: ["Copilot Chat"], minutes: 3, madeWith: "copilot",
       intro: "Instead of searching your emails, chats, meetings, and files one at a time, ask Copilot to find the detail. It looks across what you can already open and shows where it found the answer.",
       blocks: [
         { type: "audio", src: "audio/find.mp3", title: "Listen: a word from Clay", length: "25 sec", transcript: "When did someone first propose that date? Where is the latest version of the plan? What did the customer ask for last month? Instead of searching emails, then chats, then files, ask Copilot once. It looks across what you can open and shows you where it found the answer. Then open the source. The references are there so you can check - and in the demo you will see exactly what that looks like." },
@@ -364,7 +364,7 @@ window.COURSE = {
       ] },
 
     /* ---------- 7 ---------- */
-    { id: "numbers", title: "Numbers", minutes: 4, madeWith: "copilot",
+    { id: "numbers", title: "Numbers", apps: ["Excel"], minutes: 4, madeWith: "copilot",
       intro: "Copilot in Excel can find patterns, write formulas, explain the ones already there, and make a chart. It works best when the data is a clean table with headers.",
       blocks: [
         { type: "audio", src: "audio/numbers.mp3", title: "Listen: a word from Clay", length: "32 sec", transcript: "Copilot in Excel can find patterns, write formulas, explain the ones someone else wrote, and make a chart. It is good at it, with one condition. The data has to be a clean table - one header row, one record per row, one kind of thing per column. Half of the trouble people have with Copilot in Excel is really trouble with the table. In the demo, Copilot builds a small table and then adds a formula column. Watch for the step where I check one row by hand. Always do that step." },
@@ -414,7 +414,7 @@ window.COURSE = {
       ] },
 
     /* ---------- 8 ---------- */
-    { id: "present", title: "Present", minutes: 3, madeWith: "copilot",
+    { id: "present", title: "Present", apps: ["PowerPoint"], minutes: 3, madeWith: "copilot",
       intro: "Copilot can turn a document into a first-draft deck. You then refine the slides, fix the message, and add notes for the person presenting.",
       blocks: [
         { type: "audio", src: "audio/present.mp3", title: "Listen: a word from Clay", length: "28 sec", transcript: "A first-draft deck from a document is one of the most useful things Copilot does, and one of the easiest to misuse. Name the audience, the number of slides, and the tone, and you get a deck to refine. Add a slide, shorten it, change the tone, add speaker notes. In the demo, watch the note Copilot writes about its own work. It tells you which slides it checked and which it did not. That is your review list." },
@@ -512,7 +512,7 @@ window.COURSE = {
       ] },
 
     /* ---------- 10 ---------- */
-    { id: "together", title: "Put it together", minutes: 5, madeWith: "copilot",
+    { id: "together", title: "Put it together", apps: ["Outlook", "Teams", "Word", "Excel"], minutes: 5, madeWith: "copilot",
       intro: "Real work does not stay in one app. Three everyday activities, each chaining the earlier lessons: a status update, a customer reply, and a meeting turned into an action list.",
       blocks: [
         { type: "audio", src: "audio/together.mp3", title: "Listen: a word from Clay", length: "33 sec", transcript: "Real work does not stay in one app, so this lesson chains the earlier ones. A weekly status update - catch up, pull the decisions, draft, check. A reply to a customer who wants a change - find what was promised, draft, check against the source, shorten. A meeting turned into an action list - recap, owners, table, send. Each step names the app and the prompt. Then the scenario puts you at four o'clock on a Friday and asks what you do first." },
@@ -563,7 +563,7 @@ window.COURSE = {
       ] },
 
     /* ---------- 11 ---------- */
-    { id: "handoff", title: "Hand it off", minutes: 5, madeWith: "copilot",
+    { id: "handoff", title: "Hand it off", apps: ["Chat", "Word", "Excel", "PowerPoint", "Outlook"], minutes: 5, madeWith: "copilot",
       intro: "One fun job, carried across every app: organize a one-day team offsite for 20 people. The skill is the handoff. Start in one place, then give the result to the next app instead of starting over.",
       blocks: [
         { type: "audio", src: "audio/handoff.mp3", title: "Listen: a word from Clay", length: "35 sec", transcript: "This one is my favorite, because it is the part people do not think to try. You have one job - organize a one-day offsite for twenty people. Instead of starting over in every app, you hand the work along. Chat interviews you. Word turns the answers into a plan. Excel turns the plan into a budget. PowerPoint shows it, and Outlook sends it. Then go backwards. A table becomes three sentences. A deck becomes a handout. The demo is real, and so is the moment where the budget lands exactly on the number." },

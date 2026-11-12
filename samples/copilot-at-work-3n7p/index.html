@@ -71,10 +71,15 @@
     .shell { display: grid; grid-template-columns: var(--nav-w) 1fr; min-height: calc(100vh - var(--topbar)); background: var(--page); }
     .outline { background: var(--surface); border-right: 1px solid var(--line); padding: 22px 18px 40px; position: sticky; top: var(--topbar); height: calc(100vh - var(--topbar)); overflow-y: auto; }
     .outline h2 { font-size: 13px; font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 14px 8px; }
+    .outline-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 14px 8px; }
+    .outline-head h2 { margin: 0; }
+    .outline .outline-close { display: none; width: auto; flex: 0 0 auto; border: 1px solid var(--line-strong); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--accent-ink); background: var(--surface); }
     .outline ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
     .outline button { width: 100%; text-align: left; background: transparent; border: 0; border-radius: var(--radius-sm); padding: 9px 10px; display: flex; gap: 10px; align-items: flex-start; cursor: pointer; color: var(--ink-2); line-height: 1.35; font-size: 15px; }
     .outline button:hover { background: var(--tint); }
     .outline button[aria-current="page"] { background: var(--accent-soft); color: var(--accent-ink); font-weight: 500; }
+    .outline .apps { display: block; margin-top: 1px; font-size: 12.5px; font-weight: 400; color: var(--ink-3); }
+    .outline button[aria-current="page"] .apps { color: var(--accent-ink); }
     .outline .dot { flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line-strong); margin-top: 2px; display: grid; place-items: center; }
     .outline .dot svg { width: 10px; height: 10px; display: none; }
     .outline .done .dot { background: var(--ok); border-color: var(--ok); }
@@ -344,6 +349,7 @@
       .outline { position: fixed; top: var(--topbar); left: 0; bottom: 0; width: min(320px, 88vw); transform: translateX(-100%); transition: transform 220ms ease; z-index: 15; box-shadow: 0 0 0 100vw rgba(0,0,0,0); height: auto; }
       .outline.open { transform: translateX(0); box-shadow: 0 0 40px rgba(0,0,0,0.25); }
       .menu-btn { display: inline-block; }
+      .outline .outline-close { display: inline-flex; }
       .two-col, .before-after { grid-template-columns: 1fr; }
       .lesson-nav { flex-direction: column; }
       .lesson-nav .placeholder { display: none; }
@@ -369,7 +375,7 @@
 
   <div class="shell">
     <nav class="outline" id="outline" aria-label="Course outline">
-      <h2>Lessons</h2>
+      <div class="outline-head"><h2>Lessons</h2><button type="button" class="outline-close" id="outlineClose">Close</button></div>
       <ol id="outlineList"></ol>
       <div class="pct" id="pct"></div>
       <div class="bar"><span id="barFill"></span></div>
@@ -377,7 +383,7 @@
     <main id="main"></main>
   </div>
 
-  <script src="content.js?v=20261112b"></script>
+  <script src="content.js?v=20261112c"></script>
   <script>
   (function () {
     "use strict";
@@ -692,7 +698,7 @@
     function renderOutline(current) {
       const list = document.getElementById("outlineList"); list.innerHTML = "";
       lessons.forEach((l, i) => {
-        const li = el(`<li class="${progress[l.id] ? "done" : ""}"><button ${current === l.id ? 'aria-current="page"' : ""}><span class="dot"><svg><use href="#tick"/></svg></span><span>${i + 1}. ${esc(l.title)}</span></button></li>`);
+        const li = el(`<li class="${progress[l.id] ? "done" : ""}"><button ${current === l.id ? 'aria-current="page"' : ""}><span class="dot"><svg><use href="#tick"/></svg></span><span class="t">${i + 1}. ${esc(l.title)}${Array.isArray(l.apps) && l.apps.length ? `<span class="apps">${esc(l.apps.join(", "))}</span>` : ""}</span></button></li>`);
         li.querySelector("button").addEventListener("click", () => { location.hash = l.id; closeMenu(); });
         list.appendChild(li);
       });
@@ -754,8 +760,11 @@
     }
 
     const outline = document.getElementById("outline"), menuBtn = document.getElementById("menuBtn");
-    function closeMenu() { outline.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); }
-    menuBtn.addEventListener("click", () => { const open = outline.classList.toggle("open"); menuBtn.setAttribute("aria-expanded", String(open)); });
+    function setMenu(open) { outline.classList.toggle("open", open); menuBtn.setAttribute("aria-expanded", String(open)); menuBtn.textContent = open ? "Close" : "Lessons"; }
+    function closeMenu() { setMenu(false); }
+    menuBtn.addEventListener("click", () => setMenu(!outline.classList.contains("open")));
+    document.getElementById("outlineClose").addEventListener("click", () => { closeMenu(); menuBtn.focus(); });
+    document.getElementById("main").addEventListener("click", () => { if (outline.classList.contains("open")) closeMenu(); });
     document.addEventListener("keydown", e => { if (e.key === "Escape") closeMenu(); });
     document.getElementById("courseName").textContent = course.title;
     window.addEventListener("hashchange", route);
