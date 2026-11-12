@@ -185,6 +185,22 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
   Verified by OCR of every frame of all 20 videos (~57,000 frames) and transcription of all
   22 audio tracks. **If this export is ever rebuilt from the original, all of that work must
   be redone.** The repair spec is not in this repo; the method is described in the handoff.
+- `samples/copilot-at-work-3n7p/` is a hand-built, Rise-style course page, "Copilot at Work", added
+  2026-11-11 and shared by direct link only: https://arbolinea.com/samples/copilot-at-work-3n7p/
+  It is NOT a Rise export: `index.html` is the renderer (one function per block type), `content.js`
+  holds every lesson, question, and prompt as data, `prompts.html` is a standalone prompt library,
+  `cheat-sheet.html` is the printable version and `copilot-prompt-cheat-sheet.pdf` is made from it
+  by headless Chrome with `--no-pdf-header-footer` (see `.ultron/copilot-course/make-pdf.sh`; regenerate
+  the PDF after any change to the prompts). All three pages carry noindex; the PDF has its own card on
+  the samples page because a card is one link. The site copy rules apply to these files (they are ours).
+  Provenance: the lesson text was drafted with Copilot Chat on Clay's personal Microsoft account (not a
+  work tenant) and edited by hand; the raw prompts and outputs are in `.ultron/copilot-course/prompts/`
+  and the edits in `edits.md` there; the course says this in the closing lesson and both cards say it.
+  Every image in `img/` is a real capture (Copilot Chat on the web, or Copilot in desktop Word, Excel,
+  and PowerPoint) listed in `.ultron/copilot-course/captures.md` with its sha256 and what was cropped;
+  the drawn chat panels in the lessons are labeled as drawings. Never add a Microsoft logo or icon.
+  A planned second phase adds narration through ElevenLabs only after Clay approves the scripts, in a
+  second push with its own approval.
 - `samples/rise-demo-7k3q/` is an Articulate Rise web export (a generalized "How to use Rise"
   demo) shared by direct link only: https://arbolinea.com/samples/rise-demo-7k3q/
   Never link it from the site, the nav, or a sitemap; its index.html carries noindex.
