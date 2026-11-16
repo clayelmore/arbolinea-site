@@ -255,7 +255,7 @@ $('#download').addEventListener('click', () => {
   const msg = $('#download-message');
   if (!r.groups) { msg.textContent = r.error; return; }
   msg.textContent = '';
-  const url = URL.createObjectURL(new Blob([toCsv(r)], { type: 'text/csv' }));
+  const url = URL.createObjectURL(new Blob(['\uFEFF' + toCsv(r)], { type: 'text/csv' }));
   const a = el('a', { href: url, download: 'training-priorities.csv' });
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);

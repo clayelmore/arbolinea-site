@@ -41,13 +41,14 @@ export function recommend(answers, questions = QUESTIONS) {
   let jobAid = null;
   if (top === 'J' || ruleAddsAid) {
     const type = flags.has('includeChecklist') ? 'checklist' : q1Type ?? 'steps';
-    const use = flags.has('trainingNeeded') && ruleAddsAid ? 'verify' : 'during';
+    const use = flags.has('trainingNeeded') ? 'verify' : 'during';
     jobAid = { type, use };
   }
 
   if (flags.has('includeJobAid') && flags.has('trainingNeeded')) notes.add('refresherPractice');
   if (flags.has('phone') && (course === 'S' || course === 'RS')) notes.add('storylineOnPhones');
   if (course === 'R' || course === 'RS') notes.add('license');
+  if (!course) notes.delete('storylineUpdatesSlower');
 
   return { scores, top, course, scenarioBlock, jobAid, label: labelFor(course, scenarioBlock, jobAid), firmRules, reasons, notes: [...notes] };
 }

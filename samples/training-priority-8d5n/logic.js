@@ -294,10 +294,10 @@ export function toCsv(result) {
       const reason = type ? [type.label, r.reason_note].filter(Boolean).join(': ') : r.reason_note;
       lines.push([
         guard(r.course.trim()), r.reach, r.importance, r.out_of_date, r.works, r.feedback === 'none' ? 'no data' : r.feedback, r.effort,
-        r.must_change ? 'yes' : 'no', guard(reason), guard(r.reason_date || ''), r.overlap ? 'yes' : 'no',
+        r.must_change ? 'yes' : 'no', guard(r.must_change ? reason : ''), guard(r.must_change ? (r.reason_date || '') : ''), r.overlap ? 'yes' : 'no',
         it.score, g.label, it.effortLabel,
         guard(it.drivers.map((k) => FACTORS.find((f) => f.key === k).label).join('; ')),
-        guard(it.hints.map((h) => HINTS[h]).join(' ')),
+        guard([...it.hints.map((h) => HINTS[h]), it.closeCall ? 'Close call.' : ''].filter(Boolean).join(' ')),
       ].map(esc).join(','));
     }
   }
