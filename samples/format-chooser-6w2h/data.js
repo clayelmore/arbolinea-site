@@ -37,7 +37,7 @@ export const SOURCES = {
   slVpat: { title: 'Articulate: Storyline 360 accessibility conformance report', short: 'Articulate, Storyline conformance report', url: 'https://www.articulate.com/about/accessibility/storyline-360-accessibility-conformance-report-vpat/', kind: 'vendor' },
   devlinpeck: { title: 'Devlin Peck: Articulate Storyline vs Rise', short: 'Devlin Peck', url: 'https://www.devlinpeck.com/content/articulate-storyline-vs-rise', kind: 'practitioner' },
   atdJobAids: { title: 'ATD: Design Considerations for Job Aids (PDF)', short: 'ATD, job aids', url: 'https://assets.td.org/m/7baf07d32958910a/original/ATD-Design-Considerations-for-JobAids-r1.pdf', kind: 'professional' },
-  fhwaJobAids: { title: 'FHWA National Highway Institute: Job aids', short: 'FHWA, job aid types', url: 'https://www.nhi.fhwa.dot.gov/LearnersFirst/job-aids.htm', kind: 'professional' },
+  fhwaJobAids: { title: 'FHWA National Highway Institute: Job aids', short: 'FHWA, job aid types', url: 'https://fhwaapps.fhwa.dot.gov/nhit/LearnersFirst/job-aids.htm', kind: 'professional' },
   mooreJobAid: { title: 'Cathy Moore: Job aid or memory? (PDF)', short: 'Cathy Moore', url: 'https://s3.amazonaws.com/cathymooremedia/job-aid-or-memory-A4.pdf', kind: 'practitioner' },
   jobaidsInfo: { title: 'jobaids.info: Job aids job aid (PDF)', short: 'jobaids.info', url: 'https://jobaids.info/JobAidsJobAid.pdf', kind: 'practitioner' },
   arthur1998: { title: 'Arthur and others (1998), Factors that influence skill decay and retention: a quantitative review (PDF)', short: 'Arthur and others, 1998', url: 'https://gwern.net/doc/psychology/spaced-repetition/1998-arthur.pdf', kind: 'research' },
