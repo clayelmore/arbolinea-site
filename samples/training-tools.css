@@ -92,3 +92,4 @@ table.compare tbody th { color: var(--text); font-weight: 500; }
   .no-print { display: none !important; }
   .wrap { padding: 0 !important; max-width: none; }
 }
+.card-row .card-title { margin: 0 0 12px; font-size: 18px; }

@@ -262,11 +262,19 @@ export function importCsv(text, makeId) {
     c.must_change = flag('must_change');
     c.overlap = flag('overlap');
     const reasonText = col(rec, 'reason').trim();
-    const hit = REASON_PATTERNS.find(([re]) => re.test(reasonText));
-    if (hit) {
+    const lower = reasonText.toLowerCase();
+    const names = REASON_TYPES.flatMap((t) => [[t.label.toLowerCase(), t], [t.key, t]]).sort((x, y) => y[0].length - x[0].length);
+    const exact = names.find(([n]) => lower === n || (lower.startsWith(n) && /^\s*[:-]/.test(reasonText.slice(n.length))));
+    const hit = exact ? null : REASON_PATTERNS.find(([re]) => re.test(reasonText));
+    if (exact) {
+      c.reason = exact[1].key;
+      c.reason_note = reasonText.slice(exact[0].length).replace(/^\s*[:-]\s*/, '').trim();
+    } else if (hit) {
       c.reason = hit[1];
       c.reason_note = reasonText.replace(hit[0], '').replace(/^\s*[:-]\s*/, '').trim();
     } else c.reason_note = reasonText;
+    const rd = col(rec, 'reason_date').trim();
+    c.reason_date = /^\d{4}-\d{2}-\d{2}$/.test(rd) ? rd : '';
     return c;
   });
   return { courses, error: null, notes };
@@ -277,7 +285,7 @@ const guard = (v) => { const s = String(v ?? ''); return /^[=+\-@\t\r]/.test(s) 
 const esc = (v) => { const s = String(v ?? ''); return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 
 export function toCsv(result) {
-  const lines = [[...CSV_COLUMNS, 'need_score', 'group', 'effort_label', 'drivers', 'hints'].join(',')];
+  const lines = [[...CSV_COLUMNS.slice(0, 9), 'reason_date', 'overlap', 'need_score', 'group', 'effort_label', 'drivers', 'hints'].join(',')];
   if (!result.groups) return lines[0] + '\n';
   for (const g of GROUPS) {
     for (const it of result.groups[g.key]) {
@@ -286,7 +294,7 @@ export function toCsv(result) {
       const reason = type ? [type.label, r.reason_note].filter(Boolean).join(': ') : r.reason_note;
       lines.push([
         guard(r.course.trim()), r.reach, r.importance, r.out_of_date, r.works, r.feedback === 'none' ? 'no data' : r.feedback, r.effort,
-        r.must_change ? 'yes' : 'no', guard(reason), r.overlap ? 'yes' : 'no',
+        r.must_change ? 'yes' : 'no', guard(reason), r.reason_date || '', r.overlap ? 'yes' : 'no',
         it.score, g.label, it.effortLabel,
         guard(it.drivers.map((k) => FACTORS.find((f) => f.key === k).label).join('; ')),
         guard(it.hints.map((h) => HINTS[h]).join(' ')),

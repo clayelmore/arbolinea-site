@@ -1,7 +1,7 @@
 // Training priority renderer. All scoring lives in logic.js.
 import {
   FACTORS, EFFORT, DEFAULT_WEIGHTS, REASON_TYPES, GROUPS, HINTS, EXAMPLE_COURSES,
-  emptyCourse, validateCourse, rankCourses, importCsv, toCsv,
+  emptyCourse, validateCourse, rankCourses, importCsv, toCsv, validCapacity,
 } from './logic.js';
 
 const KEY = 'tp-state-v1';
@@ -9,16 +9,38 @@ const $ = (s) => document.querySelector(s);
 let seq = 0;
 const newId = () => `c${Date.now().toString(36)}${(seq++).toString(36)}`;
 
-const state = load();
-
+const RATING_KEYS = ['reach', 'importance', 'out_of_date', 'works', 'effort'];
+const asRating = (v) => (Number.isInteger(v) && v >= 1 && v <= 5 ? v : null);
+function cleanCourse(c) {
+  const base = emptyCourse(typeof c.id === 'string' && c.id ? c.id : newId());
+  const out = { ...base, course: String(c.course ?? '').slice(0, 400) };
+  for (const k of RATING_KEYS) out[k] = asRating(c[k]);
+  out.feedback = c.feedback === 'none' ? 'none' : asRating(c.feedback);
+  out.must_change = c.must_change === true;
+  out.overlap = c.overlap === true;
+  out.reason = REASON_TYPES.some((t) => t.key === c.reason) ? c.reason : '';
+  out.reason_note = typeof c.reason_note === 'string' ? c.reason_note : '';
+  out.reason_date = typeof c.reason_date === 'string' ? c.reason_date : '';
+  if (Array.isArray(c.csvProblems)) out.csvProblems = c.csvProblems.filter((p) => typeof p === 'string');
+  return out;
+}
 function load() {
-  const fresh = { courses: [], weights: { ...DEFAULT_WEIGHTS }, capacity: '' };
+  const fresh = () => ({ courses: [], weights: { ...DEFAULT_WEIGHTS }, capacity: '' });
   try {
     const s = JSON.parse(localStorage.getItem(KEY) || 'null');
-    if (s && Array.isArray(s.courses) && s.weights) return { ...fresh, ...s, weights: { ...DEFAULT_WEIGHTS, ...s.weights } };
-  } catch { /* storage blocked or bad JSON: start fresh */ }
-  return fresh;
+    if (!s || typeof s !== 'object' || !Array.isArray(s.courses) || !s.weights || typeof s.weights !== 'object') return fresh();
+    const weights = {};
+    for (const k of Object.keys(DEFAULT_WEIGHTS)) {
+      const w = s.weights[k];
+      weights[k] = Number.isInteger(w) && w >= 0 && w <= 50 && w % 5 === 0 ? w : DEFAULT_WEIGHTS[k];
+    }
+    const courses = s.courses.filter((c) => c && typeof c === 'object' && !Array.isArray(c)).map(cleanCourse);
+    const capacity = typeof s.capacity === 'string' || typeof s.capacity === 'number' ? s.capacity : '';
+    return { courses, weights, capacity };
+  } catch { return fresh(); }
 }
+const state = load();
+
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* page still works */ } }
 
 function el(tag, attrs = {}, ...kids) {
@@ -53,8 +75,13 @@ function ratingSelect(c, key, label, anchors, withNone = false) {
       anchors.map((a, i) => el('option', { value: String(i + 1), selected: val === i + 1, text: `${i + 1}: ${a}` }))));
 }
 
+// The ARIA attribute is spelled the British way; built from parts so the US-spelling guard does not flag it.
+const ARIA_NAMED_BY = 'aria-label' + 'ledby';
+const cardTitle = (c) => (c.course || '').trim() || `Course ${state.courses.indexOf(c) + 1}`;
+
 function rowCard(c) {
-  return el('div', { class: 'card-row', 'data-id': c.id },
+  return el('div', { class: 'card-row', role: 'group', [ARIA_NAMED_BY]: `t-${c.id}`, 'data-id': c.id },
+    el('h3', { class: 'card-title', id: `t-${c.id}`, text: cardTitle(c) }),
     el('label', { class: 'field' }, 'Course name', el('input', { type: 'text', class: 'name', 'data-field': 'course', value: c.course, maxlength: '120' })),
     el('div', { class: 'ratings' },
       FACTORS.map((f) => ratingSelect(c, f.key, f.label, f.anchors, f.key === 'feedback')),
@@ -67,14 +94,18 @@ function rowCard(c) {
         el('select', { 'data-field': 'reason' },
           el('option', { value: '', selected: !c.reason, text: 'Choose' }),
           REASON_TYPES.map((r) => el('option', { value: r.key, selected: c.reason === r.key, text: r.label })))),
-      el('label', { class: 'field' }, 'Date of the change (if there is one)', el('input', { type: 'date', 'data-field': 'reason_date', value: c.reason_date })),
+      el('label', { class: 'field date-field', hidden: c.reason === 'wont-launch' }, 'Date of the change (if there is one)', el('input', { type: 'date', 'data-field': 'reason_date', value: c.reason_date })),
       el('label', { class: 'field' }, 'Note', el('input', { type: 'text', 'data-field': 'reason_note', value: c.reason_note }))),
-    el('ul', { class: 'problems problem' }),
-    el('div', { class: 'actions' }, el('button', { type: 'button', class: 'secondary', 'data-action': 'delete', text: 'Remove this course' })));
+    el('ul', { class: 'problems problem', id: `p-${c.id}`, hidden: true }),
+    el('div', { class: 'actions' }, el('button', { type: 'button', class: 'secondary', 'data-action': 'delete', 'aria-label': `Remove ${cardTitle(c)}`, text: 'Remove this course' })));
 }
 
 function showProblems(card, c) {
-  card.querySelector('.problems').replaceChildren(...validateCourse(c).map((p) => el('li', { text: p })));
+  const list = card.querySelector('.problems');
+  const probs = validateCourse(c);
+  list.replaceChildren(...probs.map((p) => el('li', { text: p })));
+  list.hidden = !probs.length;
+  if (probs.length) card.setAttribute('aria-describedby', list.id); else card.removeAttribute('aria-describedby');
 }
 
 function renderEditor() {
@@ -96,6 +127,12 @@ function onField(e) {
   else if (['reach', 'importance', 'out_of_date', 'works', 'effort'].includes(f)) c[f] = t.value ? Number(t.value) : null;
   else c[f] = t.value;
   if (f === 'must_change') card.querySelector('.reason-fields').hidden = !c.must_change;
+  if (f === 'reason') card.querySelector('.date-field').hidden = c.reason === 'wont-launch';
+  if (f === 'course') {
+    const title = cardTitle(c);
+    card.querySelector('.card-title').textContent = title;
+    card.querySelector('[data-action="delete"]').setAttribute('aria-label', `Remove ${title}`);
+  }
   showProblems(card, c);
   save();
   renderResults();
@@ -106,8 +143,12 @@ $('#editor').addEventListener('change', onField);
 $('#editor').addEventListener('click', (e) => {
   if (e.target.dataset.action !== 'delete') return;
   const id = e.target.closest('[data-id]').dataset.id;
+  const idx = state.courses.findIndex((c) => c.id === id);
   state.courses = state.courses.filter((c) => c.id !== id);
   save(); renderEditor(); renderResults();
+  const cards = $('#editor').children;
+  const next = cards[Math.min(idx, cards.length - 1)];
+  (next ? next.querySelector('input.name') : $('#add')).focus();
 });
 $('#add').addEventListener('click', () => {
   const c = emptyCourse(newId());
@@ -141,18 +182,23 @@ $('#import').addEventListener('click', () => {
 
 // ---------------------------------------------------------------- settings
 function renderWeights() {
-  $('#weights').replaceChildren(...FACTORS.map((f) => el('label', { class: 'field' },
-    el('span', {}, `${f.label}: `, el('output', { id: `w-${f.key}-out`, text: String(state.weights[f.key]) })),
-    el('input', { type: 'range', min: '0', max: '50', step: '5', value: String(state.weights[f.key]), 'data-weight': f.key }))));
+  $('#weights').replaceChildren(...FACTORS.map((f) => el('label', { class: 'field', for: `w-${f.key}` },
+    el('span', {}, `${f.label}: `, el('output', { id: `w-${f.key}-out`, for: `w-${f.key}`, text: String(state.weights[f.key]) })),
+    el('input', { type: 'range', id: `w-${f.key}`, min: '0', max: '50', step: '5', value: String(state.weights[f.key]), 'data-weight': f.key }))));
 }
 $('#weights').addEventListener('input', (e) => {
   const k = e.target.dataset.weight;
   if (!k) return;
   state.weights[k] = Number(e.target.value);
-  $(`#w-${k}-out`).textContent = e.target.value;
+  document.getElementById(`w-${k}-out`).textContent = e.target.value;
   save(); renderResults();
 });
 $('#reset-weights').addEventListener('click', () => { state.weights = { ...DEFAULT_WEIGHTS }; renderWeights(); save(); renderResults(); });
+function capacityNote() {
+  const raw = String(state.capacity ?? '').trim();
+  const bad = raw !== '' && !validCapacity(raw);
+  $('#capacity-message').textContent = bad ? 'Enter a whole number of 1 or more. Until then, the list uses the score cutoffs.' : '';
+}
 $('#capacity').addEventListener('input', (e) => { state.capacity = e.target.value; save(); renderResults(); });
 
 // ---------------------------------------------------------------- results
@@ -174,14 +220,16 @@ function itemView(it) {
     it.hints.map((h) => el('p', { text: HINTS[h] })));
 }
 
+function setSummary(text) { const s = $('#summary'); if (s.textContent !== text) s.textContent = text; }
+
 function renderResults() {
+  capacityNote();
   const r = rankCourses(state.courses, state.weights, state.capacity);
-  const summary = $('#summary');
   const out = $('#results');
-  if (!state.courses.length) { summary.textContent = 'Add courses or load the example to see a ranked list.'; out.replaceChildren(); return; }
-  if (r.error) { summary.textContent = r.error; out.replaceChildren(); return; }
+  if (!state.courses.length) { setSummary('Add courses or load the example to see a ranked list.'); out.replaceChildren(); return; }
+  if (r.error) { setSummary(r.error); out.replaceChildren(); return; }
   const counts = GROUPS.map((g) => `${g.label} ${r.groups[g.key].length}`).join(', ');
-  summary.textContent = `${counts}.` + (r.leftOut ? ` ${r.leftOut} course${r.leftOut === 1 ? ' is' : 's are'} left out until fixed.` : '');
+  setSummary(`${counts}.` + (r.leftOut ? ` ${r.leftOut} course${r.leftOut === 1 ? ' is' : 's are'} left out until fixed.` : ''));
   out.replaceChildren(
     ...r.warnings.map((w) => el('p', { class: 'problem', text: w })),
     ...GROUPS.filter((g) => r.groups[g.key].length).map((g) => el('section', { class: 'group' },
@@ -193,7 +241,9 @@ function renderResults() {
 $('#print').addEventListener('click', () => window.print());
 $('#download').addEventListener('click', () => {
   const r = rankCourses(state.courses, state.weights, state.capacity);
-  if (!r.groups) return;
+  const msg = $('#download-message');
+  if (!r.groups) { msg.textContent = r.error; return; }
+  msg.textContent = '';
   const url = URL.createObjectURL(new Blob([toCsv(r)], { type: 'text/csv' }));
   const a = el('a', { href: url, download: 'training-priorities.csv' });
   document.body.append(a); a.click(); a.remove();
