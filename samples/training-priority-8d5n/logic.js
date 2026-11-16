@@ -193,3 +193,102 @@ export function rankCourses(courses, weights, capacityInput) {
   }
   return { error: null, leftOut, capacity, warnings, groups: out };
 }
+
+// ---------------------------------------------------------------- CSV
+export const CSV_COLUMNS = ['course', 'reach', 'importance', 'out_of_date', 'works', 'feedback', 'effort', 'must_change', 'reason', 'overlap'];
+const REQUIRED_COLUMNS = ['course', 'reach', 'importance', 'out_of_date', 'works', 'feedback', 'effort'];
+export const MAX_ROWS = 200;
+const TRUE_WORDS = ['yes', 'y', 'true', '1', 'x'];
+const FALSE_WORDS = ['', 'no', 'n', 'false', '0'];
+const REASON_PATTERNS = [
+  [/^(law|regulation)\b/i, 'law'],
+  [/^(company )?policy\b/i, 'policy'],
+  [/^safety\b/i, 'safety'],
+  [/^audit\b/i, 'audit'],
+  [/^(won'?t launch|will not launch|wont-launch)\b/i, 'wont-launch'],
+];
+
+export function parseCsvText(text) {
+  const rows = [];
+  let row = [];
+  let field = '';
+  let quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quoted) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; } else quoted = false;
+      } else field += ch;
+    } else if (ch === '"') quoted = true;
+    else if (ch === ',') { row.push(field); field = ''; }
+    else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && text[i + 1] === '\n') i++;
+      row.push(field); rows.push(row); row = []; field = '';
+    } else field += ch;
+  }
+  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  return rows.filter((r) => r.some((v) => v.trim() !== ''));
+}
+
+const parseRating = (s) => (/^[1-5]$/.test(s.trim()) ? Number(s.trim()) : null);
+
+export function importCsv(text, makeId) {
+  const records = parseCsvText(text);
+  if (!records.length) return { courses: [], error: 'Nothing to import.', notes: [] };
+  const header = records[0].map((h) => h.trim().toLowerCase());
+  const missing = REQUIRED_COLUMNS.filter((c) => !header.includes(c));
+  if (missing.length) {
+    return { courses: [], notes: [],
+      error: `Missing column${missing.length > 1 ? 's' : ''}: ${missing.join(', ')}. The header must include ${REQUIRED_COLUMNS.join(',')}.` };
+  }
+  const col = (rec, name) => { const i = header.indexOf(name); return i === -1 ? '' : (rec[i] ?? ''); };
+  const notes = [];
+  let data = records.slice(1);
+  if (data.length > MAX_ROWS) { notes.push(`Only the first ${MAX_ROWS} rows were added.`); data = data.slice(0, MAX_ROWS); }
+  const courses = data.map((rec, n) => {
+    const c = emptyCourse(makeId(n));
+    c.course = col(rec, 'course').trim();
+    for (const k of ['reach', 'importance', 'out_of_date', 'works', 'effort']) c[k] = parseRating(col(rec, k));
+    const fb = col(rec, 'feedback').trim().toLowerCase();
+    c.feedback = fb === '' || fb === 'no data' || fb === 'none' ? 'none' : parseRating(fb);
+    c.csvProblems = [];
+    const flag = (name) => {
+      const v = col(rec, name).trim().toLowerCase();
+      if (TRUE_WORDS.includes(v)) return true;
+      if (FALSE_WORDS.includes(v)) return false;
+      c.csvProblems.push(`${name} must be yes or no`);
+      return false;
+    };
+    c.must_change = flag('must_change');
+    c.overlap = flag('overlap');
+    const reasonText = col(rec, 'reason').trim();
+    const hit = REASON_PATTERNS.find(([re]) => re.test(reasonText));
+    if (hit) {
+      c.reason = hit[1];
+      c.reason_note = reasonText.replace(hit[0], '').replace(/^\s*[:-]\s*/, '').trim();
+    } else c.reason_note = reasonText;
+    return c;
+  });
+  return { courses, error: null, notes };
+}
+
+const esc = (v) => { const s = String(v ?? ''); return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+
+export function toCsv(result) {
+  const lines = [[...CSV_COLUMNS, 'need_score', 'group', 'effort_label', 'drivers', 'hints'].join(',')];
+  for (const g of GROUPS) {
+    for (const it of result.groups[g.key]) {
+      const r = it.row;
+      const type = REASON_TYPES.find((t) => t.key === r.reason);
+      const reason = type ? [type.label, r.reason_note].filter(Boolean).join(': ') : r.reason_note;
+      lines.push([
+        r.course.trim(), r.reach, r.importance, r.out_of_date, r.works, r.feedback === 'none' ? 'no data' : r.feedback, r.effort,
+        r.must_change ? 'yes' : 'no', reason, r.overlap ? 'yes' : 'no',
+        it.score, g.label, it.effortLabel,
+        it.drivers.map((k) => FACTORS.find((f) => f.key === k).label).join('; '),
+        it.hints.map((h) => HINTS[h]).join(' '),
+      ].map(esc).join(','));
+    }
+  }
+  return lines.join('\n') + '\n';
+}
