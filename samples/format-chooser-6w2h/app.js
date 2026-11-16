@@ -59,9 +59,9 @@ function renderQuestion() {
   const last = state.step === QUESTIONS.length - 1;
   quiz.replaceChildren(
     el('p', { class: 'label', text: `Question ${state.step + 1} of ${QUESTIONS.length}` }),
-    el('fieldset', {},
+    el('fieldset', { 'aria-describedby': q.hint ? `hint-${q.id}` : false },
       el('legend', { tabindex: '-1', text: q.text }),
-      q.hint ? el('p', { class: 'muted', text: q.hint }) : null,
+      q.hint ? el('p', { class: 'muted', id: `hint-${q.id}`, text: q.hint }) : null,
       el('div', { class: 'choices' }, q.answers.map((a) => el('label', { class: 'choice' },
         el('input', { type: q.multi ? 'checkbox' : 'radio', name: q.id, value: a.id, checked: isChecked(q, a.id) }),
         el('span', { text: a.text })))),

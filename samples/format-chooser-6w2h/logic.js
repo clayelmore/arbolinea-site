@@ -1,5 +1,5 @@
 // Format chooser scoring. Pure: no DOM. Rules: spec "Firm rules" and "Assembling the pick".
-import { QUESTIONS, FORMAT_NAMES, JOB_AID_NAMES } from './data.js';
+import { QUESTIONS, FORMAT_NAMES, JOB_AID_NAMES, COVERAGE } from './data.js';
 
 const TYPE_PRIORITY = ['steps', 'reference', 'decision']; // when several checked answers carry a job aid type
 const TIE_ORDER = ['J', 'R', 'S']; // ties go to the simpler build (our choice, stated on the page)
@@ -10,6 +10,7 @@ export function recommend(answers, questions = QUESTIONS) {
   const notes = new Set();
   const reasons = [];
   const types = [];
+  const multiPicked = []; // answers checked on a multi question with more than one choice
 
   for (const q of questions) {
     const given = answers[q.id];
@@ -17,6 +18,7 @@ export function recommend(answers, questions = QUESTIONS) {
     const wanted = q.multi && Array.isArray(given) ? given : [given];
     const picked = q.answers.filter((x) => wanted.includes(x.id)); // answer order
     if (!picked.length) continue;
+    if (q.multi && picked.length > 1) multiPicked.push(...picked);
     // Multi: average the checked answers, so the question keeps the same total weight.
     // Sum first, then divide once, so equal sums always compare equal.
     const sum = { R: 0, S: 0, J: 0 };
@@ -60,6 +62,16 @@ export function recommend(answers, questions = QUESTIONS) {
   if (flags.has('phone') && (course === 'S' || course === 'RS')) notes.add('storylineOnPhones');
   if (course === 'R' || course === 'RS') notes.add('license');
   if (!course) notes.delete('storylineUpdatesSlower');
+
+  // Coverage: a checked answer the pick does not cover gets a suggestion, after the other notes.
+  const covered = {
+    understand: course === 'R' || course === 'RS',
+    lookup: !!jobAid,
+    steps: !!jobAid,
+    'short-judgment': scenarioBlock || course === 'S' || course === 'RS',
+    floor: !!jobAid,
+  };
+  for (const a of multiPicked) if (a.id in covered && !covered[a.id] && COVERAGE[a.id]) notes.add('cover-' + a.id);
 
   return { scores, top, course, scenarioBlock, jobAid, label: labelFor(course, scenarioBlock, jobAid), firmRules, reasons, notes: [...notes] };
 }

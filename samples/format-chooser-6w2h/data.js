@@ -134,6 +134,8 @@ export const QUESTIONS = [
   {
     id: 'where',
     text: 'Where will they use it?',
+    multi: true,
+    hint: 'Choose all that apply.',
     why: 'A course that adapts to phones, a course at a desk, and a printed sheet each fit a different setting.',
     designer: 'Delivery context.',
     answers: [
@@ -193,6 +195,16 @@ export const NOTES = {
   storylineOnPhones: { text: 'On phones, Storyline slides keep their shape and shrink to fit the screen.', sources: ['responsivePlayerFaq'] },
   license: { text: 'Publishing Rise to an LMS, Scenario blocks, and Storyline blocks need a standard Articulate 360 AI license.', sources: ['riseExport', 'riseScenario', 'riseStorylineBlock'] },
 };
+
+// Our suggestions for a checked answer the pick does not cover (multi questions only). No sources needed.
+export const COVERAGE = {
+  understand: 'You also chose understanding ideas. We suggest a short Rise lesson for that part.',
+  lookup: 'You also chose looking up facts. We suggest a quick reference for that part.',
+  steps: 'You also chose following set steps. We suggest a step-by-step guide or checklist for that part.',
+  'short-judgment': 'You also chose short judgment calls. We suggest a Rise Scenario block for that part.',
+  floor: 'You also chose working away from a desk. We suggest a printable job aid for that part.',
+};
+for (const [id, text] of Object.entries(COVERAGE)) NOTES['cover-' + id] = { text, sources: [] };
 
 export const TABLE = [
   { topic: 'Best for',
