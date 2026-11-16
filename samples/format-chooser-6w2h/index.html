@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Unlisted interactive sample: shared by direct link only, linked from samples/index.html. -->
+  <title>Rise, Storyline, or a job aid? | Arbolinea</title>
+  <meta name="description" content="Answer eight plain questions and get a recommendation for Rise 360, Storyline 360, or a PDF job aid, with the reasons and sources behind it.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Public+Sans:wght@400;500&family=Spline+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../training-tools.css">
+</head>
+<body>
+  <main>
+    <section class="wrap">
+      <p class="label">Interactive tool</p>
+      <h1>Rise, Storyline, or a job aid?</h1>
+      <div class="lede">
+        <p>Picking a format is a design decision, not a software preference. Rise 360 builds clean, responsive courses quickly. Storyline 360 builds custom practice, such as software simulations and branching scenarios. A job aid puts the steps in front of people while they work, so they do not have to remember them.</p>
+        <p>Answer eight questions about the task, the people, and the setting. We score each answer toward the formats it favors, apply a few firm rules that the research supports, and show you the pick with the reasons and sources behind it.</p>
+      </div>
+      <label class="toggle no-print"><input type="checkbox" id="designer-toggle"> Show designer terms</label>
+
+      <form id="quiz" class="panel no-print" novalidate>
+        <noscript><p>This tool needs JavaScript to run.</p></noscript>
+      </form>
+      <div id="result" class="panel" aria-live="polite" hidden></div>
+
+      <h2 id="compare-heading">Compare the three formats</h2>
+      <p class="muted">Each cell links to its source. Articulate statements were checked against Articulate's own pages in November 2026.</p>
+      <div id="compare"></div>
+
+      <h2>How this tool decides</h2>
+      <p>Each answer adds points to the formats it favors. The format with the most points is the starting pick.</p>
+      <p>Four firm rules come from the research and beat the count:</p>
+      <ul>
+        <li>Software practice, complex judgment practice, or advanced tracking means the pick includes Storyline. On a phone, that becomes a Storyline block inside Rise.</li>
+        <li>When people cannot read a guide in time, or the LMS must track the training, a job aid cannot be the whole answer.</li>
+        <li>Costly mistakes mean the pick includes a checklist.</li>
+        <li>Rare tasks mean the pick includes a job aid, because skills fade when they go unused.</li>
+      </ul>
+      <p>When two formats tie, we pick the simpler build: a job aid, then Rise, then Storyline. That tie rule is our choice, not a research finding.</p>
+      <p>We quote Articulate on accessibility rather than calling any tool compliant. How accessible a course is depends on how it is built.</p>
+
+      <h2>Sources</h2>
+      <ol id="sources" class="sources"></ol>
+    </section>
+  </main>
+  <footer class="site-foot">
+    <div class="wrap">
+      <span>Built by Clay Elmore</span>
+      <span>Nothing you enter is sent anywhere.</span>
+      <span><a href="https://arbolinea.com/" target="_blank" rel="noopener">arbolinea.com</a></span>
+    </div>
+  </footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
