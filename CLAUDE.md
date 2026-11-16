@@ -143,16 +143,16 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
 
 - `samples/index.html` lists the samples below at https://arbolinea.com/samples/ . This is the
   link Clay shares. It is unlisted: noindex, and nothing on the site links to it.
-- The samples page groups its cards into three categories, each a `<details class="cat">` that opens
+- The samples page groups its cards into four categories, each a `<details class="cat">` that opens
   to show its cards: Training examples (`#training`), Process documents and job aids (`#process`),
-  and Documentation (`#docs`). Update the "N samples" count in a category's summary when a card is
+  Interactive tools (`#tools`), and Documentation (`#docs`). Update the "N samples" count in a category's summary when a card is
   added or removed. Added 2026-11-16.
 - `samples/training-priority-job-aid.pdf` and `samples/rise-storyline-job-aid.pdf` are one-page job
   aids added 2026-11-16. Their HTML sources and shared `style.css` are in
   ~/Documents/Resume/job-aids-2026-11-16/ ; regenerate with headless Chrome and
   `--no-pdf-header-footer`, and check each stays one page.
 - `samples/format-chooser-6w2h/` (Format Chooser) and `samples/training-priority-8d5n/` (Training
-  Priority Tool) are interactive tools added 2026-11-16, each carded in `#process` beside its job aid.
+  Priority Tool) are interactive tools added 2026-11-16, carded in `#tools` (their job aids stay in `#process`).
   Logic lives in each folder's `logic.js` (plus `data.js` for the chooser); tests live outside the
   repo in `.ultron/training-tools/tests/`. Shared styles: `samples/training-tools.css`. Every claim
   traces to the research ledgers in
