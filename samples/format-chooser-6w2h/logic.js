@@ -1,6 +1,7 @@
 // Format chooser scoring. Pure: no DOM. Rules: spec "Firm rules" and "Assembling the pick".
 import { QUESTIONS, FORMAT_NAMES, JOB_AID_NAMES } from './data.js';
 
+const TYPE_PRIORITY = ['steps', 'reference', 'decision']; // when several checked answers carry a job aid type
 const TIE_ORDER = ['J', 'R', 'S']; // ties go to the simpler build (our choice, stated on the page)
 
 export function recommend(answers, questions = QUESTIONS) {
@@ -8,17 +9,27 @@ export function recommend(answers, questions = QUESTIONS) {
   const flags = new Set();
   const notes = new Set();
   const reasons = [];
-  let q1Type = null;
+  const types = [];
 
   for (const q of questions) {
-    const a = q.answers.find((x) => x.id === answers[q.id]);
-    if (!a) continue;
-    for (const [k, v] of Object.entries(a.points ?? {})) scores[k] += v;
-    (a.flags ?? []).forEach((f) => flags.add(f));
-    (a.notes ?? []).forEach((n) => notes.add(n));
-    if (a.jobAidType) q1Type = a.jobAidType;
-    if (a.reason) reasons.push({ text: a.reason, designer: a.designerReason, sources: a.sources ?? [] });
+    const given = answers[q.id];
+    // A multi question takes an array of ids (a single id still works); the others take one id.
+    const wanted = q.multi && Array.isArray(given) ? given : [given];
+    const picked = q.answers.filter((x) => wanted.includes(x.id)); // answer order
+    if (!picked.length) continue;
+    // Multi: average the checked answers, so the question keeps the same total weight.
+    // Sum first, then divide once, so equal sums always compare equal.
+    const sum = { R: 0, S: 0, J: 0 };
+    for (const a of picked) for (const [k, v] of Object.entries(a.points ?? {})) sum[k] += v;
+    for (const k of Object.keys(sum)) scores[k] += q.multi ? sum[k] / picked.length : sum[k];
+    for (const a of picked) {
+      (a.flags ?? []).forEach((f) => flags.add(f));
+      (a.notes ?? []).forEach((n) => notes.add(n));
+      if (a.jobAidType) types.push(a.jobAidType);
+      if (a.reason) reasons.push({ text: a.reason, designer: a.designerReason, sources: a.sources ?? [] });
+    }
   }
+  const q1Type = TYPE_PRIORITY.find((t) => types.includes(t)) ?? null;
 
   const top = TIE_ORDER.reduce((best, k) => (scores[k] > scores[best] ? k : best), TIE_ORDER[0]);
   const notAlone = flags.has('jobAidNotAlone') || flags.has('trainingNeeded');

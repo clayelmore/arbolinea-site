@@ -37,6 +37,21 @@ function sourceLinks(keys) {
   return span;
 }
 
+function hasAnswer(q) {
+  const v = state.answers[q.id];
+  return q.multi ? Array.isArray(v) && v.length > 0 : Boolean(v);
+}
+function isChecked(q, id) {
+  const v = state.answers[q.id];
+  return q.multi ? Array.isArray(v) && v.includes(id) : v === id;
+}
+function answerText(q) {
+  const v = state.answers[q.id];
+  const ids = q.multi ? (Array.isArray(v) ? v : []) : [v];
+  const texts = q.answers.filter((a) => ids.includes(a.id)).map((a) => a.text); // answer order
+  return texts.length ? texts.join('; ') : 'Not answered';
+}
+
 function focusLegend() { const l = quiz.querySelector('legend'); if (l) l.focus(); }
 
 function renderQuestion() {
@@ -48,13 +63,13 @@ function renderQuestion() {
       el('legend', { tabindex: '-1', text: q.text }),
       q.hint ? el('p', { class: 'muted', text: q.hint }) : null,
       el('div', { class: 'choices' }, q.answers.map((a) => el('label', { class: 'choice' },
-        el('input', { type: 'radio', name: q.id, value: a.id, checked: state.answers[q.id] === a.id }),
+        el('input', { type: q.multi ? 'checkbox' : 'radio', name: q.id, value: a.id, checked: isChecked(q, a.id) }),
         el('span', { text: a.text })))),
       el('p', {}, el('strong', { text: 'Why we ask: ' }), q.why),
       el('p', { class: 'designer muted', hidden: !toggle.checked }, el('strong', { text: 'Designer terms: ' }), q.designer)),
     el('div', { class: 'actions' },
       el('button', { type: 'button', class: 'secondary', id: 'back', disabled: state.step === 0, text: 'Back' }),
-      el('button', { type: 'submit', id: 'next', disabled: !state.answers[q.id], text: last ? 'See my result' : 'Next' })));
+      el('button', { type: 'submit', id: 'next', disabled: !hasAnswer(q), text: last ? 'See my result' : 'Next' })));
 }
 
 function showResult(moveFocus = true) {
@@ -71,7 +86,7 @@ function showResult(moveFocus = true) {
     el('h3', { text: 'Your answers' }),
     el('dl', { class: 'answers' }, QUESTIONS.flatMap((q) => [
       el('dt', { text: q.text }),
-      el('dd', { text: q.answers.find((a) => a.id === state.answers[q.id])?.text ?? 'Not answered' }),
+      el('dd', { text: answerText(q) }),
     ])),
     el('div', { class: 'actions no-print' },
       el('button', { type: 'button', id: 'print', text: 'Print summary' }),
@@ -98,14 +113,21 @@ function renderSources() {
 }
 
 quiz.addEventListener('change', (e) => {
-  if (e.target.name) { state.answers[e.target.name] = e.target.value; $('#next').disabled = false; }
+  if (!e.target.name) return;
+  const q = QUESTIONS.find((x) => x.id === e.target.name);
+  if (q.multi) {
+    state.answers[q.id] = [...quiz.querySelectorAll('input[type=checkbox]:checked')].map((i) => i.value);
+  } else {
+    state.answers[q.id] = e.target.value;
+  }
+  $('#next').disabled = !hasAnswer(q);
 });
 quiz.addEventListener('click', (e) => {
   if (e.target.id === 'back' && state.step > 0) { state.step -= 1; renderQuestion(); focusLegend(); }
 });
 quiz.addEventListener('submit', (e) => {
   e.preventDefault();
-  if (!state.answers[QUESTIONS[state.step].id]) return;
+  if (!hasAnswer(QUESTIONS[state.step])) return;
   if (state.step < QUESTIONS.length - 1) { state.step += 1; renderQuestion(); focusLegend(); } else showResult();
 });
 resultEl.addEventListener('click', (e) => {

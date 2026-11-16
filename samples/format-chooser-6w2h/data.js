@@ -51,6 +51,8 @@ export const QUESTIONS = [
   {
     id: 'do',
     text: 'What should people be able to do when they finish?',
+    multi: true,
+    hint: 'Choose all that apply.',
     why: 'The goal decides the format more than anything else. Explaining ideas, following steps, making judgment calls, and using software each call for something different.',
     designer: 'Performance objective: the type of outcome (knowledge, procedure, decision, or software skill).',
     answers: [
