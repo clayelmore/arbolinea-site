@@ -26,7 +26,7 @@ export const FACTORS = [
     question: 'What do learners say about how useful and clear it is?',
     why: 'Recurring complaints about usefulness or clarity point to problems you can fix.',
     help: 'Look at comments, focus groups, where people drop off, quiz questions most people miss, and help-desk tickets. Star ratings of how much people liked it are a weak signal on their own. No data counts as a 3.',
-    anchors: ['Useful for the job and easy to follow, no recurring complaints', 'Mostly positive, a few small issues', 'Mixed: some say parts are unclear or not relevant', 'Recurring comments that it is confusing, hard to use, or not relevant', 'Most say it does not help them do the job, or the same problem keeps being reported'] },
+    anchors: ['Useful for the job and easy to follow, no recurring complaints', 'Mostly positive, isolated small issues', 'Mixed: some say parts are unclear or not relevant', 'Recurring comments that it is confusing, hard to use, or not relevant', 'Most say it does not help them do the job, or the same problem keeps being reported'] },
 ];
 
 export const EFFORT = {
@@ -40,7 +40,7 @@ export const DEFAULT_WEIGHTS = { reach: 25, importance: 30, out_of_date: 20, wor
 
 export const REASON_TYPES = [
   { key: 'law', label: 'Law or regulation' },
-  { key: 'policy', label: 'Policy change' },
+  { key: 'policy', label: 'Company policy' },
   { key: 'safety', label: 'Safety' },
   { key: 'audit', label: 'Audit finding' },
   { key: 'wont-launch', label: 'Will not launch' },
@@ -62,6 +62,8 @@ export const HINTS = {
 const RATED = ['reach', 'importance', 'out_of_date', 'works', 'effort'];
 const isRating = (v) => Number.isInteger(v) && v >= 1 && v <= 5;
 const labelOf = (key) => (key === 'effort' ? EFFORT.label : FACTORS.find((f) => f.key === key).label);
+const wt = (weights, key) => Number(weights[key] ?? 0) || 0;
+const allZero = (weights) => FACTORS.every((f) => wt(weights, f.key) === 0);
 const ratingFor = (c, key) => (key === 'feedback' && c.feedback === 'none' ? 3 : c[key]);
 
 export function emptyCourse(id) {
@@ -99,7 +101,7 @@ export function needScore(c, weights) {
   let num = 0;
   let den = 0;
   for (const f of FACTORS) {
-    const w = weights[f.key] ?? 0;
+    const w = wt(weights, f.key);
     num += w * (ratingFor(c, f.key) - 1);
     den += w;
   }
@@ -108,8 +110,8 @@ export function needScore(c, weights) {
 }
 
 export function drivers(c, weights) {
-  return FACTORS.map((f, i) => ({ key: f.key, i, v: (weights[f.key] ?? 0) * (ratingFor(c, f.key) - 1) }))
-    .filter((x) => x.v > 0)
+  return FACTORS.map((f, i) => ({ key: f.key, i, v: wt(weights, f.key) * (ratingFor(c, f.key) - 1) }))
+    .filter((x) => x.v > 0 && !(x.key === 'feedback' && c.feedback === 'none'))
     .sort((a, b) => b.v - a.v || a.i - b.i)
     .slice(0, 2)
     .map((x) => x.key);
@@ -127,8 +129,10 @@ export function hintsFor(c) {
 
 export function validCapacity(v) {
   if (v == null || String(v).trim() === '') return null;
+  if (typeof v !== 'string' && typeof v !== 'number') return null;
+  if (!/^\s*\d+\s*$/.test(String(v))) return null;
   const n = Number(v);
-  return Number.isInteger(n) && n >= 1 ? n : null;
+  return n >= 1 ? n : null;
 }
 
 function ordered(courses, weights) {
@@ -155,10 +159,10 @@ function closeCallIds(courses, weights, capacity, base) {
   const ids = new Set();
   for (const f of FACTORS) {
     for (const d of [10, -10]) {
-      const was = weights[f.key] ?? 0;
+      const was = wt(weights, f.key);
       const w = { ...weights, [f.key]: Math.max(0, was + d) };
       if (w[f.key] === was) continue;
-      if (FACTORS.every((g) => (w[g.key] ?? 0) === 0)) continue;
+      if (allZero(w)) continue;
       const { groups } = assignGroups(courses, w, capacity);
       for (const c of courses) if (!c.must_change && groups.get(c.id) !== base.get(c.id)) ids.add(c.id);
     }
@@ -170,7 +174,7 @@ export function rankCourses(courses, weights, capacityInput) {
   const capacity = validCapacity(capacityInput);
   const valid = courses.filter((c) => validateCourse(c).length === 0);
   const leftOut = courses.length - valid.length;
-  if (FACTORS.every((f) => (weights[f.key] ?? 0) === 0)) {
+  if (allZero(weights)) {
     return { error: 'Set at least one weight above zero.', leftOut, capacity, warnings: [], groups: null };
   }
   const { groups, pool, required } = assignGroups(valid, weights, capacity);
