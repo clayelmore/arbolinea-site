@@ -247,7 +247,7 @@ export function importCsv(text, makeId) {
   if (data.length > MAX_ROWS) { notes.push(`Only the first ${MAX_ROWS} rows were added.`); data = data.slice(0, MAX_ROWS); }
   const courses = data.map((rec, n) => {
     const c = emptyCourse(makeId(n));
-    c.course = col(rec, 'course').trim();
+    c.course = col(rec, 'course').trim().replace(/^'(?=[=+\-@\t\r])/, '');
     for (const k of ['reach', 'importance', 'out_of_date', 'works', 'effort']) c[k] = parseRating(col(rec, k));
     const fb = col(rec, 'feedback').trim().toLowerCase();
     c.feedback = fb === '' || fb === 'no data' || fb === 'none' ? 'none' : parseRating(fb);
@@ -272,21 +272,24 @@ export function importCsv(text, makeId) {
   return { courses, error: null, notes };
 }
 
+// Spreadsheet formula guard for user text cells: a leading apostrophe keeps Excel and Sheets from running it.
+const guard = (v) => { const s = String(v ?? ''); return /^[=+\-@\t\r]/.test(s) ? `'${s}` : s; };
 const esc = (v) => { const s = String(v ?? ''); return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 
 export function toCsv(result) {
   const lines = [[...CSV_COLUMNS, 'need_score', 'group', 'effort_label', 'drivers', 'hints'].join(',')];
+  if (!result.groups) return lines[0] + '\n';
   for (const g of GROUPS) {
     for (const it of result.groups[g.key]) {
       const r = it.row;
       const type = REASON_TYPES.find((t) => t.key === r.reason);
       const reason = type ? [type.label, r.reason_note].filter(Boolean).join(': ') : r.reason_note;
       lines.push([
-        r.course.trim(), r.reach, r.importance, r.out_of_date, r.works, r.feedback === 'none' ? 'no data' : r.feedback, r.effort,
-        r.must_change ? 'yes' : 'no', reason, r.overlap ? 'yes' : 'no',
+        guard(r.course.trim()), r.reach, r.importance, r.out_of_date, r.works, r.feedback === 'none' ? 'no data' : r.feedback, r.effort,
+        r.must_change ? 'yes' : 'no', guard(reason), r.overlap ? 'yes' : 'no',
         it.score, g.label, it.effortLabel,
-        it.drivers.map((k) => FACTORS.find((f) => f.key === k).label).join('; '),
-        it.hints.map((h) => HINTS[h]).join(' '),
+        guard(it.drivers.map((k) => FACTORS.find((f) => f.key === k).label).join('; ')),
+        guard(it.hints.map((h) => HINTS[h]).join(' ')),
       ].map(esc).join(','));
     }
   }
