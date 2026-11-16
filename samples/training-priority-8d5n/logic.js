@@ -10,7 +10,7 @@ export const FACTORS = [
   { key: 'importance', label: 'Importance',
     question: 'What goes wrong on the job if people get it wrong?',
     why: 'This is the cost of people getting it wrong.',
-    help: 'Count revenue here only, not again under reach.',
+    help: 'Rate the harm here. Reach already counts how many people take it.',
     anchors: ['Nice to know', 'Minor rework', 'Noticeable errors or support calls', 'Revenue, customer, or quality harm', 'Safety, legal, or regulatory harm'] },
   { key: 'out_of_date', label: 'Out of date',
     question: 'How much has changed since the course was built?',

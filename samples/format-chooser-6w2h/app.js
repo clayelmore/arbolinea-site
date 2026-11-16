@@ -64,7 +64,7 @@ function showResult(moveFocus = true) {
   resultEl.replaceChildren(
     el('p', { class: 'label', text: 'Our pick' }),
     el('h2', { id: 'pick', class: 'pick', tabindex: '-1', text: r.label }),
-    el('h3', { text: 'Why' }),
+    el('h3', { text: 'How your answers counted' }),
     el('ul', {}, lines.map((x) => el('li', {}, designer && x.designer ? x.designer : x.text, sourceLinks(x.sources)))),
     r.notes.length ? el('h3', { text: 'Keep in mind' }) : null,
     r.notes.length ? el('ul', {}, r.notes.map((k) => el('li', {}, NOTES[k].text, sourceLinks(NOTES[k].sources)))) : null,
