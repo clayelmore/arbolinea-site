@@ -9,6 +9,7 @@ const $ = (s) => document.querySelector(s);
 let seq = 0;
 const newId = () => `c${Date.now().toString(36)}${(seq++).toString(36)}`;
 
+const DATE_REASONS = ['law', 'policy', 'safety', 'audit'];
 const RATING_KEYS = ['reach', 'importance', 'out_of_date', 'works', 'effort'];
 const asRating = (v) => (Number.isInteger(v) && v >= 1 && v <= 5 ? v : null);
 function cleanCourse(c) {
@@ -20,7 +21,7 @@ function cleanCourse(c) {
   out.overlap = c.overlap === true;
   out.reason = REASON_TYPES.some((t) => t.key === c.reason) ? c.reason : '';
   out.reason_note = typeof c.reason_note === 'string' ? c.reason_note : '';
-  out.reason_date = typeof c.reason_date === 'string' ? c.reason_date : '';
+  out.reason_date = typeof c.reason_date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(c.reason_date) && DATE_REASONS.includes(out.reason) ? c.reason_date : '';
   if (Array.isArray(c.csvProblems)) out.csvProblems = c.csvProblems.filter((p) => typeof p === 'string');
   return out;
 }
@@ -34,8 +35,12 @@ function load() {
       const w = s.weights[k];
       weights[k] = Number.isInteger(w) && w >= 0 && w <= 50 && w % 5 === 0 ? w : DEFAULT_WEIGHTS[k];
     }
-    const courses = s.courses.filter((c) => c && typeof c === 'object' && !Array.isArray(c)).map(cleanCourse);
-    const capacity = typeof s.capacity === 'string' || typeof s.capacity === 'number' ? s.capacity : '';
+    const courses = [];
+    for (const c of s.courses) {
+      if (!c || typeof c !== 'object' || Array.isArray(c)) continue;
+      try { courses.push(cleanCourse(c)); } catch { /* drop this row, keep the rest */ }
+    }
+    const capacity = validCapacity(s.capacity) ? String(s.capacity).trim() : '';
     return { courses, weights, capacity };
   } catch { return fresh(); }
 }
@@ -75,12 +80,10 @@ function ratingSelect(c, key, label, anchors, withNone = false) {
       anchors.map((a, i) => el('option', { value: String(i + 1), selected: val === i + 1, text: `${i + 1}: ${a}` }))));
 }
 
-// The ARIA attribute is spelled the British way; built from parts so the US-spelling guard does not flag it.
-const ARIA_NAMED_BY = 'aria-label' + 'ledby';
 const cardTitle = (c) => (c.course || '').trim() || `Course ${state.courses.indexOf(c) + 1}`;
 
 function rowCard(c) {
-  return el('div', { class: 'card-row', role: 'group', [ARIA_NAMED_BY]: `t-${c.id}`, 'data-id': c.id },
+  return el('div', { class: 'card-row', role: 'group', 'aria-labelledby': `t-${c.id}`, 'data-id': c.id },
     el('h3', { class: 'card-title', id: `t-${c.id}`, text: cardTitle(c) }),
     el('label', { class: 'field' }, 'Course name', el('input', { type: 'text', class: 'name', 'data-field': 'course', value: c.course, maxlength: '120' })),
     el('div', { class: 'ratings' },
@@ -94,7 +97,7 @@ function rowCard(c) {
         el('select', { 'data-field': 'reason' },
           el('option', { value: '', selected: !c.reason, text: 'Choose' }),
           REASON_TYPES.map((r) => el('option', { value: r.key, selected: c.reason === r.key, text: r.label })))),
-      el('label', { class: 'field date-field', hidden: c.reason === 'wont-launch' }, 'Date of the change (if there is one)', el('input', { type: 'date', 'data-field': 'reason_date', value: c.reason_date })),
+      el('label', { class: 'field date-field', hidden: !DATE_REASONS.includes(c.reason) }, 'Date of the change (if there is one)', el('input', { type: 'date', 'data-field': 'reason_date', value: c.reason_date })),
       el('label', { class: 'field' }, 'Note', el('input', { type: 'text', 'data-field': 'reason_note', value: c.reason_note }))),
     el('ul', { class: 'problems problem', id: `p-${c.id}`, hidden: true }),
     el('div', { class: 'actions' }, el('button', { type: 'button', class: 'secondary', 'data-action': 'delete', 'aria-label': `Remove ${cardTitle(c)}`, text: 'Remove this course' })));
@@ -127,7 +130,11 @@ function onField(e) {
   else if (['reach', 'importance', 'out_of_date', 'works', 'effort'].includes(f)) c[f] = t.value ? Number(t.value) : null;
   else c[f] = t.value;
   if (f === 'must_change') card.querySelector('.reason-fields').hidden = !c.must_change;
-  if (f === 'reason') card.querySelector('.date-field').hidden = c.reason === 'wont-launch';
+  if (f === 'reason') {
+    const showDate = DATE_REASONS.includes(c.reason);
+    if (!showDate) { c.reason_date = ''; card.querySelector('[data-field="reason_date"]').value = ''; }
+    card.querySelector('.date-field').hidden = !showDate;
+  }
   if (f === 'course') {
     const title = cardTitle(c);
     card.querySelector('.card-title').textContent = title;
@@ -197,7 +204,9 @@ $('#reset-weights').addEventListener('click', () => { state.weights = { ...DEFAU
 function capacityNote() {
   const raw = String(state.capacity ?? '').trim();
   const bad = raw !== '' && !validCapacity(raw);
-  $('#capacity-message').textContent = bad ? 'Enter a whole number of 1 or more. Until then, the list uses the score cutoffs.' : '';
+  const text = bad ? 'Enter a whole number of 1 or more. Until then, the list uses the score cutoffs.' : '';
+  const m = $('#capacity-message');
+  if (m.textContent !== text) m.textContent = text;
 }
 $('#capacity').addEventListener('input', (e) => { state.capacity = e.target.value; save(); renderResults(); });
 
@@ -227,6 +236,8 @@ function renderResults() {
   const r = rankCourses(state.courses, state.weights, state.capacity);
   const out = $('#results');
   if (!state.courses.length) { setSummary('Add courses or load the example to see a ranked list.'); out.replaceChildren(); return; }
+  const dl = $('#download-message');
+  if (!r.error && dl.textContent) dl.textContent = '';
   if (r.error) { setSummary(r.error); out.replaceChildren(); return; }
   const counts = GROUPS.map((g) => `${g.label} ${r.groups[g.key].length}`).join(', ');
   setSummary(`${counts}.` + (r.leftOut ? ` ${r.leftOut} course${r.leftOut === 1 ? ' is' : 's are'} left out until fixed.` : ''));

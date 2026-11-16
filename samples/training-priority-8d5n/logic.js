@@ -274,7 +274,7 @@ export function importCsv(text, makeId) {
       c.reason_note = reasonText.replace(hit[0], '').replace(/^\s*[:-]\s*/, '').trim();
     } else c.reason_note = reasonText;
     const rd = col(rec, 'reason_date').trim();
-    c.reason_date = /^\d{4}-\d{2}-\d{2}$/.test(rd) ? rd : '';
+    c.reason_date = /^\d{4}-\d{2}-\d{2}$/.test(rd) && ['law', 'policy', 'safety', 'audit'].includes(c.reason) ? rd : '';
     return c;
   });
   return { courses, error: null, notes };
@@ -294,7 +294,7 @@ export function toCsv(result) {
       const reason = type ? [type.label, r.reason_note].filter(Boolean).join(': ') : r.reason_note;
       lines.push([
         guard(r.course.trim()), r.reach, r.importance, r.out_of_date, r.works, r.feedback === 'none' ? 'no data' : r.feedback, r.effort,
-        r.must_change ? 'yes' : 'no', guard(reason), r.reason_date || '', r.overlap ? 'yes' : 'no',
+        r.must_change ? 'yes' : 'no', guard(reason), guard(r.reason_date || ''), r.overlap ? 'yes' : 'no',
         it.score, g.label, it.effortLabel,
         guard(it.drivers.map((k) => FACTORS.find((f) => f.key === k).label).join('; ')),
         guard(it.hints.map((h) => HINTS[h]).join(' ')),
