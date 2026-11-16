@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Unlisted interactive sample: shared by direct link only, linked from samples/index.html. -->
+  <title>Which courses do we update first? | Arbolinea</title>
+  <meta name="description" content="Rate your training courses on five signs of need and get a ranked list, with effort shown as a planning label.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Public+Sans:wght@400;500&family=Spline+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../training-tools.css">
+</head>
+<body>
+  <main>
+    <section class="wrap">
+      <p class="label">Interactive tool</p>
+      <h1>Which courses do we update first?</h1>
+      <div class="lede">
+        <p>Most training teams have more courses than time. This tool helps decide which ones to update first. Rate each course on five signs of need: how many people take it, what goes wrong if they get it wrong, how out of date it is, whether it works for everyone, and what learners say about it. We combine those into a need score from 0 to 100 and rank the list.</p>
+        <p>Effort is not part of the score. A course that matters a lot and needs a rebuild should still rise to the top, so we show effort as a label that helps you plan the work. The ranking supports your team's decision. It does not make it.</p>
+      </div>
+      <p class="muted">Everything stays in this browser. Nothing you enter is sent anywhere. Your list is saved on this device so a reload keeps it.</p>
+
+      <div class="no-print">
+        <h2>The five signs of need</h2>
+        <div id="guide"></div>
+
+        <h2>Your courses</h2>
+        <div class="actions">
+          <button type="button" id="add">Add a course</button>
+          <button type="button" class="secondary" id="example">Load an example</button>
+          <button type="button" class="secondary" id="clear">Clear all</button>
+        </div>
+        <details class="panel">
+          <summary>Paste CSV</summary>
+          <p>Paste rows with this header. Columns can be in any order. Ratings are 1 to 5. Leave feedback blank, or write "no data", if you have none. For must_change and overlap, write yes or no. A must-change reason starts with law, policy, safety, audit, or will not launch.</p>
+          <p><code>course,reach,importance,out_of_date,works,feedback,effort,must_change,reason,overlap</code></p>
+          <label class="field" for="csv">CSV text</label>
+          <textarea id="csv" spellcheck="false"></textarea>
+          <div class="actions"><button type="button" id="import">Add these rows</button></div>
+          <p id="csv-message" role="status"></p>
+        </details>
+        <div id="editor"></div>
+
+        <h2>Settings</h2>
+        <div class="panel">
+          <p>How much does going from 1 to 5 on each factor matter, compared with the others? Move the sliders, and the list re-sorts as you go.</p>
+          <div id="weights" class="grid-2"></div>
+          <div class="actions"><button type="button" class="secondary" id="reset-weights">Reset weights</button></div>
+          <label class="field" style="margin-top: 22px">How many courses can you update this cycle? (optional)
+            <input type="number" id="capacity" min="1" step="1" inputmode="numeric" style="max-width: 140px">
+          </label>
+          <p class="muted">Capacity counts courses, not hours. The effort labels show which ones are big. Without a number, we use starting cutoffs of 70 for Do first and 45 for Next.</p>
+        </div>
+      </div>
+
+      <h2>Results</h2>
+      <p id="summary" role="status" aria-live="polite"></p>
+      <div id="results"></div>
+      <div class="actions no-print">
+        <button type="button" id="print">Print the list</button>
+        <button type="button" class="secondary" id="download">Download CSV</button>
+      </div>
+
+      <h2>Using the results</h2>
+      <ul>
+        <li><strong>Required</strong> courses sit above the ranking. Only the required change is mandatory, not a full rebuild. If safety or legal content is wrong right now, we suggest pulling it or posting a notice now, before the update.</li>
+        <li><strong>Consider retiring</strong> appears when reach and importance are both low. Check with the owner first.</li>
+        <li><strong>Consider merging</strong> appears when you mark a course as overlapping another.</li>
+        <li><strong>Close call</strong> means a 10-point change in one weight would move the course to another group. Talk those through.</li>
+        <li>Before a rebuild, ask whether a job aid or a process fix would solve the problem. Our <a href="../format-chooser-6w2h/">format chooser</a> can help.</li>
+      </ul>
+
+      <h2>How the score works</h2>
+      <p>Each need factor is rated 1 to 5. A 1 adds nothing and a 5 adds the factor's full weight. We add those up and scale the total to 0 to 100. Every point on every scale has a label, because survey research generally finds fully labeled scales give more reliable answers (<a href="https://www.surveypractice.org/article/2956-should-i-label-all-scale-points-or-just-the-end-points-for-attitudinal-questions" target="_blank" rel="noopener">Survey Practice</a>).</p>
+      <h3>Why effort is not in the score</h3>
+      <p>In a weighted score, a high mark on one factor can make up for a low mark on another (<a href="https://assets.publishing.service.gov.uk/media/5a790545e5274a2acd18b975/1132618.pdf" target="_blank" rel="noopener">UK government multi-criteria analysis manual</a>). If effort counted against a course, a hard update could hide an urgent need. A 2018 ISPOR Special Task Force report on decision scoring recommends leaving cost out of the score as a negative factor (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7110784/" target="_blank" rel="noopener">Phelps and others</a>). Some product teams divide by effort instead, as RICE does (<a href="https://www.intercom.com/blog/rice-simple-prioritization-for-product-managers/" target="_blank" rel="noopener">Intercom</a>) and WSJF does (<a href="https://framework.scaledagile.com/wsjf" target="_blank" rel="noopener">SAFe</a>), but dividing by size can leave big, important work waiting (<a href="https://highberg.com/insights/wsjf-for-backlog-prioritization/" target="_blank" rel="noopener">Highberg</a>). Nielsen Norman Group's impact and effort guidance pursues quick wins and big bets alike (<a href="https://www.nngroup.com/articles/prioritization-methods/" target="_blank" rel="noopener">NN/g</a>). So effort is a label that helps you plan.</p>
+      <h3>Why must-change courses sit outside the score</h3>
+      <p>Portfolio guidance says to name required work as required, not force it to win a scoring contest (<a href="https://www.kiplot.com/guides/portfolio-prioritization/" target="_blank" rel="noopener">Kiplot</a>). One audit guide adds that outdated content should not stay available just because most of it is still valid (<a href="https://www.scheer-imc.com/blog/article/practical-learning-content-audit/" target="_blank" rel="noopener">scheer imc</a>).</p>
+      <h3>About learner feedback</h3>
+      <p>How much learners like a course is a weak sign of what they learn. Research on learner reactions finds they are a weak guide to learning on their own (<a href="https://pubmed.ncbi.nlm.nih.gov/18361632/" target="_blank" rel="noopener">Sitzmann and others</a>). Ratings of how useful a course is for the job track use on the job a little better: r = .17 in a 2010 meta-analysis (<a href="https://jasonhuangatwork.com/papers/Blume%20Ford%20Baldwin%20Huang%202010%20JOM%20-%20Transfer%20Meta.pdf" target="_blank" rel="noopener">Blume and others</a>). So the feedback factor asks about usefulness and clarity, and carries the smallest weight. High completion does not show that a course works either (<a href="https://brandonhall.com/how-to-conduct-a-learning-needs-analysis-for-2026-a-step-by-step-guide-for-ld-leaders/" target="_blank" rel="noopener">Brandon Hall Group</a>).</p>
+      <h3>Reviewing the whole catalog</h3>
+      <p>Course audits usually sort courses into keep, update, merge, or retire (<a href="https://trainingindustry.com/articles/content-development/stop-rebuilding-training-content-you-already-have/" target="_blank" rel="noopener">Training Industry</a>). Low use is a signal, not a verdict: a small audience can be critical, or people may not find the course (<a href="https://accellms.com/insights/your-lms-has-too-many-courses/" target="_blank" rel="noopener">Accel</a>). Accessibility and courses that no longer run belong in the review too (<a href="https://www.instructionalengineer.com/elearning-content-audit/" target="_blank" rel="noopener">Instructional Engineer</a>). Flash content, for example, has been blocked since January 12, 2021 (<a href="https://elearning.adobe.com/2020/12/how-to-view-flash-content-after-december-31-2020-and-january-12-2021/" target="_blank" rel="noopener">Adobe</a>). Cathy Moore's flowchart asks whether a job aid or a workflow fix would solve a problem before training does (<a href="https://blog.cathy-moore.com/is-training-really-the-answer-ask-the-flowchart/" target="_blank" rel="noopener">Cathy Moore</a>). We suggest asking the same before a rebuild.</p>
+      <h3>The ranking supports your decision</h3>
+      <p>Decision scoring guidance is clear that the analysis informs people and does not decide for them (<a href="https://www.ispor.org/docs/default-source/publications/value-outcomes-spotlight/march-april-2016/valueandoutcomesspotlight_mcda_tfr2-summary.pdf" target="_blank" rel="noopener">ISPOR task force summary</a>). Each course shows the two factors that added most to its score, as UK government guidance recommends (<a href="https://assets.publishing.service.gov.uk/media/6645e4b2b7249a4c6e9d3631/Use_of_MCDA_in_options_appraisal_of_economic_cases.pdf" target="_blank" rel="noopener">DESNZ</a>). The close call marker is a simple version of the sensitivity testing the UK manual recommends.</p>
+      <h3>Our choices</h3>
+      <p>These settings are our judgment, not findings from a study. Change the weights and capacity to fit your team.</p>
+      <ul>
+        <li>The default weights: reach 25, importance 30, out of date 20, works for everyone 15, learner feedback 10.</li>
+        <li>The starting cutoffs: 70 for Do first and 45 for Next.</li>
+        <li>With a capacity number, Next holds the same number of courses as your capacity.</li>
+        <li>The warning when more than half the list is marked Must change.</li>
+        <li>Counting "No data" for feedback as a 3.</li>
+        <li>The 12-month window for reach.</li>
+        <li>The 10-point test for a close call.</li>
+        <li>The retire hint: reach and importance both 2 or less.</li>
+        <li>The effort labels: Quick fix for 1 or 2, Moderate for 3, Major project for 4 or 5.</li>
+        <li>The middle levels (2 and 4) of Works for everyone.</li>
+      </ul>
+    </section>
+  </main>
+  <footer class="site-foot">
+    <div class="wrap">
+      <span>Built by Clay Elmore</span>
+      <span>Nothing you enter is sent anywhere.</span>
+      <span><a href="https://arbolinea.com/" target="_blank" rel="noopener">arbolinea.com</a></span>
+    </div>
+  </footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
