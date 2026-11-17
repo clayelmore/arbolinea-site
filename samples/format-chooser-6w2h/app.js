@@ -25,16 +25,29 @@ function el(tag, attrs = {}, ...kids) {
   return n;
 }
 
-function sourceLinks(keys) {
+// Sources are numbered in the order of SOURCES; the Sources list at the bottom uses the same numbers.
+const SOURCE_KEYS = Object.keys(SOURCES);
+const sourceNum = (k) => SOURCE_KEYS.indexOf(k) + 1;
+
+// Small numbered markers for the comparison table, linking to the Sources list.
+function sourceRefs(keys) {
   if (!keys || !keys.length) return null;
-  const span = el('span', { class: 'cite' }, ' (');
+  const sup = el('sup', { class: 'ref' });
   keys.forEach((k, i) => {
-    const s = SOURCES[k];
-    if (i) span.append(', ');
-    span.append(el('a', { href: s.url, target: '_blank', rel: 'noopener', text: s.short }));
+    if (i) sup.append(', ');
+    sup.append(el('a', { href: `#src-${k}`, 'aria-label': `Source ${sourceNum(k)}: ${SOURCES[k].title}`, text: String(sourceNum(k)) }));
   });
-  span.append(')');
-  return span;
+  return sup;
+}
+
+// One collapsed list of every source behind the result, so the result reads cleanly.
+function sourcesFor(groups) {
+  const keys = [...new Set(groups.flatMap((g) => g.sources ?? []))].sort((a, b) => sourceNum(a) - sourceNum(b));
+  if (!keys.length) return null;
+  return el('details', { class: 'cite-list' },
+    el('summary', { text: `Sources for this pick (${keys.length})` }),
+    el('ol', {}, keys.map((k) => el('li', { value: String(sourceNum(k)) },
+      el('a', { href: SOURCES[k].url, target: '_blank', rel: 'noopener', text: SOURCES[k].title })))));
 }
 
 function hasAnswer(q) {
@@ -76,18 +89,22 @@ function showResult(moveFocus = true) {
   const r = recommend(state.answers);
   const designer = toggle.checked;
   const lines = [...r.firmRules.map((k) => RULES[k]), ...r.reasons];
+  const notes = r.notes.map((k) => NOTES[k]);
   resultEl.replaceChildren(
     el('p', { class: 'label', text: 'Our pick' }),
     el('h2', { id: 'pick', class: 'pick', tabindex: '-1', text: r.label }),
+    el('h3', { text: 'What goes where' }),
+    el('ul', { class: 'pieces' }, r.pieces.map((p) => el('li', {}, el('strong', { text: p.name }), el('span', { text: p.text })))),
     el('h3', { text: 'How your answers counted' }),
-    el('ul', {}, lines.map((x) => el('li', {}, designer && x.designer ? x.designer : x.text, sourceLinks(x.sources)))),
-    r.notes.length ? el('h3', { text: 'Keep in mind' }) : null,
-    r.notes.length ? el('ul', {}, r.notes.map((k) => el('li', {}, NOTES[k].text, sourceLinks(NOTES[k].sources)))) : null,
+    el('ul', {}, lines.map((x) => el('li', { text: designer && x.designer ? x.designer : x.text }))),
+    notes.length ? el('h3', { text: 'Keep in mind' }) : null,
+    notes.length ? el('ul', {}, notes.map((n) => el('li', { text: n.text }))) : null,
     el('h3', { text: 'Your answers' }),
     el('dl', { class: 'answers' }, QUESTIONS.flatMap((q) => [
       el('dt', { text: q.text }),
       el('dd', { text: answerText(q) }),
     ])),
+    sourcesFor([...r.pieces, ...lines, ...notes]),
     el('div', { class: 'actions no-print' },
       el('button', { type: 'button', id: 'print', text: 'Print summary' }),
       el('button', { type: 'button', class: 'secondary', id: 'restart', text: 'Start over' })));
@@ -103,11 +120,11 @@ function renderCompare() {
     el('thead', {}, el('tr', {}, el('th', { scope: 'col', text: 'Topic' }), cols.map((c) => el('th', { scope: 'col', text: FORMAT_NAMES[c] })))),
     el('tbody', {}, TABLE.map((row) => el('tr', {},
       el('th', { scope: 'row', text: row.topic }),
-      cols.map((c) => el('td', { 'data-col': FORMAT_NAMES[c] }, row[c].text, sourceLinks(row[c].sources))))))));
+      cols.map((c) => el('td', { 'data-col': FORMAT_NAMES[c] }, row[c].text, sourceRefs(row[c].sources))))))));
 }
 
 function renderSources() {
-  $('#sources').replaceChildren(...Object.values(SOURCES).map((s) => el('li', {},
+  $('#sources').replaceChildren(...SOURCE_KEYS.map((k) => SOURCES[k]).map((s, i) => el('li', { id: `src-${SOURCE_KEYS[i]}` },
     el('a', { href: s.url, target: '_blank', rel: 'noopener', text: s.title }),
     s.kind === 'practitioner' ? ' (practitioner view)' : '')));
 }
@@ -144,6 +161,10 @@ toggle.addEventListener('change', () => {
   document.querySelectorAll('.designer').forEach((n) => { n.hidden = !toggle.checked; });
   if (!resultEl.hidden) showResult(false);
 });
+
+// Closed details do not print, so open the result's source list for printing.
+window.addEventListener('beforeprint', () => resultEl.querySelectorAll('details').forEach((d) => { d.dataset.wasOpen = d.open ? '1' : ''; d.open = true; }));
+window.addEventListener('afterprint', () => resultEl.querySelectorAll('details').forEach((d) => { d.open = d.dataset.wasOpen === '1'; }));
 
 renderQuestion();
 renderCompare();

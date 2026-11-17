@@ -1,5 +1,5 @@
 // Format chooser scoring. Pure: no DOM. Rules: spec "Firm rules" and "Assembling the pick".
-import { QUESTIONS, FORMAT_NAMES, JOB_AID_NAMES, COVERAGE } from './data.js';
+import { QUESTIONS, FORMAT_NAMES, JOB_AID_NAMES, COVERAGE, PIECES, STORYLINE_PARTS, JOB_AID_PARTS } from './data.js';
 
 const TYPE_PRIORITY = ['steps', 'reference', 'decision']; // when several checked answers carry a job aid type
 const TIE_ORDER = ['J', 'R', 'S']; // ties go to the simpler build (our choice, stated on the page)
@@ -11,6 +11,7 @@ export function recommend(answers, questions = QUESTIONS) {
   const reasons = [];
   const types = [];
   const multiPicked = []; // answers checked on a multi question with more than one choice
+  const chosen = new Set(); // 'question:answer' for every checked answer
 
   for (const q of questions) {
     const given = answers[q.id];
@@ -25,6 +26,7 @@ export function recommend(answers, questions = QUESTIONS) {
     for (const a of picked) for (const [k, v] of Object.entries(a.points ?? {})) sum[k] += v;
     for (const k of Object.keys(sum)) scores[k] += q.multi ? sum[k] / picked.length : sum[k];
     for (const a of picked) {
+      chosen.add(q.id + ':' + a.id);
       (a.flags ?? []).forEach((f) => flags.add(f));
       (a.notes ?? []).forEach((n) => notes.add(n));
       if (a.jobAidType) types.push(a.jobAidType);
@@ -44,7 +46,9 @@ export function recommend(answers, questions = QUESTIONS) {
   }
   if (flags.has('needsStoryline')) {
     firmRules.push('needsStoryline');
-    course = course === 'R' || flags.has('phone') ? 'RS' : 'S';
+    // A Storyline block inside Rise reports only completion or one quiz score, so advanced tracking stays Storyline alone.
+    course = !flags.has('storylineAlone') && (course === 'R' || flags.has('phone')) ? 'RS' : 'S';
+    if (flags.has('storylineAlone')) notes.add('trackingStandalone');
   }
   const scenarioBlock = flags.has('scenarioBlock') && (course === 'R' || course === 'RS');
 
@@ -73,7 +77,33 @@ export function recommend(answers, questions = QUESTIONS) {
   };
   for (const a of multiPicked) if (a.id in covered && !covered[a.id] && COVERAGE[a.id]) notes.add('cover-' + a.id);
 
-  return { scores, top, course, scenarioBlock, jobAid, label: labelFor(course, scenarioBlock, jobAid), firmRules, reasons, notes: [...notes] };
+  const pieces = piecesFor(course, scenarioBlock, jobAid, chosen, flags);
+  return { scores, top, course, scenarioBlock, jobAid, label: labelFor(course, scenarioBlock, jobAid), pieces, firmRules, reasons, notes: [...notes] };
+}
+
+// What goes where: one entry per piece of the pick, in build order.
+function piecesFor(course, scenarioBlock, jobAid, chosen, flags) {
+  const out = [];
+  const parts = [];
+  if (chosen.has('do:software')) parts.push(STORYLINE_PARTS.software);
+  if (chosen.has('do:complex-judgment')) parts.push(STORYLINE_PARTS.complex);
+  if (flags.has('storylineAlone') && course === 'S') parts.push(STORYLINE_PARTS.tracking);
+  if (!parts.length) parts.push(STORYLINE_PARTS.other);
+  const join = (extra = []) => ({ text: parts.map((p) => p.text).concat(extra).join(' '), sources: [...new Set(parts.flatMap((p) => p.sources))] });
+
+  if (course === 'R' || course === 'RS') {
+    out.push({ name: PIECES.rise.name, text: PIECES.rise.text + (course === 'RS' ? PIECES.riseHost : ''), sources: PIECES.rise.sources });
+  }
+  if (scenarioBlock) out.push({ ...PIECES.scenario });
+  if (course === 'RS') {
+    const j = join([PIECES.storylineBlock.tail]);
+    out.push({ name: PIECES.storylineBlock.name, text: j.text, sources: [...j.sources, ...PIECES.storylineBlock.sources] });
+  }
+  if (course === 'S') out.push({ name: PIECES.storyline.name, ...join() });
+  if (jobAid) {
+    out.push({ name: PIECES.jobAid.name + JOB_AID_NAMES[jobAid.type], text: JOB_AID_PARTS[jobAid.type] + JOB_AID_PARTS[jobAid.use], sources: PIECES.jobAid.sources });
+  }
+  return out;
 }
 
 function labelFor(course, scenarioBlock, jobAid) {

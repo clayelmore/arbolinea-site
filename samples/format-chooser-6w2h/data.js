@@ -17,6 +17,7 @@ export const SOURCES = {
   riseBlocks: { title: 'Articulate support: Rise 360, choose lesson and block types', short: 'Articulate, Rise blocks', url: AS + 'Rise-360-Choose-Lesson-and-Block-Types', kind: 'vendor' },
   riseScenario: { title: 'Articulate support: Rise 360, how to use Scenario blocks', short: 'Articulate, Scenario blocks', url: AS + 'Rise-360-How-to-Use-Scenario-Blocks', kind: 'vendor' },
   riseStorylineBlock: { title: 'Articulate support: Rise, use Storyline blocks to embed Storyline 360 courses', short: 'Articulate, Storyline blocks', url: AS + 'Rise-Use-Storyline-Blocks-to-Embed-Storyline-360-Courses', kind: 'vendor' },
+  slBlockTracking: { title: 'Articulate support: Rise 360, how to track course completion with a Storyline block', short: 'Articulate, Storyline block tracking', url: AS + 'Rise-How-to-Track-Course-Completion-with-a-Storyline-Block', kind: 'vendor' },
   riseExport: { title: 'Articulate support: Rise 360, export to LMS, PDF, and the web', short: 'Articulate, Rise export', url: AS + 'Rise-360-Export-to-LMS-PDF-and-the-Web', kind: 'vendor' },
   riseQuizData: { title: 'Articulate support: Rise, quiz data sent to an LMS', short: 'Articulate, Rise quiz data', url: AS + 'Rise-Quiz-Data-Sent-to-an-LMS', kind: 'vendor' },
   riseProduct: { title: 'Articulate: Rise 360 product page', short: 'Articulate, Rise 360 page', url: 'https://www.articulate.com/360/rise/', kind: 'vendor' },
@@ -158,7 +159,7 @@ export const QUESTIONS = [
       { id: 'basic', text: 'Completion, or one scored quiz or test-out', points: { R: 1 }, flags: ['jobAidNotAlone'],
         reason: 'You need completion or one score. Rise handles both: when a course is tracked by quiz result, it sends the most recent quiz score to the LMS.',
         designerReason: 'Rise tracks by completion percentage, one quiz result, or one Storyline block.', sources: ['riseExport', 'riseQuizData'] },
-      { id: 'advanced', text: 'Several alternative quizzes or completion paths, a custom completion trigger, or custom xAPI data or an LRS', points: { S: 3 }, flags: ['jobAidNotAlone', 'needsStoryline'],
+      { id: 'advanced', text: 'Several alternative quizzes or completion paths, a custom completion trigger, or custom xAPI data or an LRS', points: { S: 3 }, flags: ['jobAidNotAlone', 'needsStoryline', 'storylineAlone'],
         reason: 'You need advanced tracking. Several reportable quizzes, a completion trigger, custom xAPI statements, and publishing to an LRS are Storyline features.',
         designerReason: 'Storyline-only LMS options in Articulate\'s feature comparison.', sources: ['lmsCompare', 'slMoreQuizzing', 'slXapi'] },
     ],
@@ -193,7 +194,32 @@ export const NOTES = {
   refresherPractice: { text: 'The task is rare and cannot be read in time, so plan refresher practice and use the job aid to check the work afterward.', sources: ['arthur1998'] },
   storylineUpdatesSlower: { text: 'Practitioners report that Storyline updates take longer than Rise updates. That is experience, not a measured study.', sources: ['devlinpeck'] },
   storylineOnPhones: { text: 'On phones, Storyline slides keep their shape and shrink to fit the screen.', sources: ['responsivePlayerFaq'] },
+  trackingStandalone: { text: 'Advanced tracking needs Storyline published to the LMS on its own. Inside a Rise course, a Storyline block can report only its completion or one quiz score.', sources: ['slBlockTracking', 'lmsCompare'] },
   license: { text: 'Publishing Rise to an LMS, Scenario blocks, and Storyline blocks need a standard Articulate 360 AI license.', sources: ['riseExport', 'riseScenario', 'riseStorylineBlock'] },
+};
+
+// What goes where: one line per piece of the pick. Assembled in logic.js from the answers.
+export const PIECES = {
+  rise: { name: 'Rise 360 course', text: 'The main course: explanations, examples, and knowledge checks, in a layout that adapts to any screen.', sources: ['riseBlocks', 'riseProduct'] },
+  riseHost: ' The Storyline block sits inside one of its lessons.',
+  scenario: { name: 'Scenario block, inside the Rise course', text: 'Practice for the short conversation or judgment call. It branches with up to three responses per prompt.', sources: ['riseScenario'] },
+  storylineBlock: { name: 'Storyline block, inside the Rise course', tail: 'It is built in Storyline, published to Review 360, and added to a Rise lesson as a block.', sources: ['riseStorylineBlock'] },
+  storyline: { name: 'Storyline 360 course', sources: [] },
+  jobAid: { name: 'PDF ', sources: ['atdJobAids'] },
+};
+export const STORYLINE_PARTS = {
+  software: { text: 'The software practice: people watch the task, try it with prompts, then do it on their own as a test.', sources: ['slScreenRecording'] },
+  complex: { text: 'The complex judgment practice: a branching scenario that can remember earlier choices and score them.', sources: ['slVariables'] },
+  tracking: { text: 'Published to your LMS on its own, so it can send the advanced tracking you need.', sources: ['lmsCompare', 'slBlockTracking'] },
+  other: { text: 'The course, built for custom interactions with triggers and variables.', sources: ['slVariables'] },
+};
+export const JOB_AID_PARTS = {
+  checklist: 'The steps where a mistake is costly, in a list people check off.',
+  steps: 'The steps in order, so nobody has to remember them.',
+  reference: 'The facts people look up, one glance away.',
+  decision: 'The decision points, laid out as a table or flowchart.',
+  during: ' People keep it at hand and use it while they work.',
+  verify: ' People use it after the task to check the work, because there is no time to read it during the task.',
 };
 
 // Our suggestions for a checked answer the pick does not cover (multi questions only). No sources needed.
