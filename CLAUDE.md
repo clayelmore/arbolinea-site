@@ -223,7 +223,8 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
   `lesson-ai-tells-draft.md`; Microsoft moves these features often, so recheck the click paths and
   license notes before editing them.
   `friday.html` (with `friday-data.js`, `friday-logic.js`, `friday-app.js`) is "Friday practice", the
-  weekly companion linked from lesson 13: a warm-up question, ten minutes of writing with no AI, a
+  weekly companion linked from lesson 13 and from its own card on the samples page (added 2026-11-20):
+  a warm-up question, ten minutes of writing with no AI, a
   streak, and badges. It keeps everything in the visitor's browser (localStorage) and must never send
   anything anywhere. Its tests are `node --test .ultron/copilot-course/friday-tests/`.
   AI-writing tells are a standing check on the course text:
