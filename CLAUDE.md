@@ -212,9 +212,23 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
   pages carry noindex; the PDF has its own card on the samples page because a card is one link. The
   site copy rules apply to these files (they are ours). Clay asked on 2026-11-11 that the cards and the
   course just say what it is: no "edited by hand".
-  Provenance: the lesson text was drafted with Copilot Chat on Clay's personal Microsoft account (not a
-  work tenant); the raw prompts and outputs are in `.ultron/copilot-course/prompts/` and the edits in
-  `edits.md` there. Each lesson keeps the real capture of its run behind "Show me the prompt used".
+  Provenance: the text of the first eleven lessons and the first eleven quiz questions was drafted with
+  Copilot Chat on Clay's personal Microsoft account (not a work tenant); the raw prompts and outputs are
+  in `.ultron/copilot-course/prompts/` and the edits in `edits.md` there. Each of those lessons keeps the
+  real capture of its run behind "Show me the prompt used". Lessons 12 and 13 ("Why AI sounds like AI",
+  id `tells`, and "Make it sound like you", id `voice`), added 2026-11-20, were written with Claude from
+  Microsoft's documentation and published research, have no capture, and say so under their titles and
+  in the last lesson (Clay: "we could use Copilot for this as well, but wanted to show a different AI").
+  Their facts and sources are in `.ultron/copilot-course/lesson-voice-draft.md` and
+  `lesson-ai-tells-draft.md`; Microsoft moves these features often, so recheck the click paths and
+  license notes before editing them.
+  `friday.html` (with `friday-data.js`, `friday-logic.js`, `friday-app.js`) is "Friday practice", the
+  weekly companion linked from lesson 13: a warm-up question, ten minutes of writing with no AI, a
+  streak, and badges. It keeps everything in the visitor's browser (localStorage) and must never send
+  anything anywhere. Its tests are `node --test .ultron/copilot-course/friday-tests/`.
+  AI-writing tells are a standing check on the course text:
+  `node .ultron/copilot-course/check-tells.mjs .ultron/copilot-course/tells-allow.txt <content.js> <friday-data.js>`
+  must print `TELLS OK`; deliberate bad examples are allowed by path in `tells-allow.txt`.
   Every image in `img/` is a real capture (Copilot Chat on the web, or Copilot in desktop Word, Excel,
   and PowerPoint) listed in `.ultron/copilot-course/captures.md` with its sha256 and what was cropped;
   crop above the Recents list on any Office start screen. The drawn chat panels are labeled as drawings.

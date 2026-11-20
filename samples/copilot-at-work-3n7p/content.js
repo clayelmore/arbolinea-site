@@ -28,10 +28,10 @@ window.COURSE = {
   kicker: "A short course",
   description: "The everyday tasks people do with Microsoft Copilot in Outlook, Teams, Word, Excel, and PowerPoint, and how to do them well.",
   author: "Clay Elmore",
-  madeWithTool: "The lesson text was drafted with Copilot Chat on a personal Microsoft account.",
+  madeWithTool: "The text of the first eleven lessons was drafted with Copilot Chat on a personal Microsoft account. The two lessons on voice were written with Claude. Copilot could have drafted them too; the point was to show the same approach with a different AI.",
   madeWithShort: "Lesson text drafted with Copilot Chat. See the last lesson.",
-  madeLine: "The lesson text was drafted with Copilot Chat on a personal Microsoft account. The last lesson shows the prompts and what changed.",
-  welcome: { src: "audio/welcome.mp3", title: "Listen: welcome from Clay", length: "30 sec", transcript: "Hi, I'm Clay. Thanks for giving this course a few minutes. It is about Microsoft Copilot - not the big promises, just the everyday tasks. Catching up on a thread you missed, a meeting you could not attend, a first draft when the page is blank, a formula you do not want to write. Eleven short lessons, a quiz, and at the end I show you how I built this, including what Copilot wrote and what I changed. Let's get started." },
+  madeLine: "The first eleven lessons were drafted with Copilot Chat on a personal Microsoft account. The two lessons on voice were written with Claude. Copilot could have drafted them too; the point was to show the same approach with a different AI. The last lesson shows the prompts and what changed.",
+  welcome: { src: "audio/welcome.mp3", title: "Listen: welcome from Clay", length: "28 sec", transcript: "Hi, I'm Clay. Thanks for giving this course a few minutes. It is about Microsoft Copilot - not the big promises, just the everyday tasks. Catching up on a thread you missed, a meeting you could not attend, a first draft when the page is blank, a formula you do not want to write. Thirteen short lessons, a quiz, and at the end I show you how I built this, including what Copilot wrote and what I changed. Let's get started." },
 
   /* ---------- Prompts: one list, used by the lesson cards, the desk card, and the library ---------- */
   prompts: [
@@ -73,7 +73,16 @@ window.COURSE = {
     { id: "hand-sentences", app: "Excel", task: "Turn a table into sentences", prompt: "Summarize this budget table in three sentences for an email update. Highlight the total cost and any major assumptions.", note: "Copy the answer into the email." },
     { id: "together-status", app: "Word", task: "Draft a weekly status update", prompt: "Draft a weekly status update for the project. Include accomplishments, current work, risks, decisions, and next steps. Use a professional business tone.", note: "Catch up on messages and the meeting recap first, then draft." },
     { id: "together-actions", app: "Excel", task: "Turn action items into a table", prompt: "Put these action items into a table with columns for Action Item, Owner, Status, and Due Date.", note: "Paste the action items from the meeting recap." },
-    { id: "together-send", app: "Teams", task: "Send the summary to attendees", prompt: "Draft a message to the attendees with the meeting summary and action items. Ask owners to confirm their assignments.", note: "Read it once as an attendee before you send." }
+    { id: "together-send", app: "Teams", task: "Send the summary to attendees", prompt: "Draft a message to the attendees with the meeting summary and action items. Ask owners to confirm their assignments.", note: "Read it once as an attendee before you send." },
+    { id: "tells-find", app: "Copilot Chat", task: "Find the generic lines in a draft", prompt: "Mark every sentence in this draft that sounds generic or could appear in anyone's email. For each one, tell me what specific fact would fix it. Do not rewrite it for me.", note: "Copilot marks the lines; you put in the facts only you know." },
+    { id: "tells-leftovers", app: "Outlook", task: "Check a draft before sending", prompt: "Before I send this, list anything in it that was meant for me instead of the reader, any blanks in brackets, and any sentence with no name, number, or date in it.", note: "Catches chat leftovers and empty brackets before the reader sees them." },
+    { id: "voice-describe", app: "Copilot Chat", task: "Describe my writing style", prompt: "Here are three things I wrote. Describe my writing style as a short list: the words I use, how long my sentences are, how I open and close, my tone, and anything I never do. Quote a short example from my writing for each point.", note: "Paste three things you wrote that sound like you on a good day." },
+    { id: "voice-correct", app: "Copilot Chat", task: "Correct the style list", prompt: "Some of that is not me. [What is wrong.] Update the list.", note: "Fill in the bracket. Only you know which patterns are you." },
+    { id: "voice-interview", app: "Copilot Chat", task: "Let Copilot interview me about my voice", prompt: "Interview me about how I like to write. Ask one question at a time, no more than eight. Then summarize my voice and my preferences as a short list I can save as custom instructions.", note: "Use it when you have no writing samples at hand." },
+    { id: "voice-remember", app: "Copilot Chat", task: "Save one preference", prompt: "Remember that I sign off with \"Thanks,\" and my first name.", note: "Copilot answers Memory updated. You can see and delete saved memories in Personalization." },
+    { id: "voice-example", app: "Word", task: "Match an example I like", prompt: "Here is an update I wrote that I liked. Write this week's update the same way.", note: "Then say why you like it, so Copilot has the rule as well as the example." },
+    { id: "voice-tuneup", app: "Copilot Chat", task: "Monthly voice tune-up", prompt: "Here is what I wrote this month without AI, and here is my voice list. What has changed or is missing? Suggest updates to the list, and quote the lines from my writing that show each one.", note: "Keep only the suggestions that are true. One week's mood is not a pattern." },
+    { id: "voice-skill", app: "Copilot Chat", task: "Make a voice skill (Premium)", prompt: "Make a skill called my-voice. Use it whenever I ask you to write or rewrite something for me. Follow the voice and taste list below, and before you finish, check the draft against it.", note: "Skills need Microsoft Copilot (Premium), the paid add-on. Paste your voice list below the prompt." }
   ],
 
   lessons: [
@@ -629,10 +638,204 @@ window.COURSE = {
       ] },
 
     /* ---------- 12 ---------- */
-    { id: "quiz", title: "Final quiz", kind: "quiz", minutes: 5, madeWith: "copilot", madeLine: "Questions drafted with Copilot Chat. See the last lesson.",
-      intro: "Eleven questions, at least one per lesson. Answer them all; you get feedback on each one and a score at the end.",
+    { id: "tells", title: "Why AI sounds like AI", apps: ["Copilot Chat", "Outlook", "Word"], minutes: 5, madeWith: "claude", madeLine: "Added later, and written with Claude. Copilot could have drafted it too. I wanted to show the same approach with a different AI. See the last lesson.",
+      intro: "AI drafts have habits, and once you can hear them it is hard to stop. This lesson names the common ones and the fix for each, which is usually a fact only you know.",
       blocks: [
-        { type: "audio", src: "audio/quiz.mp3", title: "Listen: a word from Clay", length: "23 sec", transcript: "Eleven questions, at least one from each lesson. You get feedback on every answer, right or wrong, because the feedback is where the learning happens. If you miss a few, that is fine. The feedback names the lesson to go back to. Take it again when you are ready - the order shuffles each time." },
+        { type: "audio", src: "audio/tells.mp3", title: "Listen: a word from Clay", length: "31 sec", transcript: "Have you ever read an email and thought - a person did not write this? I think most of us have. It is hard to say why at first. Then you start to notice. The same handful of words. Everything comes in threes - like this list. A big finish that says nothing. This lesson names those habits so you can hear them in your own Copilot drafts. And the fix is almost never a fancier word. It is something only you know - a name, a number, a date." },
+        { type: "statement", label: "The idea", text: "AI tends to reach for safe, likely words and familiar shapes. That is fine for a first draft. It is also why the draft sounds like no one in particular." },
+        { type: "beforeafter", heading: "Before (straight from the chat) and after (a person)", pairs: [
+          { before: "Certainly! Here's a draft you can send: Dear [Manager's Name], I hope this message finds you well. This quarter marks a pivotal moment for our team, highlighting our commitment to excellence. We delivered faster, smarter, and more collaborative results. Moving forward, we remain well positioned for continued success. Let me know if you'd like me to adjust the tone!", after: "Hi Priya, We closed the quarter at $1.2 million, 8% over plan, mostly from the two renewals in August. The one miss was the Denver rollout, which slipped to January. I will send the new plan by Friday.", note: "The second one has no tells, because every sentence carries a fact: an amount, a month, a city, a day." }
+        ] },
+        { type: "accordion", items: [
+          { title: "Show me the tells in the first one", body: [
+            "1. \"Certainly! Here's a draft you can send:\" was meant for you, not your manager.",
+            "2. \"[Manager's Name]\" is a blank that never got filled.",
+            "3. \"I hope this message finds you well\" says nothing.",
+            "4. \"A pivotal moment\" makes it sound important without saying what happened.",
+            "5. \", highlighting our commitment to excellence\" is a comment tacked on the end.",
+            "6. \"Faster, smarter, and more collaborative\" is three words with no facts behind them.",
+            "7. \"Moving forward, we remain well positioned for continued success\" is the formula ending.",
+            "8. \"Let me know if you'd like me to adjust the tone!\" is Copilot talking to you again."
+          ] }
+        ] },
+        { type: "tabs", heading: "The tells, and the fix for each", items: [
+          { title: "Words", body: [
+            "AI's favorite words: delve, underscore, showcase, foster, leverage, intricate, pivotal, testament. One on its own is fine. Two or three in a paragraph is a tell.",
+            "One study found \"delves\" in 2024 medical research abstracts at about 28 times the expected rate.",
+            "Big importance: \"a pivotal moment,\" \"a testament to,\" \"plays a crucial role.\" Fix: say what happened.",
+            "Fancy verbs: \"serves as,\" \"boasts,\" \"utilize,\" \"facilitate.\" Fix: is, has, use, help.",
+            "Vague sources: \"experts agree,\" \"studies show.\" Fix: name the source, or drop the claim."
+          ] },
+          { title: "Shapes", body: [
+            "\"It's not just a software upgrade, it's a transformation.\" Fix: say the plain thing. \"The upgrade moves approvals into Teams.\"",
+            "A comment on the end: \"Revenue grew 4%, highlighting our commitment to customers.\" Fix: cut it, or give the real reason.",
+            "Everything in threes: \"faster, smarter, and more inclusive.\" Fix: keep the one that is true. One list of three is normal. Three of them in a paragraph is a habit.",
+            "The formula ending: \"In summary,\" \"Moving forward,\" \"Despite these challenges.\" Fix: end on the next step, who owns it, and when.",
+            "A bold label on every bullet, like \"**Efficiency:** Streamlines workflows.\" Fix: a plain sentence with a fact in it."
+          ] },
+          { title: "Habits", body: [
+            "Leftovers from the chat: \"Certainly! Here's a draft,\" \"[Manager's Name],\" \"Let me know if you'd like me to adjust the tone.\" Fix: delete anything addressed to you and fill every bracket. This is the most embarrassing tell and the easiest to catch.",
+            "Flattering openers: \"Great question!\" \"You're absolutely right.\" Fix: start with the answer.",
+            "No specifics: \"This will significantly improve efficiency.\" Fix: \"The new form cuts approval time from 5 days to 2.\"",
+            "Hedging: \"Based on available information,\" \"It's important to note.\" Fix: say what you know, and who will confirm the rest.",
+            "Same rhythm: every sentence about the same length. Fix: one short sentence where it matters. Like this one."
+          ] }
+        ] },
+        { type: "statement", label: "The one fix behind most of them", text: "Most tells are a missing fact wearing a fancy coat. Put the fact back (a name, a number, a date, what actually happened) and the coat comes off." },
+        { type: "sorting", heading: "Sounds like AI, or sounds like a person?", intro: "Drag each line to a side. (All lines were written for this exercise.)", categories: ["Sounds like AI", "Sounds like a person"], cards: [
+          { text: "\"This initiative underscores our commitment to fostering innovation.\"", category: "Sounds like AI" },
+          { text: "\"It's not just a meeting, it's a mindset.\"", category: "Sounds like AI" },
+          { text: "\"Great question! Let's dive in.\"", category: "Sounds like AI" },
+          { text: "\"Moving forward, we remain well positioned for success.\"", category: "Sounds like AI" },
+          { text: "\"The printer on 3 is fixed. Use it.\"", category: "Sounds like a person" },
+          { text: "\"Can you send the deck by 2? I want to read it before the call.\"", category: "Sounds like a person" },
+          { text: "\"We missed the date. That's on me. The new one is May 9.\"", category: "Sounds like a person" },
+          { text: "\"Short version: yes, but not until the budget clears.\"", category: "Sounds like a person" }
+        ] },
+        { type: "text", heading: "Try it: fix one by hand", body: [
+          "The draft: \"I wanted to reach out regarding the upcoming training. This session serves as a crucial opportunity to enhance our skills and foster collaboration across teams. Moving forward, your participation is highly encouraged.\"",
+          "Rewrite it in three sentences or fewer, by hand. Put in at least one fact."
+        ] },
+        { type: "accordion", items: [
+          { title: "One way to fix it", body: [
+            "\"Excel training is Thursday at 10 in Room 4B. It covers the new budget template we start using in January. Please come if you build budgets.\"",
+            "Why it works: a day, a time, a room, a reason, and who it is for. No tells left to cut."
+          ] }
+        ] },
+        { type: "text", heading: "Ask Copilot to find them, not fix them", body: [
+          "Copilot can point out its own habits. Have it mark them, then do the fixing yourself, because the fix is the fact only you have.",
+          "Try: \"Mark every sentence in this draft that sounds generic or could appear in anyone's email. For each one, tell me what specific fact would fix it. Do not rewrite it for me.\""
+        ] },
+        { type: "statement", label: "For your drafts, not for catching people", text: "Hearing the tells is for your own writing. It is not proof that someone else used AI. People write this way too, and AI checkers often get it wrong. OpenAI pulled its own checker in 2023 for low accuracy, and a Stanford study found checkers flagged more than half of essays by non-native English writers as AI." },
+        { type: "knowledge", heading: "Check", questions: [
+          { q: "Your Copilot draft says, \"This launch marks a pivotal moment for the team.\" What is the best fix?", options: [
+            { text: "Change \"pivotal\" to \"critical.\"", feedback: "No. Swapping one big word for another keeps the tell." },
+            { text: "Say what happened: \"We launched on March 3, two weeks early.\"", correct: true, feedback: "Yes. A fact does the work the big word was pretending to do." },
+            { text: "Add \"truly\" for emphasis.", feedback: "No. That adds a second tell." },
+            { text: "Put it in bold.", feedback: "No. Bold does not make it say anything." }
+          ] },
+          { q: "A coworker's email has three phrases that sound like AI. What should you do?", options: [
+            { text: "Report them for using AI.", feedback: "No. People write this way too, and AI checkers are often wrong." },
+            { text: "Reply that their email sounds like a robot.", feedback: "No. That helps no one." },
+            { text: "Use what you know about tells on your own drafts.", correct: true, feedback: "Yes. The tells are a tool for your writing, not proof about anyone else's." },
+            { text: "Run it through an AI checker to be sure.", feedback: "No. Checkers are unreliable, and one study found they flag writers whose first language is not English far more often." }
+          ] }
+        ] },
+        { type: "prompts", heading: "Prompts from this lesson", intro: "Use the first on a draft from Outlook or Word that you paste into Copilot Chat. Use the second in Outlook before you send.", ids: ["tells-find", "tells-leftovers"] },
+        { type: "text", heading: "Sources", body: [
+          "Wikipedia, \"Signs of AI writing\" (WikiProject AI Cleanup), revision of 2026-11-19.",
+          "Kobak et al., \"Delving into LLM-assisted writing in biomedical publications through excess vocabulary,\" Science Advances, 2025 (\"delves\" at about 28 times the expected rate).",
+          "Liang et al., 2024, AI-modified text in conference peer reviews (\"meticulous\" about 34.7 times more likely).",
+          "Reinhart et al., PNAS, 2025 (GPT-4o uses \"-ing\" clauses at about 5.3 times the human rate).",
+          "Antislop, 2025 (\"It's not X, it's Y\" up to 6.3 times the human rate).",
+          "OpenAI, \"New AI classifier for indicating AI-written text,\" withdrawn July 2023 for \"low rate of accuracy.\"",
+          "Liang et al., \"GPT detectors are biased against non-native English writers,\" Patterns, 2023 (61.3% average false positive rate on essays by non-native writers)."
+        ] },
+        { type: "links", items: [ { href: "https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing", label: "Wikipedia: Signs of AI writing", ghost: true } ] }
+      ] },
+
+    /* ---------- 13 ---------- */
+    { id: "voice", title: "Make it sound like you", apps: ["Copilot Chat", "Outlook"], minutes: 5, madeWith: "claude", madeLine: "Added later, and written with Claude. Copilot could have drafted it too. I wanted to show the same approach with a different AI. See the last lesson.",
+      intro: "Copilot writes like everyone, so out of the box it sounds like no one. This lesson teaches it two things that are yours alone: your voice and your taste.",
+      blocks: [
+        { type: "audio", src: "audio/voice.mp3", title: "Listen: a word from Clay", length: "32 sec", transcript: "Copilot writes well enough. But out of the box it writes like everyone - and that means it sounds like no one. You can change that. Two things matter. Voice is how you sound - the words you pick, how long your sentences run, how you open and how you close. Taste is what you keep and what you cut. You can teach Copilot both. Not perfectly, and it will still need your eye. But enough that the first draft feels like yours instead of something you have to fix." },
+        { type: "statement", label: "The idea", text: "**Voice** is how you sound: the words you pick, how long your sentences run, how you open and close.\n**Taste** is your judgment: what you keep, what you cut, and what good looks like to you.\nA template makes your work look like the company's. Voice and taste make it sound like you." },
+        { type: "beforeafter", heading: "Before (generic) and after (a person)", pairs: [
+          { before: "I hope this email finds you well! I wanted to reach out to provide a quick update regarding the project. We are pleased to share that significant progress has been made, and we look forward to continuing our collaboration.", after: "Quick update on the project. We finished testing on Tuesday and we are on track for the March launch. One open item: the vendor contract is still unsigned. I will have an answer for you by Friday.", note: "Same facts. The second one sounds like someone you know." }
+        ] },
+        { type: "process", heading: "Find your voice", steps: [
+          { title: "Gather three things you wrote", body: "An email, a Teams message, a short document. Pick ones that sound like you on a good day." },
+          { title: "Ask Copilot to describe your style", body: "Try: \"Here are three things I wrote. Describe my writing style as a short list: the words I use, how long my sentences are, how I open and close, my tone, and anything I never do. Quote a short example from my writing for each point.\"" },
+          { title: "Correct it", body: ["Copilot finds patterns. Only you know which ones are you.", "Try: \"Some of that is not me. I never use exclamation points in work email, and I am more direct than you described. Update the list.\""] }
+        ] },
+        { type: "text", body: "Or let it interview you: \"Interview me about how I like to write. Ask one question at a time, no more than eight. Then summarize my voice and my preferences as a short list I can save as custom instructions.\"" },
+        { type: "tabs", heading: "Teach it once", items: [
+          { title: "Every chat (Copilot Chat)", body: [
+            "1. In Copilot Chat, open **Settings and more (...)**, then **Chat settings**, then **Personalization**.",
+            "2. Choose **Custom instructions**, then **Edit instructions**.",
+            "3. Paste your list and save. Copilot uses it in every chat from then on."
+          ] },
+          { title: "Every email draft (Outlook)", body: [
+            "1. In the new Outlook, open the menu next to the Copilot icon and choose **Settings**.",
+            "2. Open **Draft Instructions** and turn on **Use custom instructions when drafting email**.",
+            "3. Paste the parts that matter for email, such as how you open and how you sign off, and save."
+          ] }
+        ] },
+        { type: "text", body: "Microsoft moves these menus now and then. If you do not see them, search Copilot's settings by name. Your organization may also have turned them off." },
+        { type: "heading", text: "Example: what a voice list can look like", sub: "An example, not a template. Yours should come from your own writing." },
+        { type: "statement", label: "Example voice list", text: "**My voice:** Plain words, short sentences, short paragraphs. Warm but direct. Start with the point, not \"I hope this finds you well.\" End with the next step and who owns it. No exclamation points at work. Never \"leverage,\" \"synergy,\" or \"circle back.\"\n**My taste:** One idea per paragraph. A list only when there are three or more items. Cut anything that repeats. When in doubt, shorter." },
+        { type: "accordion", heading: "Let it remember", items: [
+          { title: "Tell it once", body: "Say \"Remember that I sign off with 'Thanks,' and my first name.\" Copilot answers **Memory updated** and keeps it." },
+          { title: "See what it remembers", body: "Open **Chat settings**, then **Personalization**, then **Saved memories**, then **Manage saved memories**. Delete anything that is wrong or that you would rather it forgot." },
+          { title: "It may learn from your sent mail", body: "If your organization allows it, Copilot can learn your style from emails you have sent, so drafts sound more like you. You can turn this off in the same Personalization settings." },
+          { title: "Where it follows you", body: "Microsoft says memory reaches Copilot in Word, Outlook, PowerPoint, Excel, and Teams, and it is still rolling out across apps." }
+        ] },
+        { type: "list", heading: "Taste is yours: four moves", items: [
+          "**Show it, do not describe it.** \"Here is an update I wrote that I liked. Write this week's update the same way.\" One good example beats a page of adjectives.",
+          "**Say why you like it.** \"I like it because it starts with the decision and ends with who does what.\" Now Copilot has the rule as well as the example.",
+          "**Ask for choices.** \"Give me two versions, one short and one shorter.\" Picking between two is easier than fixing one.",
+          "**Read it out loud.** If you would not say it, change it."
+        ] },
+        { type: "text", heading: "Keep it growing", body: [
+          "Your voice list is a snapshot. To keep it true, feed it writing that is only you. Once a week, write something with no AI at all. Once a month, use those pieces to tune your list.",
+          "Why no AI: If Copilot drafts your email, your sent mail is partly Copilot. Learning from it teaches Copilot to sound like Copilot. Writing you did on your own is the only sample that is really you, and it keeps your own writing in practice."
+        ] },
+        { type: "list", heading: "The rules", items: [
+          "Set a timer for 10 minutes. No Copilot, no AI of any kind.",
+          "Do not worry about getting it right. Write the way you would say it. Typos are fine.",
+          "When you finish, add one line: what you like about what you wrote. That line is your taste.",
+          "Save it with the date in one folder in OneDrive, such as \"My voice.\""
+        ] },
+        { type: "text", heading: "Once a month: the tune-up", body: [
+          "Paste the month's pieces into Copilot Chat with your current voice list.",
+          "Try: \"Here is what I wrote this month without AI, and here is my voice list. What has changed or is missing? Suggest updates to the list, and quote the lines from my writing that show each one.\"",
+          "Keep only the suggestions that are true. One week's mood is not a pattern.",
+          "Friday practice has the twelve weekly assignments and a button that sets up the Friday reminder in your calendar."
+        ] },
+        { type: "links", items: [ { href: "friday.html", label: "Open Friday practice" } ] },
+        { type: "accordion", heading: "Go further (if your plan includes it)", items: [
+          { title: "A voice skill", body: [
+            "A skill is a set of instructions Copilot saves and reuses. Describe your voice in Copilot Chat and ask it to make one. You review it and save it, and Copilot can use it on its own whenever you write. Skills are available only with Microsoft Copilot (Premium), the paid add-on.",
+            "Try: \"Make a skill called my-voice. Use it whenever I ask you to write or rewrite something for me. Follow the voice and taste list below, and before you finish, check the draft against it.\"",
+            "Skills use an open format that some other AI tools also read, so a voice skill can move with you."
+          ] },
+          { title: "A voice agent", body: "Open **Agents & Skills**, then **New agent**. Put your voice and taste list in **Instructions** and add a handful of your own emails and documents under **Knowledge** as examples. Microsoft publishes a playbook for this exact idea, built for an executive's voice. Uploading files needs a Microsoft 365 Copilot license." },
+          { title: "A notebook with its own rules", body: "For one project, a Copilot Notebook can keep its own instructions. Open the notebook, choose **More options (...)**, then **Instructions**." }
+        ] },
+        { type: "statement", label: "Your voice, not someone else's", text: "Copilot can copy anyone's style from their writing. Use it for your own words, or with the person's say-so, such as drafting for your manager when that is part of your job." },
+        { type: "knowledge", heading: "Check", questions: [
+          { q: "Copilot's drafts sound generic. What is the best first step?", options: [
+            { text: "Switch to a different company template.", feedback: "No. A template sets the look, not your voice." },
+            { text: "Show Copilot three things you wrote and ask it to describe your style.", correct: true, feedback: "Yes. Start from your real writing, then correct what it gets wrong." },
+            { text: "Ask it to sound more human.", feedback: "Not quite. \"Human\" is everyone. Your own writing is the only sample of you." },
+            { text: "Accept it. AI always sounds like AI.", feedback: "No. A few minutes of setup changes every draft after." }
+          ] },
+          { q: "The draft is accurate but it is not how you would say it. What is the taste move?", options: [
+            { text: "Send it anyway; the facts are right.", feedback: "No. It goes out with your name on it." },
+            { text: "Show it an example you like and say why you like it.", correct: true, feedback: "Yes. The example shows what good looks like, and the why gives it a rule it can use again." },
+            { text: "Start over in a new chat.", feedback: "No. You lose the context and get the same result." },
+            { text: "Ask for more detail.", feedback: "No. Longer is rarely the fix." }
+          ] }
+        ] },
+        { type: "prompts", heading: "Prompts from this lesson", ids: ["voice-describe", "voice-correct", "voice-interview", "voice-remember", "voice-example", "voice-tuneup", "voice-skill"] },
+        { type: "heading", text: "Sources", sub: "Microsoft's support and Learn pages, read 2026-11-20." },
+        { type: "links", items: [
+          { href: "https://support.microsoft.com/en-us/microsoft-365-copilot/customize-how-microsoft-365-copilot-responds-to-you", label: "Custom instructions", ghost: true },
+          { href: "https://support.microsoft.com/en-us/microsoft-365-copilot/manage-copilot-memory-in-microsoft-365-copilot", label: "Memory", ghost: true },
+          { href: "https://support.microsoft.com/en-us/outlook/copilot-outlook/ask-copilot-to-make-email-drafts-sound-like-you", label: "Outlook Draft Instructions", ghost: true },
+          { href: "https://support.microsoft.com/en-us/microsoft-365-copilot/create-edit-skills-copilot", label: "Skills", ghost: true },
+          { href: "https://learn.microsoft.com/en-us/plugins/build-copilot-chat-skills", label: "Building skills", ghost: true },
+          { href: "https://learn.microsoft.com/en-us/plugins/agent-builder-build-agents", label: "Agent Builder", ghost: true },
+          { href: "https://adoption.microsoft.com/files/modern-communications/ExecutiveVoiceAgentPlaybook.pdf", label: "Executive Voice Agent Playbook", ghost: true },
+          { href: "https://support.microsoft.com/en-us/microsoft-365-copilot/provide-custom-instructions-for-your-microsoft-365-copilot-notebook", label: "Notebook instructions", ghost: true }
+        ] }
+      ] },
+
+    /* ---------- 14 ---------- */
+    { id: "quiz", title: "Final quiz", kind: "quiz", minutes: 5, madeWith: "copilot", madeLine: "Eleven questions drafted with Copilot Chat, two added later. See the last lesson.",
+      intro: "Thirteen questions, at least one per lesson. Answer them all; you get feedback on each one and a score at the end.",
+      blocks: [
+        { type: "audio", src: "audio/quiz.mp3", title: "Listen: a word from Clay", length: "21 sec", transcript: "Thirteen questions, at least one from each lesson. You get feedback on every answer, right or wrong, because the feedback is where the learning happens. If you miss a few, that is fine. The feedback names the lesson to go back to. Take it again when you are ready - the order shuffles each time." },
         { type: "reveal", label: "Show me the prompt used", intro: "Every prompt in this course began with the same preamble, shown once in the last lesson. This is the part that asked for this lesson. Below it is the real Copilot Chat run.", prompt: "Write the final quiz for the course. 10 questions covering all nine lessons (at least one per lesson): 7 multiple choice with 4 options, 2 multiple response, 1 fill in the blank. For each, mark the correct answer and give one sentence of feedback that explains why. Keep every question general to any industry. Return only the sections asked for, with the headings given.", blocks: [
           { type: "image", src: "img/quiz-chat.png", alt: "Copilot Chat showing the quiz prompt and the first questions it drafted, each with its options, the correct answer, and a feedback sentence.", real: true, source: "Copilot Chat", caption: "The Copilot Chat run that drafted these questions." }
         ] },
@@ -699,18 +902,30 @@ window.COURSE = {
             { text: "PowerPoint", feedback: "No. Slides come after the numbers." },
             { text: "Teams", feedback: "No." }
           ] },
+          { q: "What fixes most of the habits that make a draft sound like AI?", options: [
+            { text: "A fancier word in place of the plain one.", feedback: "No. Swapping one big word for another keeps the habit. Go back to Why AI sounds like AI." },
+            { text: "A fact only you know: a name, a number, a date, what happened.", correct: true, feedback: "Yes. Most tells are a missing fact. That is the one fix in Why AI sounds like AI." },
+            { text: "Bold on the important words.", feedback: "No. Bold does not make a sentence say anything. Go back to Why AI sounds like AI." },
+            { text: "A longer draft with more detail.", feedback: "No. Length is not a fact. Go back to Why AI sounds like AI." }
+          ] },
+          { q: "Which writing teaches Copilot your voice best?", options: [
+            { text: "Emails Copilot drafted for you this month.", feedback: "No. Learning from those teaches Copilot to sound like Copilot. Go back to Make it sound like you." },
+            { text: "A company template.", feedback: "No. A template sets the look, not your voice. Go back to Make it sound like you." },
+            { text: "Something you wrote on your own, with no AI.", correct: true, feedback: "Yes. Writing you did on your own is the only sample that is really you. That is the weekly habit in Make it sound like you." },
+            { text: "A list of adjectives, such as warm and direct.", feedback: "Not quite. One good example beats a page of adjectives. Go back to Make it sound like you." }
+          ] },
           { q: "Putting it together means using Copilot across several apps to finish one ________.", type: "fill", answer: "task", answers: ["task", "activity", "job", "piece of work", "result"], feedback: "The apps change; the task is the thread that runs through them." }
         ] }
       ] },
 
-    /* ---------- 13 ---------- */
+    /* ---------- 15 ---------- */
     { id: "built", title: "How this course was built", kind: "closing", minutes: 3,
       intro: "This course is a work sample. It shows how I use Copilot, and it shows how I build training. Here is what happened, in order.",
       blocks: [
-        { type: "audio", src: "audio/built.mp3", title: "Listen: a word from Clay", length: "36 sec", transcript: "A quick word about how this was made, because it is part of the point. The text of every lesson was drafted with Copilot Chat on my personal Microsoft account, one prompt per lesson. Each lesson carries the real capture of that run, and the demos are real captures from Copilot in Word, Excel, and PowerPoint. The page itself is hand-written, no course tool. Every lesson and question lives in one file, so changing a question is changing a few lines. And every block you clicked was chosen for a reason. This lesson lists them." },
-        { type: "statement", label: "What Copilot did and did not do", text: "The lesson text was drafted with Copilot Chat on a personal Microsoft account. Copilot Chat drafted the text of every lesson and the quiz from one prompt each. It did not build the page, pick the block types, or take the screen captures. The drawn chat panels are illustrations written here, and say so under each one." },
+        { type: "audio", src: "audio/built.mp3", title: "Listen: a word from Clay", length: "47 sec", transcript: "A quick word about how this was made, because it is part of the point. The text of the first eleven lessons was drafted with Copilot Chat on my personal Microsoft account, one prompt per lesson. Each of those carries the real capture of that run, and the demos are real captures from Copilot in Word, Excel, and PowerPoint. The two lessons on voice came later, and I wrote those with Claude. Copilot could have done it too - I wanted to show the same approach works with a different AI. The page itself is hand-written, no course tool. Every lesson and question lives in one file, so changing a question is changing a few lines. And every block you clicked was chosen for a reason. This lesson lists them." },
+        { type: "statement", label: "What Copilot did and did not do", text: "The text of the first eleven lessons, and the first eleven quiz questions, was drafted with Copilot Chat on a personal Microsoft account, from one prompt each. The two lessons on voice were written with Claude. Copilot could have drafted them too; the point was to show the same approach with a different AI. Copilot did not build the page, pick the block types, or take the screen captures. The drawn chat panels are illustrations written here, and say so under each one." },
         { type: "accordion", heading: "The preamble every prompt began with", items: [ { title: "Show the preamble", body: "You are helping write a short workplace training course called \"Copilot at Work\". The audience is any office worker in any industry who has Microsoft Copilot in their Microsoft 365 apps and has not used it much. Write in plain, speakable US English, short sentences, no hype words, no em dashes. Use the current product names (Microsoft Copilot, Copilot Chat). Do not invent features; if you are unsure a feature exists, say so. Examples must work for any industry: use a generic team, a generic project, a generic customer. Format exactly as asked." } ] },
-        { type: "accordion", heading: "The prompt behind each lesson, and what changed", intro: "One prompt per lesson, run in Copilot Chat on 2026-11-11. Every teaching lesson, and the quiz, carries the real capture of its run behind \"Show me the prompt used\". Open any lesson to see what was kept, fixed, or cut.", items: [
+        { type: "accordion", heading: "The prompt behind each lesson, and what changed", intro: "One prompt per lesson, run in Copilot Chat on 2026-11-11. Each of the first eleven lessons, and the quiz, carries the real capture of its run behind \"Show me the prompt used\". Open any lesson to see what was kept, fixed, or cut.", items: [
           { title: "Start here", body: ["Asked for: an intro, a line per app, what Copilot can see, three myths, and three questions with feedback.", "Kept nearly all of it. Fixed the product name to today's name, Microsoft Copilot, and shortened the feedback. Added the labeled drawing, the one-rule callout, and a line about asking IT when a button is missing."] },
           { title: "Ask well", body: ["Asked for: the four ingredients with examples, the slash tip, three weak-and-better pairs, follow-ups, and a sorting activity.", "Kept the ingredients and the pairs nearly word for word. Turned the ingredients into tabs and the sorting list into a real drag-and-sort block. Made the slash tip say it needs a work account."] },
           { title: "Catch up", body: ["Asked for: steps for an email thread and a Teams chat, an after-a-week prompt, three mistakes, and three questions.", "Kept the steps and prompts. Put the three places into tabs and the mistakes into an accordion, since they are reference, not reading. Added a drawn example of a good catch-up answer."] },
@@ -722,15 +937,16 @@ window.COURSE = {
           { title: "Check before you trust it", body: ["Asked for: five habits, a Work IQ note, a do-not-paste list, a scenario, and three questions.", "Kept it. Made the habits a checklist. Added that this course itself was drafted on a personal account, so the Work IQ button did not apply."] },
           { title: "Put it together", body: ["Asked for: three cross-app activities of four steps each, a Friday scenario, and three questions.", "Kept the steps. Replaced the invented name \"Project Alpha\" with \"the project\" so it stays generic. Added a check step that opens the sources."] },
           { title: "Hand it off", body: ["Asked for: a five-step relay around one job, three backwards moves, five flashcards of unusual moves, a scenario, a matching exercise, and two questions.", "Kept the relay, the moves, the flashcards, and the scenario nearly word for word. Turned the matching list into a sorting block. Added the real demo, and the note that the handoffs in it were done by pasting, since file references need a work account. Copilot also drew its own flashcard and quiz widgets inside the answer; this page uses its own blocks instead."] },
-          { title: "Final quiz", body: ["Asked for: ten questions covering all nine task lessons, seven multiple choice, two multiple response, one fill in the blank.", "Added an eleventh question from the Hand it off lesson, which Copilot drafted in that lesson's run. Kept the questions. Rewrote a few options that were too easy to rule out, and wrote feedback for every option, not only the right one."] }
+          { title: "Final quiz", body: ["Asked for: ten questions covering all nine task lessons, seven multiple choice, two multiple response, one fill in the blank.", "Added an eleventh question from the Hand it off lesson, which Copilot drafted in that lesson's run. Kept the questions. Rewrote a few options that were too easy to rule out, and wrote feedback for every option, not only the right one.", "Two more questions were added later, one for each of the two lessons on voice, written with Claude."] }
         ] },
+        { type: "text", heading: "The two lessons added later", body: ["\"Why AI sounds like AI\" and \"Make it sound like you\" were written with Claude, from Microsoft's documentation and published research on AI writing. Copilot could have drafted them too. I wanted to show the same approach with a different AI.", "There was no Copilot run behind them, so they carry no capture and no \"Show me the prompt used\".", "The list of tells in \"Why AI sounds like AI\" also runs as an automatic check on this course's own text."] },
         { type: "list", heading: "Design decisions, and the evidence behind them", items: [
           "**Text before interaction.** Every lesson explains first, then asks. An interaction only works once the learner knows enough to make a real choice.",
           "**Every interaction has a job.** Accordions hold optional reference, so required content never hides. Tabs hold a few parallel categories. Flashcards and knowledge checks are recall practice, because testing yourself beats rereading after a week. Scenarios show consequences instead of saying \"try again\".",
-          "**Practice is spread through the course,** not saved for the end. Each lesson closes with a check, then its prompts, and the quiz covers all eleven lessons again.",
+          "**Practice is spread through the course,** not saved for the end. Each lesson closes with a check, then its prompts, and the quiz covers all thirteen lessons again.",
           "**Feedback explains why,** for right and wrong answers alike. That is what makes a check a lesson rather than a test.",
           "**Everything is editable in one file.** Every lesson, question, and prompt lives in content.js. Changing a question is changing a few lines of text.",
-          "**Real captures where they matter, drawings where they do not.** Every teaching lesson, and the quiz, carries the real Copilot Chat run that drafted it, one tap away. The Word, Excel, and PowerPoint demos, and the relay in Hand it off, are real captures. The chat panels in the text are drawings, and are labeled as such."
+          "**Real captures where they matter, drawings where they do not.** Each of the first eleven lessons, and the quiz, carries the real Copilot Chat run that drafted it, one tap away. The Word, Excel, and PowerPoint demos, and the relay in Hand it off, are real captures. The chat panels in the text are drawings, and are labeled as such."
         ] },
         { type: "text", heading: "Take the prompts with you", body: ["The prompt library at prompts.html holds every prompt in this course with a Copy button and a filter by app. The desk card at cheat-sheet.html is ten everyday prompts, grouped by app on two printable pages. Both links are below.", "The course page, the library, and the desk card are hand-built HTML. No course tool was used."] },
         { type: "links", items: [ { href: "prompts.html", label: "Open the prompt library" }, { href: "cheat-sheet.html", label: "Open the desk card" } ] }

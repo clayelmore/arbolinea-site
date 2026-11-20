@@ -709,7 +709,7 @@
     }
 
     function renderLesson(l, i, standalone) {
-      const sec = el(`<section class="lesson" data-lesson="${esc(l.id)}" aria-labelledby="h-${esc(l.id)}"><header class="lesson-head"><div class="count">Lesson ${i + 1} of ${lessons.length}</div><h1 id="h-${esc(l.id)}">${esc(l.title)}</h1>${l.intro ? `<p class="intro">${inline(l.intro)}</p>` : ""}${l.madeWith === "copilot" ? `<p class="made">${inline(l.madeLine || course.madeWithShort || "Lesson text drafted with Copilot Chat. See the last lesson.")}</p>` : ""}</header><div class="blocks"></div></section>`);
+      const sec = el(`<section class="lesson" data-lesson="${esc(l.id)}" aria-labelledby="h-${esc(l.id)}"><header class="lesson-head"><div class="count">Lesson ${i + 1} of ${lessons.length}</div><h1 id="h-${esc(l.id)}">${esc(l.title)}</h1>${l.intro ? `<p class="intro">${inline(l.intro)}</p>` : ""}${l.madeLine || l.madeWith === "copilot" ? `<p class="made">${inline(l.madeLine || course.madeWithShort || "Lesson text drafted with Copilot Chat. See the last lesson.")}</p>` : ""}</header><div class="blocks"></div></section>`);
       const blocks = sec.querySelector(".blocks");
       (l.blocks || []).forEach((b, k) => {
         const fn = RENDER[b.type];
