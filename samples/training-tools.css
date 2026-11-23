@@ -105,3 +105,27 @@ table.compare tbody th { color: var(--text); font-weight: 500; }
 .card-row .card-title { margin: 0 0 12px; font-size: 18px; }
 
 .item, .card-row { overflow-wrap: anywhere; }
+/* Priority tool guide: the five signs show first, and each one opens to its details. */
+ol.signs { list-style: none; padding-left: 0; margin: 18px 0 0; counter-reset: sign; }
+ol.signs > li { counter-increment: sign; max-width: none; margin-top: 10px; }
+details.sign { background: var(--panel); border: 1px solid var(--hairline); border-radius: 12px; margin-top: 10px; padding: 0 16px; }
+details.sign > summary { list-style: none; cursor: pointer; display: grid; gap: 4px; padding: 14px 0; }
+details.sign > summary::-webkit-details-marker { display: none; }
+details.sign[open] { padding-bottom: 18px; }
+details.sign[open] > summary { border-bottom: 1px solid var(--hairline); }
+.sign-name { font-family: var(--font-display); font-weight: 500; font-size: 19px; line-height: 1.3; color: var(--text); }
+ol.signs .sign-name::before { content: counter(sign) ". "; }
+.sign-q { max-width: 68ch; }
+details.sign .toggle-hint { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--ice); }
+details.sign .toggle-hint::before { content: "Show the details +"; }
+details.sign[open] .toggle-hint::before { content: "Hide the details -"; }
+.scale-label { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; color: var(--muted); margin-top: 18px; }
+ol.scale { list-style: none; padding-left: 0; margin: 4px 0 0; }
+ol.scale li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start; margin-top: 8px; }
+ol.scale li > span:last-child { padding-top: 3px; }
+.rating { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--ice-deep); font-family: var(--font-mono); font-weight: 600; font-size: 15px; color: var(--text); }
+.rating.r1 { background: rgba(143, 198, 232, 0.05); }
+.rating.r2 { background: rgba(143, 198, 232, 0.13); }
+.rating.r3 { background: rgba(143, 198, 232, 0.21); }
+.rating.r4 { background: rgba(143, 198, 232, 0.29); }
+.rating.r5 { background: rgba(143, 198, 232, 0.37); }

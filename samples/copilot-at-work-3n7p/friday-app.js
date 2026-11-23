@@ -435,6 +435,7 @@ function startOver() {
 // ----- Print view: every week, answers together at the end. -----
 function renderPrint() {
   const letter = (i) => String.fromCharCode(65 + i);
+  const lettersAreChoices = (w) => w.options.some((o) => /^[A-D]$/.test(o.text));
   $('print-view').replaceChildren(
     h('h1', {}, T.title),
     h('p', { class: 'pv-intro' }, `${T.intro} ${T.honesty}`),
@@ -442,7 +443,8 @@ function renderPrint() {
       h('h2', {}, `Week ${w.n}: ${w.title} (${w.level}${w.tuneUp ? ', tune-up week' : ''})`),
       w.parts.map((p) => [h('p', { class: 'pv-lbl' }, p.label), h('blockquote', {}, p.text), p.list ? h('ul', {}, p.list.map((x) => h('li', {}, x))) : null]),
       h('p', { class: 'pv-lbl' }, 'Warm-up'), h('p', {}, w.ask),
-      h('ol', { type: 'A' }, w.options.map((o) => h('li', {}, o.text))),
+      // Weeks whose choices are already the letters A and B get a plain list, so print never shows "A. A".
+      lettersAreChoices(w) ? h('ul', {}, w.options.map((o) => h('li', {}, o.text))) : h('ol', { type: 'A' }, w.options.map((o) => h('li', {}, o.text))),
       h('p', { class: 'pv-lbl' }, 'Write, 10 minutes, no AI'), h('p', {}, w.write),
       w.tuneUpNote ? [h('p', { class: 'pv-lbl' }, 'Tune-up'), h('p', {}, w.tuneUpNote)] : null)),
     h('div', { class: 'answers' },
@@ -450,7 +452,7 @@ function renderPrint() {
       F.weeks.map((w) => {
         const i = w.options.findIndex((o) => o.correct);
         return h('section', {},
-          h('h2', {}, `Week ${w.n}: ${letter(i)}. ${w.options[i].text}`),
+          h('h2', {}, lettersAreChoices(w) ? `Week ${w.n}: ${w.options[i].text}` : `Week ${w.n}: ${letter(i)}. ${w.options[i].text}`),
           h('p', {}, w.reveal),
           h('p', {}, h('strong', {}, `${w.clueLabel}: `), w.clue));
       }),

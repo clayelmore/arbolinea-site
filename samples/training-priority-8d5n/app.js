@@ -62,12 +62,28 @@ function el(tag, attrs = {}, ...kids) {
 
 // ---------------------------------------------------------------- guide
 function renderGuide() {
-  $('#guide').replaceChildren(...[...FACTORS, EFFORT].map((f) => el('div', { class: 'panel' },
-    el('h3', { text: f.label + (f.key === 'effort' ? ' (not scored)' : '') }),
-    el('p', { text: f.question }),
-    el('p', {}, el('strong', { text: 'Why it counts: ' }), f.why),
-    el('ol', {}, f.anchors.map((a, i) => el('li', {}, el('strong', { text: `${i + 1}: ` }), a))),
-    f.help ? el('p', { class: 'muted', text: f.help }) : null)));
+  // The five signs show first, closed, as name and question. Each one opens to its details.
+  const sign = (f) => {
+    const effort = f.key === 'effort';
+    return el('details', { class: 'sign' },
+      el('summary', {},
+        el('span', { class: 'sign-name', text: f.label + (effort ? ' (not scored)' : '') }),
+        el('span', { class: 'sign-q', text: f.question }),
+        el('span', { class: 'toggle-hint', 'aria-hidden': 'true' })),
+      el('p', {}, el('strong', { text: 'Why it counts: ' }), f.why),
+      el('p', { class: 'scale-label', text: effort
+        ? 'Rating scale: 1 is the least work, 5 is the most.'
+        : 'Rating scale: 1 is the least need to update, 5 is the most.' }),
+      // The number is a rating badge, not a list number, so the list itself is unnumbered.
+      el('ol', { class: 'scale' }, f.anchors.map((a, i) => el('li', {},
+        el('span', { class: `rating r${i + 1}`, text: String(i + 1) }), el('span', { text: a })))),
+      f.help ? el('p', { class: 'muted', text: f.help }) : null);
+  };
+  $('#guide').replaceChildren(
+    el('p', { text: 'You rate each course from 1 to 5 on these five signs. Open a sign to see why it counts and what each rating means.' }),
+    el('ol', { class: 'signs' }, FACTORS.map((f) => el('li', {}, sign(f)))),
+    el('p', { text: 'You also rate effort. It helps you plan the work and is not part of the score.' }),
+    sign(EFFORT));
 }
 
 // ---------------------------------------------------------------- editor

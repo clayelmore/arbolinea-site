@@ -5,7 +5,7 @@ export const FACTORS = [
   { key: 'reach', label: 'Reach',
     question: 'How many people take it, compared with the rest of your catalog, over the last 12 months? Required assignments count.',
     why: 'Every improvement reaches more people when more people take the course.',
-    help: 'Low reach is not low value. A small audience can be critical, or people may not be able to find the course.',
+    help: 'Reach only counts how many people take it. If a small group depends on the course, rate that under Importance. If few people take it because they cannot find it, fix that first.',
     anchors: ['Little or no use, and not required', 'Below typical', 'About typical', 'In your top quarter, or required for a department', 'One of the few courses most people take, or required for everyone'] },
   { key: 'importance', label: 'Importance',
     question: 'What goes wrong on the job if people get it wrong?',
