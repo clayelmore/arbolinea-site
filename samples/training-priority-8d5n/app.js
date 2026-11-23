@@ -1,8 +1,8 @@
 // Training priority renderer. All scoring lives in logic.js.
 import {
-  FACTORS, EFFORT, DEFAULT_WEIGHTS, REASON_TYPES, GROUPS, HINTS, EXAMPLE_COURSES,
-  emptyCourse, validateCourse, rankCourses, importCsv, toCsv, sampleCsv, fileProblem, validCapacity,
-} from './logic.js?v=3'; // Raise v when the names imported here change, so a cached logic.js is never paired with a newer app.js.
+  FACTORS, EFFORT, DEFAULT_WEIGHTS, REASON_TYPES, GROUPS, HINTS, EXAMPLE_COURSES, DIAGRAM_COURSE, CUTOFFS,
+  emptyCourse, validateCourse, rankCourses, importCsv, toCsv, sampleCsv, fileProblem, validCapacity, needScore, scoreParts, effortLabel,
+} from './logic.js?v=4'; // Raise v when the names imported here change, so a cached logic.js is never paired with a newer app.js.
 
 const KEY = 'tp-state-v1';
 const $ = (s) => document.querySelector(s);
@@ -86,6 +86,37 @@ function renderGuide() {
     sign(EFFORT));
 }
 
+// ---------------------------------------------------------------- score diagram
+// One worked example, drawn from the same functions that score the real list.
+function renderDiagram() {
+  const c = DIAGRAM_COURSE;
+  const parts = scoreParts(c, DEFAULT_WEIGHTS);
+  const score = needScore(c, DEFAULT_WEIGHTS);
+  const widest = Math.max(...parts.map((p) => p.weight));
+  const num = (n) => String(Math.round(n * 100) / 100);
+  const zones = [['Later', 0, CUTOFFS.next - 1], ['Next', CUTOFFS.next, CUTOFFS.doFirst - 1], ['Do first', CUTOFFS.doFirst, 100]];
+  const zone = zones.find(([, lo, hi]) => score >= lo && score <= hi)[0];
+  $('#score-diagram').replaceChildren(el('figure', { class: 'score-fig' },
+    el('figcaption', { text: 'An example course, scored with the default weights' }),
+    el('p', { class: 'sf-step' }, el('strong', { text: '1. Rate. ' }), 'Each sign gets a rating from 1 to 5.'),
+    el('p', { class: 'sf-step' }, el('strong', { text: '2. Weigh. ' }), 'A 1 adds nothing. A 5 adds the full weight of that sign.'),
+    el('ul', { class: 'sf-rows' }, parts.map((p) => el('li', {},
+      el('span', { class: 'sf-name', text: p.label }),
+      el('span', { class: 'sf-rate' }, el('span', { class: 'sr-only', text: 'rated ' }), el('span', { class: `rating r${p.rating}`, text: String(p.rating) })),
+      el('span', { class: 'sf-track', 'aria-hidden': 'true', style: `width: ${(100 * p.weight) / widest}%` },
+        el('span', { class: 'sf-fill', style: `width: ${p.weight ? (100 * p.points) / p.weight : 0}%` })),
+      el('span', { class: 'sf-pts' }, el('span', { class: 'sr-only', text: 'adds ' }), `${num(p.points)} of ${p.weight}`)))),
+    el('p', { class: 'sf-step' }, el('strong', { text: '3. Add up. ' }),
+      `${parts.map((p) => num(p.points)).join(' + ')} = `, el('strong', { class: 'sf-score', text: `need score ${score}` }), ' out of 100.'),
+    el('p', { class: 'sf-step' }, el('strong', { text: '4. Place. ' }), `A score of ${score} lands in ${zone}.`),
+    el('div', { class: 'sf-scale', 'aria-hidden': 'true' },
+      zones.map(([name, lo, hi]) => el('span', { class: 'sf-zone' + (name === zone ? ' on' : ''), style: `width: ${hi - lo + (hi === 100 ? 0 : 1)}%` },
+        el('b', { text: name }), el('i', { text: `${lo} to ${hi}` }))),
+      el('span', { class: 'sf-mark', style: `left: ${score}%` }, el('b', { text: String(score) }))),
+    el('p', { class: 'sf-note' }, el('strong', { text: 'Effort ' }), `is rated too, but it only shows as a label (here: ${effortLabel(c.effort)}). It never changes the score.`),
+    el('p', { class: 'sf-note' }, el('strong', { text: 'Must-change courses ' }), 'skip the score and go to Required, above the list.')));
+}
+
 // ---------------------------------------------------------------- editor
 function ratingSelect(c, key, label, anchors, withNone = false) {
   const val = c[key];
@@ -129,7 +160,8 @@ function showProblems(card, c) {
 
 function renderEditor() {
   const cards = state.courses.map(rowCard);
-  $('#editor').replaceChildren(...cards);
+  $('#editor').replaceChildren(...(cards.length ? cards
+    : [el('p', { class: 'empty', text: 'No courses yet. Press Add a course to type one in and pick its ratings.' })]));
   cards.forEach((card, i) => showProblems(card, state.courses[i]));
 }
 
@@ -298,6 +330,7 @@ $('#download').addEventListener('click', () => {
 $('#sample').addEventListener('click', () => saveCsv(sampleCsv(), 'training-priority-sample.csv'));
 
 renderGuide();
+renderDiagram();
 renderEditor();
 renderWeights();
 $('#capacity').value = state.capacity;

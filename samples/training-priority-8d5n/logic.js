@@ -36,6 +36,8 @@ export const EFFORT = {
   anchors: ['An afternoon', 'A few days', 'A couple of weeks', 'A month or more', 'A rebuild'],
 };
 
+// Starting cutoffs for the need score when no capacity is set.
+export const CUTOFFS = { doFirst: 70, next: 45 };
 export const DEFAULT_WEIGHTS = { reach: 25, importance: 30, out_of_date: 20, works: 15, feedback: 10 };
 
 export const REASON_TYPES = [
@@ -85,6 +87,9 @@ export const EXAMPLE_COURSES = [
   ex('ex8', 'Warehouse picking system', 3, 5, 4, 2, 3, 3),
 ];
 
+// The course drawn in the "How the score works" diagram: a 5, a 3, and a 1 show full weight, half, and nothing.
+export const DIAGRAM_COURSE = ex('diagram', 'An example course', 5, 3, 5, 1, 3, 2);
+
 export function validateCourse(c) {
   const p = [];
   const name = (c.course ?? '').trim();
@@ -107,6 +112,16 @@ export function needScore(c, weights) {
   }
   if (den === 0) return null;
   return Math.round((100 * num) / (4 * den));
+}
+
+// What each factor adds to the need score, for the "How the score works" diagram. The points sum to the score before rounding.
+export function scoreParts(c, weights) {
+  const den = FACTORS.reduce((t, f) => t + wt(weights, f.key), 0);
+  return FACTORS.map((f) => {
+    const w = wt(weights, f.key);
+    const rating = ratingFor(c, f.key);
+    return { key: f.key, label: f.label, rating, weight: w, points: den ? (100 * w * (rating - 1)) / (4 * den) : 0 };
+  });
 }
 
 export function drivers(c, weights) {
@@ -150,7 +165,7 @@ function assignGroups(courses, weights, capacity) {
     const k = Math.max(capacity - required.length, 0);
     pool.forEach((x, i) => groups.set(x.c.id, i < k ? 'doFirst' : i < k + capacity ? 'next' : 'later'));
   } else {
-    pool.forEach((x) => groups.set(x.c.id, x.score >= 70 ? 'doFirst' : x.score >= 45 ? 'next' : 'later'));
+    pool.forEach((x) => groups.set(x.c.id, x.score >= CUTOFFS.doFirst ? 'doFirst' : x.score >= CUTOFFS.next ? 'next' : 'later'));
   }
   return { groups, pool, required };
 }
