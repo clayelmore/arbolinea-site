@@ -158,6 +158,10 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
   traces to the research ledgers in
   ~/Documents/Develop/Arbolinea/docs/superpowers/specs/2026-11-16-training-decision-tools-research/ .
   Never name the employer whose practice inspired the priority tool.
+  References in both tools are small numbers that point to a Sources list at the bottom of the page,
+  never links inside the sentences (Clay, 2026-11-23: the references prove the reasoning, but they are
+  not part of the text people read). The priority tool's `app.js` imports `./logic.js?v=N`; raise N
+  whenever the names it imports change, so a cached `logic.js` is never paired with a newer `app.js`.
 - `samples/installation-procedures/index.html` is the landing page for two installation
   procedures Clay wrote (`samples/cm3-nli-reassignment-excerpt.pdf`,
   `samples/sm-xc-growth-excerpt.pdf`), added 2026-10-27. Clay removed company names, the product

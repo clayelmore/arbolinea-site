@@ -1,8 +1,8 @@
 // Training priority renderer. All scoring lives in logic.js.
 import {
   FACTORS, EFFORT, DEFAULT_WEIGHTS, REASON_TYPES, GROUPS, HINTS, EXAMPLE_COURSES,
-  emptyCourse, validateCourse, rankCourses, importCsv, toCsv, validCapacity,
-} from './logic.js';
+  emptyCourse, validateCourse, rankCourses, importCsv, toCsv, sampleCsv, fileProblem, validCapacity,
+} from './logic.js?v=3'; // Raise v when the names imported here change, so a cached logic.js is never paired with a newer app.js.
 
 const KEY = 'tp-state-v1';
 const $ = (s) => document.querySelector(s);
@@ -190,17 +190,31 @@ $('#clear').addEventListener('click', () => {
   try { localStorage.removeItem(KEY); } catch { /* nothing saved */ }
   renderEditor(); renderWeights(); $('#capacity').value = ''; renderResults();
 });
-$('#import').addEventListener('click', () => {
-  const r = importCsv($('#csv').value, () => newId());
+// Adds the rows in a piece of CSV text and reports the result. True when rows were added.
+function addRows(text) {
+  const r = importCsv(text, () => newId());
   const msg = $('#csv-message');
-  if (r.error) { msg.className = 'problem'; msg.textContent = r.error; return; }
+  if (r.error) { msg.className = 'problem'; msg.textContent = r.error; return false; }
   state.courses.push(...r.courses);
   const flagged = r.courses.filter((c) => validateCourse(c).length).length;
   msg.className = '';
   msg.textContent = [`Added ${r.courses.length} course${r.courses.length === 1 ? '' : 's'}.`,
     flagged ? `${flagged} need a fix; they are flagged below.` : '', ...r.notes].filter(Boolean).join(' ');
-  $('#csv').value = '';
   save(); renderEditor(); renderResults();
+  return true;
+}
+$('#import').addEventListener('click', () => { if (addRows($('#csv').value)) $('#csv').value = ''; });
+// The file is read in the browser. Nothing is uploaded.
+$('#choose').addEventListener('click', () => $('#file').click());
+$('#file').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f) return;
+  const msg = $('#csv-message');
+  const fail = (t) => { msg.className = 'problem'; msg.textContent = t; };
+  const problem = fileProblem(f.name, f.size);
+  if (problem) { fail(problem); return; }
+  try { addRows(await f.text()); } catch { fail('We could not read that file.'); }
 });
 
 // ---------------------------------------------------------------- settings
@@ -265,17 +279,23 @@ function renderResults() {
       el('ol', {}, r.groups[g.key].map(itemView)))));
 }
 
+// Saves CSV text as a file made in the browser. The byte order mark lets Excel read it as UTF-8.
+function saveCsv(text, name) {
+  const url = URL.createObjectURL(new Blob(['\uFEFF' + text], { type: 'text/csv' }));
+  const a = el('a', { href: url, download: name });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 $('#print').addEventListener('click', () => window.print());
 $('#download').addEventListener('click', () => {
   const r = rankCourses(state.courses, state.weights, state.capacity);
   const msg = $('#download-message');
   if (!r.groups) { msg.textContent = r.error; return; }
   msg.textContent = '';
-  const url = URL.createObjectURL(new Blob(['\uFEFF' + toCsv(r)], { type: 'text/csv' }));
-  const a = el('a', { href: url, download: 'training-priorities.csv' });
-  document.body.append(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  saveCsv(toCsv(r), 'training-priorities.csv');
 });
+$('#sample').addEventListener('click', () => saveCsv(sampleCsv(), 'training-priority-sample.csv'));
 
 renderGuide();
 renderEditor();

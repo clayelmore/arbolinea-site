@@ -284,6 +284,26 @@ export function importCsv(text, makeId) {
 const guard = (v) => { const s = String(v ?? ''); return /^[=+\-@\t\r]/.test(s) ? `'${s}` : s; };
 const esc = (v) => { const s = String(v ?? ''); return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 
+// A file picked with "Choose a CSV file": the reason it cannot be used, or null when it can.
+export const MAX_FILE_BYTES = 1000000;
+export function fileProblem(name, size) {
+  if (/\.(xlsx|xls|xlsm|numbers|ods)$/i.test(name)) return 'That is a spreadsheet file. Save it as CSV first, then choose the CSV.';
+  if (size > MAX_FILE_BYTES) return 'That file is too large for a course list.';
+  return null;
+}
+
+// The example courses as a CSV in the documented column order, for the "Download a sample CSV" button.
+export function sampleCsv() {
+  const lines = [CSV_COLUMNS.join(',')];
+  for (const c of EXAMPLE_COURSES) {
+    const type = REASON_TYPES.find((t) => t.key === c.reason);
+    const reason = type ? [type.label, c.reason_note].filter(Boolean).join(': ') : c.reason_note;
+    lines.push([guard(c.course), c.reach, c.importance, c.out_of_date, c.works, c.feedback === 'none' ? 'no data' : c.feedback, c.effort,
+      c.must_change ? 'yes' : 'no', guard(c.must_change ? reason : ''), c.overlap ? 'yes' : 'no'].map(esc).join(','));
+  }
+  return lines.join('\n') + '\n';
+}
+
 export function toCsv(result) {
   const lines = [[...CSV_COLUMNS.slice(0, 9), 'reason_date', 'overlap', 'need_score', 'group', 'effort_label', 'drivers', 'hints'].join(',')];
   if (!result.groups) return lines[0] + '\n';

@@ -35,10 +35,16 @@
           <button type="button" class="secondary" id="clear">Clear all</button>
         </div>
         <details class="panel">
-          <summary>Paste CSV</summary>
-          <p>Paste rows with this header. Columns can be in any order. Ratings are 1 to 5. Leave feedback blank, or write "no data", if you have none. For must_change and overlap, write yes or no. A must-change reason starts with law, policy, safety, audit, or will not launch. An optional reason_date column (YYYY-MM-DD) is also accepted for the first four.</p>
+          <summary>Import a CSV</summary>
+          <p>Choose a CSV file, or paste rows with this header. Columns can be in any order. Ratings are 1 to 5. Leave feedback blank, or write "no data", if you have none. For must_change and overlap, write yes or no. A must-change reason starts with law, policy, safety, audit, or will not launch. An optional reason_date column (YYYY-MM-DD) is also accepted for the first four.</p>
           <p><code>course,reach,importance,out_of_date,works,feedback,effort,must_change,reason,overlap</code></p>
-          <label class="field" for="csv">CSV text</label>
+          <p>A sample file shows the format. It holds the eight example courses.</p>
+          <div class="actions">
+            <button type="button" class="secondary" id="choose">Choose a CSV file</button>
+            <button type="button" class="secondary" id="sample">Download a sample CSV</button>
+            <input type="file" id="file" class="sr-only" accept=".csv,text/csv,text/plain" tabindex="-1" aria-hidden="true">
+          </div>
+          <label class="field" for="csv">Or paste CSV text</label>
           <textarea id="csv" spellcheck="false"></textarea>
           <div class="actions"><button type="button" id="import">Add these rows</button></div>
           <p id="csv-message" role="status"></p>
@@ -77,17 +83,18 @@
       </ul>
 
       <h2>How the score works</h2>
-      <p>Each need factor is rated 1 to 5. A 1 adds nothing and a 5 adds the factor's full weight. We add those up and scale the total to 0 to 100. Every point on every scale has a label, because survey research generally finds fully labeled scales give more reliable answers (<a href="https://www.surveypractice.org/article/2956-should-i-label-all-scale-points-or-just-the-end-points-for-attitudinal-questions" target="_blank" rel="noopener">Survey Practice</a>).</p>
+      <p class="muted">Small numbers point to the sources at the bottom of the page.</p>
+      <p>Each need factor is rated 1 to 5. A 1 adds nothing and a 5 adds the factor's full weight. We add those up and scale the total to 0 to 100. Every point on every scale has a label, because survey research generally finds fully labeled scales give more reliable answers.<sup class="ref"><a href="#src-1" aria-label="Source 1: Survey Practice">1</a></sup></p>
       <h3>Why effort is not in the score</h3>
-      <p>In a weighted score, a high mark on one factor can make up for a low mark on another (<a href="https://assets.publishing.service.gov.uk/media/5a790545e5274a2acd18b975/1132618.pdf" target="_blank" rel="noopener">UK government multi-criteria analysis manual</a>). If effort counted against a course, a hard update could hide an urgent need. A 2018 ISPOR Special Task Force report on decision scoring recommends leaving cost out of the score as a negative factor (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7110784/" target="_blank" rel="noopener">Phelps and others</a>). Some product teams divide by effort instead, as RICE does (<a href="https://www.intercom.com/blog/rice-simple-prioritization-for-product-managers/" target="_blank" rel="noopener">Intercom</a>) and WSJF does (<a href="https://framework.scaledagile.com/wsjf" target="_blank" rel="noopener">SAFe</a>), but with WSJF, big but important work can wait (<a href="https://highberg.com/insights/wsjf-for-backlog-prioritization/" target="_blank" rel="noopener">Highberg</a>). Nielsen Norman Group's impact and effort guidance pursues quick wins and big bets alike (<a href="https://www.nngroup.com/articles/prioritization-methods/" target="_blank" rel="noopener">NN/g</a>). So effort is a label that helps you plan.</p>
+      <p>In a weighted score, a high mark on one factor can make up for a low mark on another.<sup class="ref"><a href="#src-2" aria-label="Source 2: UK government multi-criteria analysis manual">2</a></sup> If effort counted against a course, a hard update could hide an urgent need. A 2018 ISPOR Special Task Force report on decision scoring recommends leaving cost out of the score as a negative factor.<sup class="ref"><a href="#src-3" aria-label="Source 3: Phelps and others">3</a></sup> Some product teams divide by effort instead, as RICE does<sup class="ref"><a href="#src-4" aria-label="Source 4: Intercom">4</a></sup> and WSJF does,<sup class="ref"><a href="#src-5" aria-label="Source 5: SAFe">5</a></sup> but with WSJF, big but important work can wait.<sup class="ref"><a href="#src-6" aria-label="Source 6: Highberg">6</a></sup> Nielsen Norman Group's impact and effort guidance pursues quick wins and big bets alike.<sup class="ref"><a href="#src-7" aria-label="Source 7: NN/g">7</a></sup> So effort is a label that helps you plan.</p>
       <h3>Why must-change courses sit outside the score</h3>
-      <p>Portfolio guidance says to name required work as required, not force it to win a scoring contest (<a href="https://www.kiplot.com/guides/portfolio-prioritization/" target="_blank" rel="noopener">Kiplot</a>). One audit guide adds that outdated content should not stay available just because most of it is still valid (<a href="https://www.scheer-imc.com/blog/article/practical-learning-content-audit/" target="_blank" rel="noopener">scheer imc</a>).</p>
+      <p>Portfolio guidance says to name required work as required, not force it to win a scoring contest.<sup class="ref"><a href="#src-8" aria-label="Source 8: Kiplot">8</a></sup> One audit guide adds that outdated content should not stay available just because most of it is still valid.<sup class="ref"><a href="#src-9" aria-label="Source 9: scheer imc">9</a></sup></p>
       <h3>About learner feedback</h3>
-      <p>A 2008 meta-analysis found that learner reactions mostly reflect the characteristics of the course itself (<a href="https://pubmed.ncbi.nlm.nih.gov/18361632/" target="_blank" rel="noopener">Sitzmann and others</a>). For use on the job, ratings of how much people liked a course had a corrected correlation of .08, and ratings of how useful it was had .17, when the two were measured separately (<a href="https://jasonhuangatwork.com/papers/Blume%20Ford%20Baldwin%20Huang%202010%20JOM%20-%20Transfer%20Meta.pdf" target="_blank" rel="noopener">Blume and others</a>). So the feedback factor asks about usefulness and clarity, and carries the smallest weight. High completion does not show that a course works either (<a href="https://brandonhall.com/how-to-conduct-a-learning-needs-analysis-for-2026-a-step-by-step-guide-for-ld-leaders/" target="_blank" rel="noopener">Brandon Hall Group</a>).</p>
+      <p>A 2008 meta-analysis found that learner reactions mostly reflect the characteristics of the course itself.<sup class="ref"><a href="#src-10" aria-label="Source 10: Sitzmann and others">10</a></sup> For use on the job, ratings of how much people liked a course had a corrected correlation of .08, and ratings of how useful it was had .17, when the two were measured separately.<sup class="ref"><a href="#src-11" aria-label="Source 11: Blume and others">11</a></sup> So the feedback factor asks about usefulness and clarity, and carries the smallest weight. High completion does not show that a course works either.<sup class="ref"><a href="#src-12" aria-label="Source 12: Brandon Hall Group">12</a></sup></p>
       <h3>Reviewing the whole catalog</h3>
-      <p>Course audits usually sort courses into keep, update, merge, or retire (<a href="https://trainingindustry.com/articles/content-development/stop-rebuilding-training-content-you-already-have/" target="_blank" rel="noopener">Training Industry</a>). Low use is a signal, not a verdict: a small audience can be critical, or people may not find the course (<a href="https://accellms.com/insights/your-lms-has-too-many-courses/" target="_blank" rel="noopener">Accel</a>). Accessibility and courses that no longer run belong in the review too (<a href="https://www.instructionalengineer.com/elearning-content-audit/" target="_blank" rel="noopener">Instructional Engineer</a>). Flash content, for example, has been blocked since January 12, 2021 (<a href="https://elearning.adobe.com/2020/12/how-to-view-flash-content-after-december-31-2020-and-january-12-2021/" target="_blank" rel="noopener">Adobe</a>). Cathy Moore's flowchart asks whether a job aid or a workflow fix would solve a problem before training does (<a href="https://blog.cathy-moore.com/is-training-really-the-answer-ask-the-flowchart/" target="_blank" rel="noopener">Cathy Moore</a>). We suggest asking the same before a rebuild.</p>
+      <p>Course audits usually sort courses into keep, update, merge, or retire.<sup class="ref"><a href="#src-13" aria-label="Source 13: Training Industry">13</a></sup> Low use is a signal, not a verdict: a small audience can be critical, or people may not find the course.<sup class="ref"><a href="#src-14" aria-label="Source 14: Accel">14</a></sup> Accessibility and courses that no longer run belong in the review too.<sup class="ref"><a href="#src-15" aria-label="Source 15: Instructional Engineer">15</a></sup> Flash content, for example, has been blocked since January 12, 2021.<sup class="ref"><a href="#src-16" aria-label="Source 16: Adobe">16</a></sup> Cathy Moore's flowchart asks whether a job aid or a workflow fix would solve a problem before training does.<sup class="ref"><a href="#src-17" aria-label="Source 17: Cathy Moore">17</a></sup> We suggest asking the same before a rebuild.</p>
       <h3>The ranking supports your decision</h3>
-      <p>Decision scoring guidance is clear that the analysis informs people and does not decide for them (<a href="https://www.ispor.org/docs/default-source/publications/value-outcomes-spotlight/march-april-2016/valueandoutcomesspotlight_mcda_tfr2-summary.pdf" target="_blank" rel="noopener">ISPOR task force summary</a>). UK government guidance recommends showing what each factor contributed; we show the top two (<a href="https://assets.publishing.service.gov.uk/media/6645e4b2b7249a4c6e9d3631/Use_of_MCDA_in_options_appraisal_of_economic_cases.pdf" target="_blank" rel="noopener">DESNZ</a>). The close call marker is a simple version of the sensitivity testing the UK manual recommends.</p>
+      <p>Decision scoring guidance is clear that the analysis informs people and does not decide for them.<sup class="ref"><a href="#src-18" aria-label="Source 18: ISPOR task force summary">18</a></sup> UK government guidance recommends showing what each factor contributed; we show the top two.<sup class="ref"><a href="#src-19" aria-label="Source 19: DESNZ">19</a></sup> The close call marker is a simple version of the sensitivity testing the UK manual recommends.</p>
       <h3>Our choices</h3>
       <p>These settings are our judgment, not findings from a study. Change the weights and capacity to fit your team.</p>
       <ul>
@@ -102,6 +109,29 @@
         <li>The effort labels: Quick fix for 1 or 2, Moderate for 3, Major project for 4 or 5.</li>
         <li>The middle levels (2 and 4) of Works for everyone.</li>
       </ul>
+
+      <h2>Sources</h2>
+      <ol class="sources">
+        <li id="src-1"><a href="https://www.surveypractice.org/article/2956-should-i-label-all-scale-points-or-just-the-end-points-for-attitudinal-questions" target="_blank" rel="noopener">Survey Practice</a></li>
+        <li id="src-2"><a href="https://assets.publishing.service.gov.uk/media/5a790545e5274a2acd18b975/1132618.pdf" target="_blank" rel="noopener">UK government multi-criteria analysis manual</a></li>
+        <li id="src-3"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7110784/" target="_blank" rel="noopener">Phelps and others</a></li>
+        <li id="src-4"><a href="https://www.intercom.com/blog/rice-simple-prioritization-for-product-managers/" target="_blank" rel="noopener">Intercom</a></li>
+        <li id="src-5"><a href="https://framework.scaledagile.com/wsjf" target="_blank" rel="noopener">SAFe</a></li>
+        <li id="src-6"><a href="https://highberg.com/insights/wsjf-for-backlog-prioritization/" target="_blank" rel="noopener">Highberg</a></li>
+        <li id="src-7"><a href="https://www.nngroup.com/articles/prioritization-methods/" target="_blank" rel="noopener">NN/g</a></li>
+        <li id="src-8"><a href="https://www.kiplot.com/guides/portfolio-prioritization/" target="_blank" rel="noopener">Kiplot</a></li>
+        <li id="src-9"><a href="https://www.scheer-imc.com/blog/article/practical-learning-content-audit/" target="_blank" rel="noopener">scheer imc</a></li>
+        <li id="src-10"><a href="https://pubmed.ncbi.nlm.nih.gov/18361632/" target="_blank" rel="noopener">Sitzmann and others</a></li>
+        <li id="src-11"><a href="https://jasonhuangatwork.com/papers/Blume%20Ford%20Baldwin%20Huang%202010%20JOM%20-%20Transfer%20Meta.pdf" target="_blank" rel="noopener">Blume and others</a></li>
+        <li id="src-12"><a href="https://brandonhall.com/how-to-conduct-a-learning-needs-analysis-for-2026-a-step-by-step-guide-for-ld-leaders/" target="_blank" rel="noopener">Brandon Hall Group</a></li>
+        <li id="src-13"><a href="https://trainingindustry.com/articles/content-development/stop-rebuilding-training-content-you-already-have/" target="_blank" rel="noopener">Training Industry</a></li>
+        <li id="src-14"><a href="https://accellms.com/insights/your-lms-has-too-many-courses/" target="_blank" rel="noopener">Accel</a></li>
+        <li id="src-15"><a href="https://www.instructionalengineer.com/elearning-content-audit/" target="_blank" rel="noopener">Instructional Engineer</a></li>
+        <li id="src-16"><a href="https://elearning.adobe.com/2020/12/how-to-view-flash-content-after-december-31-2020-and-january-12-2021/" target="_blank" rel="noopener">Adobe</a></li>
+        <li id="src-17"><a href="https://blog.cathy-moore.com/is-training-really-the-answer-ask-the-flowchart/" target="_blank" rel="noopener">Cathy Moore</a></li>
+        <li id="src-18"><a href="https://www.ispor.org/docs/default-source/publications/value-outcomes-spotlight/march-april-2016/valueandoutcomesspotlight_mcda_tfr2-summary.pdf" target="_blank" rel="noopener">ISPOR task force summary</a></li>
+        <li id="src-19"><a href="https://assets.publishing.service.gov.uk/media/6645e4b2b7249a4c6e9d3631/Use_of_MCDA_in_options_appraisal_of_economic_cases.pdf" target="_blank" rel="noopener">DESNZ</a></li>
+      </ol>
     </section>
   </main>
   <footer class="site-foot">
