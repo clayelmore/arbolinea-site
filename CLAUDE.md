@@ -162,6 +162,10 @@ the wording, get the OK, push, and confirm the change is live on arbolinea.com.
   never links inside the sentences (Clay, 2026-11-23: the references prove the reasoning, but they are
   not part of the text people read). The priority tool's `app.js` imports `./logic.js?v=N`; raise N
   whenever the names it imports change, so a cached `logic.js` is never paired with a newer `app.js`.
+  The priority tool comes first on its page and the explanation sits in a separate "About this tool"
+  section below it (Clay, 2026-11-23: the tool should be almost separate from the description). Each
+  course card shows its need score live with its place on the scale, and Add a course fills in a
+  starter name so a new course never errors.
 - `samples/installation-procedures/index.html` is the landing page for two installation
   procedures Clay wrote (`samples/cm3-nli-reassignment-excerpt.pdf`,
   `samples/sm-xc-growth-excerpt.pdf`), added 2026-10-27. Clay removed company names, the product

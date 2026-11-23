@@ -124,6 +124,35 @@ export function scoreParts(c, weights) {
   });
 }
 
+// Where one course stands while it is being rated. Until all five signs are rated, low and high are the range
+// the score can still land in. left names every rating not chosen yet, effort included: the ranked list needs it.
+export function scoreProgress(c, weights) {
+  const den = FACTORS.reduce((t, f) => t + wt(weights, f.key), 0);
+  if (den === 0) return null;
+  const has = (key) => isRating(c[key]) || (key === 'feedback' && c.feedback === 'none');
+  let low = 0;
+  let high = 0;
+  for (const f of FACTORS) {
+    const w = wt(weights, f.key);
+    if (has(f.key)) { low += w * (ratingFor(c, f.key) - 1); high += w * (ratingFor(c, f.key) - 1); } else high += w * 4;
+  }
+  const left = [...FACTORS, EFFORT].filter((f) => !has(f.key)).map((f) => f.label);
+  const rated = FACTORS.filter((f) => has(f.key)).length;
+  const complete = rated === FACTORS.length;
+  const pct = (n) => Math.round((100 * n) / (4 * den));
+  return { rated, complete, low: pct(low), high: pct(high), score: complete ? needScore(c, weights) : null, left };
+}
+
+export function zoneFor(score) { return score >= CUTOFFS.doFirst ? 'doFirst' : score >= CUTOFFS.next ? 'next' : 'later'; }
+
+// The notes shown on a course card. A course typed in on the page does not list ratings that are simply not chosen yet,
+// because the card's score line already says what is left. A CSV row keeps every note, so a bad value in the file is flagged.
+export function cardProblems(c) {
+  const all = validateCourse(c);
+  if (Array.isArray(c.csvProblems)) return all;
+  return all.filter((p) => !/ must be 1 to 5(, or No data)?$/.test(p));
+}
+
 export function drivers(c, weights) {
   return FACTORS.map((f, i) => ({ key: f.key, i, v: wt(weights, f.key) * (ratingFor(c, f.key) - 1) }))
     .filter((x) => x.v > 0 && !(x.key === 'feedback' && c.feedback === 'none'))

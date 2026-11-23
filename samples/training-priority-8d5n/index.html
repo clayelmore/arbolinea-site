@@ -15,19 +15,16 @@
 </head>
 <body>
   <main>
-    <section class="wrap">
+    <section class="wrap tool">
       <p class="label">Interactive tool</p>
       <h1>Which courses do we update first?</h1>
       <div class="lede">
-        <p>Most training teams have more courses than time. This tool helps decide which ones to update first. Rate each course on five signs of need: how many people take it, what goes wrong if they get it wrong, how out of date it is, whether it works for everyone, and what learners say about it. We combine those into a need score from 0 to 100 and rank the list.</p>
-        <p>Effort is not part of the score. A course that matters a lot and needs a rebuild should still rise to the top, so we show effort as a label that helps you plan the work. The ranking supports your team's decision. It does not make it.</p>
+        <p>Rate each course from 1 to 5 on five signs of need. Each course gets a need score from 0 to 100, shown on its card as you rate it, and the ranked list builds itself below.</p>
       </div>
       <p class="muted">Everything stays in this browser. Nothing you enter is sent anywhere. Your list is saved on this device so a reload keeps it.</p>
+      <p class="no-print"><a href="#about">How the ratings and the score work</a></p>
 
       <div class="no-print">
-        <h2>The five signs of need</h2>
-        <div id="guide"></div>
-
         <h2>Your courses</h2>
         <p>Enter courses here one at a time, or bring in a whole list from a CSV file. The sample CSV shows the format.</p>
         <div class="actions">
@@ -47,11 +44,9 @@
           <textarea id="csv" spellcheck="false"></textarea>
           <div class="actions"><button type="button" id="import">Add these rows</button></div>
         </details>
-        <div id="editor"></div>
-
-        <h2>Settings</h2>
-        <div class="panel">
-          <p>How much does going from 1 to 5 on each factor matter, compared with the others? Move the sliders, and the list re-sorts as you go.</p>
+        <details class="panel settings">
+          <summary>Settings: weights and capacity</summary>
+          <p>How much does going from 1 to 5 on each factor matter, compared with the others? Move the sliders, and the scores and the list update as you go.</p>
           <div id="weights" class="grid-2"></div>
           <div class="actions"><button type="button" class="secondary" id="reset-weights">Reset weights</button></div>
           <label class="field" style="margin-top: 22px">How many courses can you update this cycle? (optional)
@@ -59,7 +54,8 @@
           </label>
           <p id="capacity-message" class="problem" role="status"></p>
           <p class="muted">Capacity counts courses, not hours. The effort labels show which ones are big. Without a number, we use starting cutoffs of 70 for Do first and 45 for Next.</p>
-        </div>
+        </details>
+        <div id="editor"></div>
       </div>
 
       <h2>Results</h2>
@@ -70,6 +66,19 @@
         <button type="button" class="secondary" id="download">Download CSV</button>
       </div>
       <p id="download-message" class="problem no-print" role="status"></p>
+    </section>
+
+    <section class="about" id="about">
+     <div class="wrap">
+      <p class="label">About this tool</p>
+      <h2>What it is for</h2>
+      <p>Most training teams have more courses than time. This tool helps decide which ones to update first. Rate each course on five signs of need: how many people take it, what goes wrong if they get it wrong, how out of date it is, whether it works for everyone, and what learners say about it. We combine those into a need score from 0 to 100 and rank the list.</p>
+      <p>Effort is not part of the score. A course that matters a lot and needs a rebuild should still rise to the top, so we show effort as a label that helps you plan the work. The ranking supports your team's decision. It does not make it.</p>
+
+      <div class="no-print">
+        <h2 id="signs">The five signs of need</h2>
+        <div id="guide"></div>
+      </div>
 
       <h2>Using the results</h2>
       <ul>
@@ -128,6 +137,7 @@
         <li id="src-15"><a href="https://www.ispor.org/docs/default-source/publications/value-outcomes-spotlight/march-april-2016/valueandoutcomesspotlight_mcda_tfr2-summary.pdf" target="_blank" rel="noopener">Multiple Criteria Decision Analysis for Health Care Decision Making - Emerging Good Practices: Report 2 of the ISPOR MCDA Emerging Good Practices Task Force</a><span class="src-by">ISPOR, summary in Value &amp; Outcomes Spotlight, March/April 2016</span></li>
         <li id="src-16"><a href="https://assets.publishing.service.gov.uk/media/6645e4b2b7249a4c6e9d3631/Use_of_MCDA_in_options_appraisal_of_economic_cases.pdf" target="_blank" rel="noopener">Use of Multi-Criteria Decision Analysis in options appraisal of economic cases</a><span class="src-by">UK Department for Energy Security and Net Zero, 2024</span></li>
       </ol>
+     </div>
     </section>
   </main>
   <footer class="site-foot">

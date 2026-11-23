@@ -155,10 +155,53 @@ ul.sf-rows li { display: grid; grid-template-columns: minmax(0, 1fr) 34px 78px; 
 .sf-zone b { display: block; font-weight: 600; font-size: 14px; color: var(--text); white-space: nowrap; }
 .sf-zone i { display: block; font-style: normal; font-family: var(--font-mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
 .sf-mark { position: absolute; top: -8px; bottom: -6px; width: 2px; margin-left: -1px; background: var(--timber); }
-.sf-mark b { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 13px; color: var(--bg); background: var(--timber); border-radius: 6px; padding: 0 6px; }
+.sf-mark b { white-space: nowrap; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 13px; color: var(--bg); background: var(--timber); border-radius: 6px; padding: 0 6px; }
 .sf-note { font-size: 15px; color: var(--muted); margin-top: 14px; }
 .sf-scale + .sf-note { margin-top: 22px; }
 .sf-note strong { color: var(--text-2); }
+/* Priority tool: the live score on each course card and in the ranked list. */
+.score-strip { background: var(--panel); border: 1px solid var(--ice-deep); border-radius: 12px; padding: 14px 16px 16px; margin: 0 0 16px; }
+.ss-label { display: block; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ice); }
+.ss-main { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin-top: 2px; }
+.ss-num { font-family: var(--font-display); font-weight: 600; font-size: 44px; line-height: 1.1; color: var(--text); }
+.ss-num.range { font-size: 30px; }
+.ss-num.off { font-size: 24px; font-weight: 500; color: var(--muted); }
+.ss-note { color: var(--muted); font-size: 15px; line-height: 1.4; }
+.ss-main .tag { margin: 0; }
+.tag.group { font-size: 13px; color: var(--bg); background: var(--ice); border-color: var(--ice); }
+.ss-left { font-size: 15px; margin-top: 14px; max-width: none; }
+.ss-left strong { color: var(--text); }
+.sf-zone.solo { border-radius: 10px; }
+@media (max-width: 420px) {
+  .score-strip { padding: 12px 10px 14px; }
+  .score-strip .sf-zone { padding-left: 1px; padding-right: 1px; }
+  .score-strip .sf-zone b { font-size: 13px; }
+  .score-strip .sf-zone i { font-size: 10px; letter-spacing: -0.02em; }
+}
+.sf-scale.no-mark { margin-top: 14px; }
+.sf-band { position: absolute; top: -4px; bottom: -4px; background: rgba(210, 168, 120, 0.3); border: 2px solid var(--timber); border-radius: 6px; }
+.sf-scale.slim { margin-top: 12px; }
+.sf-scale.slim .sf-zone { padding: 0; height: 10px; }
+.sf-scale.slim .sf-zone:not(.on) { background: rgba(143, 198, 232, 0.07); }
+.sf-scale.slim .sf-mark { top: -5px; bottom: -5px; width: 4px; margin-left: -2px; border-radius: 2px; }
+.group .item { max-width: none; }
+.item-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.item-head .name { font-size: 18px; padding-top: 4px; }
+.item-score { text-align: right; flex: none; }
+.item-score .ss-num { display: block; font-size: 36px; }
+/* Priority tool: the explanation sits in its own section below the tool. */
+.wrap.tool { padding-bottom: 64px; }
+section.about { background: var(--bg-alt); border-top: 1px solid var(--hairline); }
+section.about .wrap { padding-top: 48px; }
+section.about .label + h2 { margin-top: 14px; }
+details.panel > summary { cursor: pointer; color: var(--text); }
+details.panel.settings { margin-top: 12px; }
+@media print {
+  .score-strip { background: #fff !important; border-color: #999 !important; }
+  .ss-label, .ss-num, .ss-note, .ss-left, .ss-left strong { color: #000 !important; }
+  .tag.group { background: #fff !important; color: #000 !important; }
+  .sf-band { background: #ddd !important; border-color: #000 !important; }
+}
 @media print {
   .score-fig, .sf-zone, .sf-track { background: #fff !important; border-color: #999 !important; }
   .score-fig figcaption, .sf-name, .sf-pts, .sf-zone b, .sf-zone i, .sf-note, .sf-note strong, .sf-step strong, .src-by { color: #000 !important; }

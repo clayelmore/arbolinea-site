@@ -2,7 +2,8 @@
 import {
   FACTORS, EFFORT, DEFAULT_WEIGHTS, REASON_TYPES, GROUPS, HINTS, EXAMPLE_COURSES, DIAGRAM_COURSE, CUTOFFS,
   emptyCourse, validateCourse, rankCourses, importCsv, toCsv, sampleCsv, fileProblem, validCapacity, needScore, scoreParts, effortLabel,
-} from './logic.js?v=4'; // Raise v when the names imported here change, so a cached logic.js is never paired with a newer app.js.
+  scoreProgress, zoneFor, cardProblems,
+} from './logic.js?v=5'; // Raise v when the names imported here change, so a cached logic.js is never paired with a newer app.js.
 
 const KEY = 'tp-state-v1';
 const $ = (s) => document.querySelector(s);
@@ -86,6 +87,23 @@ function renderGuide() {
     sign(EFFORT));
 }
 
+// ---------------------------------------------------------------- scale bar
+const groupLabel = (key) => GROUPS.find((g) => g.key === key).label;
+const ZONES = [['later', 0, CUTOFFS.next - 1], ['next', CUTOFFS.next, CUTOFFS.doFirst - 1], ['doFirst', CUTOFFS.doFirst, 100]];
+// The 0 to 100 scale with a marker at the score, or a band while the score is still a range.
+// zoned draws Later, Next, and Do first by the cutoffs. With a capacity number the groups come from rank, so the bar is plain.
+function scaleBar({ score = null, low = null, high = null, zoned = true, slim = false }) {
+  const on = score != null && zoned ? zoneFor(score) : null;
+  const zones = zoned
+    ? ZONES.map(([key, lo, hi]) => el('span', { class: 'sf-zone' + (key === on ? ' on' : ''), style: `width: ${hi - lo + (hi === 100 ? 0 : 1)}%` },
+      slim ? null : el('b', { text: groupLabel(key) }), slim ? null : el('i', { text: `${lo} to ${hi}` })))
+    : [el('span', { class: 'sf-zone solo', style: 'width: 100%' }, slim ? null : el('b', { text: 'Need score' }), slim ? null : el('i', { text: '0 to 100' }))];
+  return el('div', { class: 'sf-scale' + (slim ? ' slim' : '') + (score == null ? ' no-mark' : ''), 'aria-hidden': 'true' },
+    zones,
+    low != null ? el('span', { class: 'sf-band', style: `left: ${low}%; width: ${high - low}%` }) : null,
+    score != null ? el('span', { class: 'sf-mark', style: `left: ${score}%` }, slim ? null : el('b', { text: String(score) })) : null);
+}
+
 // ---------------------------------------------------------------- score diagram
 // One worked example, drawn from the same functions that score the real list.
 function renderDiagram() {
@@ -94,8 +112,7 @@ function renderDiagram() {
   const score = needScore(c, DEFAULT_WEIGHTS);
   const widest = Math.max(...parts.map((p) => p.weight));
   const num = (n) => String(Math.round(n * 100) / 100);
-  const zones = [['Later', 0, CUTOFFS.next - 1], ['Next', CUTOFFS.next, CUTOFFS.doFirst - 1], ['Do first', CUTOFFS.doFirst, 100]];
-  const zone = zones.find(([, lo, hi]) => score >= lo && score <= hi)[0];
+  const zone = groupLabel(zoneFor(score));
   $('#score-diagram').replaceChildren(el('figure', { class: 'score-fig' },
     el('figcaption', { text: 'An example course, scored with the default weights' }),
     el('p', { class: 'sf-step' }, el('strong', { text: '1. Rate. ' }), 'Each sign gets a rating from 1 to 5.'),
@@ -109,10 +126,7 @@ function renderDiagram() {
     el('p', { class: 'sf-step' }, el('strong', { text: '3. Add up. ' }),
       `${parts.map((p) => num(p.points)).join(' + ')} = `, el('strong', { class: 'sf-score', text: `need score ${score}` }), ' out of 100.'),
     el('p', { class: 'sf-step' }, el('strong', { text: '4. Place. ' }), `A score of ${score} lands in ${zone}.`),
-    el('div', { class: 'sf-scale', 'aria-hidden': 'true' },
-      zones.map(([name, lo, hi]) => el('span', { class: 'sf-zone' + (name === zone ? ' on' : ''), style: `width: ${hi - lo + (hi === 100 ? 0 : 1)}%` },
-        el('b', { text: name }), el('i', { text: `${lo} to ${hi}` }))),
-      el('span', { class: 'sf-mark', style: `left: ${score}%` }, el('b', { text: String(score) }))),
+    scaleBar({ score }),
     el('p', { class: 'sf-note' }, el('strong', { text: 'Effort ' }), `is rated too, but it only shows as a label (here: ${effortLabel(c.effort)}). It never changes the score.`),
     el('p', { class: 'sf-note' }, el('strong', { text: 'Must-change courses ' }), 'skip the score and go to Required, above the list.')));
 }
@@ -132,6 +146,7 @@ const cardTitle = (c) => (c.course || '').trim() || `Course ${state.courses.inde
 function rowCard(c) {
   return el('div', { class: 'card-row', role: 'group', 'aria-labelledby': `t-${c.id}`, 'data-id': c.id },
     el('h3', { class: 'card-title', id: `t-${c.id}`, text: cardTitle(c) }),
+    el('div', { class: 'score-strip' }),
     el('label', { class: 'field' }, 'Course name', el('input', { type: 'text', class: 'name', 'data-field': 'course', value: c.course, maxlength: '120' })),
     el('div', { class: 'ratings' },
       FACTORS.map((f) => ratingSelect(c, f.key, f.label, f.anchors, f.key === 'feedback')),
@@ -152,10 +167,64 @@ function rowCard(c) {
 
 function showProblems(card, c) {
   const list = card.querySelector('.problems');
-  const probs = validateCourse(c);
+  const probs = cardProblems(c);
   list.replaceChildren(...probs.map((p) => el('li', { text: p })));
   list.hidden = !probs.length;
   if (probs.length) card.setAttribute('aria-describedby', list.id); else card.removeAttribute('aria-describedby');
+}
+
+// The score line on a course card: the number, the group, and where it sits on the scale.
+// placed is this course's spot in the ranked list ({ group, rank, of }), or undefined while it is left out.
+function fillStrip(card, c, placed) {
+  const strip = card.querySelector('.score-strip');
+  const show = (...kids) => strip.replaceChildren(...kids.filter(Boolean));
+  const p = scoreProgress(c, state.weights);
+  const zoned = !validCapacity(state.capacity);
+  const label = (t) => el('span', { class: 'ss-label', text: t });
+  const main = (...kids) => el('div', { class: 'ss-main' }, kids);
+  const note = (t) => el('span', { class: 'ss-note', text: t });
+  if (!p) {
+    show(label('Need score'), main(el('span', { class: 'ss-num off', text: 'None yet' }), note('Set at least one weight above zero to get a score.')));
+    return;
+  }
+  const left = p.left.length
+    ? el('p', { class: 'ss-left' }, el('strong', { text: 'Still to rate: ' }), `${p.left.join(', ')}.`,
+      p.complete ? ' It does not change the score, but the ranked list needs it.' : '')
+    : null;
+  if (!p.complete) {
+    show(
+      label(p.rated ? 'Need score so far' : 'Need score'),
+      p.rated
+        ? main(el('span', { class: 'ss-num range', text: `${p.low} to ${p.high}` }), note(`${p.rated} of 5 signs rated. The range narrows with each one.`))
+        : main(el('span', { class: 'ss-num off', text: 'None yet' }), note('Pick the ratings below. The score fills in here as you go.')),
+      scaleBar(p.rated ? { low: p.low, high: p.high, zoned } : { zoned }),
+      left);
+    return;
+  }
+  const group = placed ? placed.group : (zoned && !c.must_change ? zoneFor(p.score) : null);
+  const where = !placed ? 'Not in the ranked list yet.'
+    : placed.group === 'required' ? 'Must change, so it sits above the ranking.'
+    : placed.of > 1 ? `Ranked ${placed.rank} of ${placed.of}.` : '';
+  show(
+    label('Need score'),
+    main(el('span', { class: 'ss-num', text: String(p.score) }),
+      group ? el('span', { class: 'tag group', text: groupLabel(group) }) : null,
+      where ? note(where) : null),
+    scaleBar({ score: p.score, zoned }),
+    left);
+}
+
+function renderStrips(r) {
+  const placed = new Map();
+  if (r && r.groups) {
+    r.groups.required.forEach((it) => placed.set(it.id, { group: 'required' }));
+    const ranked = [...r.groups.doFirst, ...r.groups.next, ...r.groups.later];
+    ranked.forEach((it, i) => placed.set(it.id, { group: it.group, rank: i + 1, of: ranked.length }));
+  }
+  for (const card of $('#editor').querySelectorAll('[data-id]')) {
+    const c = state.courses.find((x) => x.id === card.dataset.id);
+    if (c) fillStrip(card, c, placed.get(c.id));
+  }
 }
 
 function renderEditor() {
@@ -207,9 +276,15 @@ $('#editor').addEventListener('click', (e) => {
 });
 $('#add').addEventListener('click', () => {
   const c = emptyCourse(newId());
+  // A starter name, so a new course is never held back for a blank name. It is selected, ready to type over.
+  const taken = new Set(state.courses.map((x) => x.course.trim()));
+  let n = state.courses.length + 1;
+  while (taken.has(`Course ${n}`)) n++;
+  c.course = `Course ${n}`;
   state.courses.push(c);
   save(); renderEditor(); renderResults();
-  $('#editor').lastElementChild.querySelector('input').focus();
+  const name = $('#editor').lastElementChild.querySelector('input.name');
+  name.focus(); name.select();
 });
 $('#example').addEventListener('click', () => {
   if (state.courses.length && !confirm('Replace your list with the example courses?')) return;
@@ -279,8 +354,10 @@ function itemView(it) {
   const r = it.row;
   const reason = REASON_TYPES.find((t) => t.key === r.reason);
   return el('li', { class: 'item' },
-    el('div', { class: 'name', text: it.course }),
-    el('div', { class: 'meta-line', text: `Need score ${it.score}` }),
+    el('div', { class: 'item-head' },
+      el('div', { class: 'name', text: it.course }),
+      el('div', { class: 'item-score' }, el('span', { class: 'ss-label', text: 'Need score' }), el('span', { class: 'ss-num', text: String(it.score) }))),
+    scaleBar({ score: it.score, zoned: !validCapacity(state.capacity), slim: true }),
     el('div', {},
       el('span', { class: 'tag', text: it.effortLabel }),
       it.closeCall ? el('span', { class: 'tag warn', text: 'Close call' }) : null),
@@ -297,12 +374,14 @@ function renderResults() {
   capacityNote();
   const r = rankCourses(state.courses, state.weights, state.capacity);
   const out = $('#results');
+  renderStrips(r);
   if (!state.courses.length) { setSummary('Add courses or load the example to see a ranked list.'); out.replaceChildren(); return; }
   const dl = $('#download-message');
   if (!r.error && dl.textContent) dl.textContent = '';
   if (r.error) { setSummary(r.error); out.replaceChildren(); return; }
   const counts = GROUPS.map((g) => `${g.label} ${r.groups[g.key].length}`).join(', ');
-  setSummary(`${counts}.` + (r.leftOut ? ` ${r.leftOut} course${r.leftOut === 1 ? ' is' : 's are'} left out until fixed.` : ''));
+  const waiting = r.leftOut ? `${r.leftOut} course${r.leftOut === 1 ? ' is' : 's are'} not in the list yet. Finish ${r.leftOut === 1 ? 'it on its card' : 'them on their cards'} above.` : '';
+  setSummary(r.leftOut === state.courses.length ? `Nothing to rank yet. ${waiting}` : [`${counts}.`, waiting].filter(Boolean).join(' '));
   out.replaceChildren(
     ...r.warnings.map((w) => el('p', { class: 'problem', text: w })),
     ...GROUPS.filter((g) => r.groups[g.key].length).map((g) => el('section', { class: 'group' },
