@@ -10,17 +10,18 @@
        and tree.svg here are copies from that repo: recopy them when it changes. -->
 
   <title>60714 - Arbolinea</title>
-  <meta name="description" content="Kaprekar's routine sends every four-digit number to 6174. With the subtraction reordered, every five-digit number lands on 60714. The rule, what was computed, and what is still open.">
+  <meta name="description" content="Kaprekar's routine sends every four-digit number to 6174. With the subtraction reordered, every five-digit number that is not one repeated digit lands on 60714. The rule, what was computed, and what is still open.">
   <link rel="canonical" href="https://arbolinea.com/60714/">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Arbolinea">
-  <meta property="og:title" content="60714 - Arbolinea">
-  <meta property="og:description" content="Kaprekar's routine sends every four-digit number to 6174. With the subtraction reordered, every five-digit number lands on 60714.">
+  <meta property="og:title" content="60714: the five-digit cousin of 6174 - Arbolinea">
+  <meta property="og:description" content="Kaprekar's routine sends every four-digit number to 6174. With the subtraction reordered, every five-digit number that is not one repeated digit lands on 60714.">
   <meta property="og:url" content="https://arbolinea.com/60714/">
   <meta property="og:image" content="https://arbolinea.com/assets/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
 
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230E1411%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%238FC6E8%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2054%20H54%22%20stroke-width%3D%222.5%22%2F%3E%3Cpath%20d%3D%22M32%2054%20C30%2040%2022%2032%2016%2024%20l8%200%20l0%20-8%20l-10%200%20l0%206%22%2F%3E%3Cpath%20d%3D%22M32%2054%20C34%2038%2042%2030%2048%2022%20l-8%200%20l0%20-8%20l10%200%20l0%206%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 
@@ -70,7 +71,7 @@
       <div class="wrap">
         <p class="label">Research</p>
         <h1>60714</h1>
-        <p>Kaprekar's routine sends every four-digit number to 6174. With the subtraction reordered, every five-digit number lands on 60714.</p>
+        <p>Kaprekar's routine sends every four-digit number to 6174. With the subtraction reordered, every five-digit number that is not one repeated digit lands on 60714.</p>
       </div>
     </section>
 
@@ -119,9 +120,27 @@
     <section class="section" aria-label="Every five-digit start">
       <div class="wrap">
         <figure class="tree-figure">
-          <img src="tree.svg" width="1000" height="1000" loading="lazy" alt="A round tree on a black background. 60714 sits in a green circle at the center, and thousands of thin colored branches curve inward from the edge, each one a path that ends at 60714.">
-          <figcaption>Every five-digit start flowing into 60714. Each dot is one collection of five digits; the farther it sits from the center, the more steps it takes to arrive.</figcaption>
+          <!-- tree.js replaces this picture with a zoomable one drawn from tree-data.json
+               (written by build_tree_data.py). Without JavaScript the static tree.svg stays. -->
+          <div class="tree-view" id="tree-view">
+            <img src="tree.svg" width="1000" height="1000" loading="lazy" alt="A round tree on a black background. 60714 sits in a green circle at the center, and thousands of thin colored branches curve inward from the edge, each one a path that ends at 60714.">
+          </div>
+          <figcaption>Every five-digit start flowing into 60714. Each dot is one collection of five digits, in any order, because the rule sorts the digits first. Each line is one step of the rule, from a collection to the one it turns into. The farther a dot sits from the center, the more steps it takes to arrive. <span class="tree-howto" hidden>Zoom with the plus and minus buttons, the mouse wheel, or two fingers, and drag to move around. Zoom in far enough and the digits appear. Point at or tap a dot to see its numbers and its path to the center, or type a number in the box to find it.</span> The picture is drawn from a complete computer check of all 99,990 starts.</figcaption>
         </figure>
+      </div>
+    </section>
+
+    <section class="section policy" aria-labelledby="steps-heading">
+      <div class="wrap">
+        <h2 id="steps-heading">How many steps does it take?</h2>
+        <p>For each number of steps from 0 to 30, how many of the 99,990 five-digit starts reach 60714 in exactly that many. Only 60714 itself takes 0.</p>
+        <div class="steps-chart" id="steps-chart">
+          <noscript><p>The chart is drawn by JavaScript. The counts are in <a href="tree-data.json">tree-data.json</a>, under stepCounts.</p></noscript>
+        </div>
+        <p class="steps-summary" id="steps-summary"></p>
+        <details class="steps-table" id="steps-table" hidden>
+          <summary>Show the counts as a table</summary>
+        </details>
       </div>
     </section>
 
@@ -161,5 +180,6 @@
     </div>
   </footer>
 
+  <script src="tree.js" defer></script>
 </body>
 </html>
