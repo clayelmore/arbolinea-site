@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>60714: a Kaprekar fixed point at every length</title>
+<meta name="description" content="Interactive calculator for the lifted Kaprekar rules that fix 60714 at every digit length from 5 up. At 5 and 6 digits every input that is not one repeated digit reaches 60714; at 7 or more digits some inputs collapse to 0 instead.">
+
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1814;
+    --paper: #f4f0e6;
+    --paper-warm: #ebe4d3;
+    --rule: #c4a96b;
+    --rule-deep: #8a6f3d;
+    --hot: #b8311c;
+    --cool: #5b6e7a;
+    --soft: #6e6555;
+    --fade: #aaa294;
+    --highlight: #fff6db;
+    --escape-bg: #f3e8d0;
+    --escape-border: #a07a30;
+    --escape-text: #5e3f10;
+  }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(196, 169, 107, 0.12) 0%, transparent 55%),
+      radial-gradient(ellipse at 90% 110%, rgba(184, 49, 28, 0.07) 0%, transparent 55%),
+      var(--paper);
+    background-attachment: fixed;
+  }
+
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+  }
+
+  .frame {
+    position: relative; z-index: 2;
+    max-width: 760px; margin: 0 auto;
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  header {
+    text-align: center;
+    border-bottom: 1px double var(--rule);
+    padding-bottom: 2.5rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-style: italic;
+    font-variant: small-caps;
+    letter-spacing: 0.18em;
+    font-size: 0.78rem;
+    color: var(--rule-deep);
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: 'Didot', 'Bodoni 72', 'Hoefler Text', Garamond, serif;
+    font-weight: 400;
+    font-size: clamp(3.4rem, 9vw, 5.5rem);
+    letter-spacing: -0.025em;
+    line-height: 0.95;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  h1 .num {
+    display: inline-block;
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    color: var(--hot);
+  }
+
+  .subtitle {
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--soft);
+    margin-top: 0.5rem;
+    letter-spacing: 0.01em;
+  }
+
+  .lede {
+    margin-top: 2rem;
+    font-size: 1.02rem;
+    line-height: 1.7;
+    color: var(--ink);
+    max-width: 60ch;
+    margin-left: auto; margin-right: auto;
+    text-align: left;
+  }
+  .lede em { color: var(--rule-deep); font-style: italic; }
+  .lede strong { font-weight: 600; }
+
+  .panel {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.5) inset,
+      0 0 0 6px var(--paper),
+      0 0 0 7px var(--rule);
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute; top: 0.5rem; left: 0.5rem; right: 0.5rem; bottom: 0.5rem;
+    border: 1px solid rgba(196, 169, 107, 0.4);
+    pointer-events: none;
+  }
+
+  .panel-label {
+    font-variant: small-caps;
+    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    color: var(--rule-deep);
+    margin-bottom: 0.85rem;
+    text-align: center;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: 'Iowan Old Style', Georgia, serif;
+    font-size: 1.6rem;
+    padding: 0.6rem 0.9rem;
+    text-align: center;
+    letter-spacing: 0.1em;
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input[type="text"]:focus {
+    border-color: var(--hot);
+    box-shadow: 0 0 0 1px var(--hot);
+  }
+
+  button {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    font-family: 'Iowan Old Style', Georgia, serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    padding: 0 1.2rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.15s, transform 0.05s;
+    white-space: nowrap;
+  }
+  button:hover { background: var(--hot); }
+  button:active { transform: translateY(1px); }
+  button.secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+  }
+  button.secondary:hover { background: var(--ink); color: var(--paper); }
+  button.escape-try {
+    background: var(--escape-border);
+    color: var(--paper);
+    border: none;
+  }
+  button.escape-try:hover { background: var(--hot); }
+
+  .controls {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.85rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hint {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--soft);
+    text-align: center;
+    margin-top: 0.6rem;
+    min-height: 1.2em;
+  }
+  .hint.error { color: var(--hot); font-style: normal; font-weight: 500; }
+  .hint.escape { color: var(--escape-text); font-weight: 500; }
+
+  .trajectory { margin-top: 1rem; }
+
+  .step {
+    background: var(--paper-warm);
+    border-left: 3px solid var(--rule);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.8rem;
+    border-radius: 0 2px 2px 0;
+    position: relative;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: stepin 0.4s ease-out forwards;
+  }
+  @keyframes stepin {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step.fixed {
+    border-left-color: var(--hot);
+    background: var(--highlight);
+  }
+  .step.escape {
+    border-left-color: var(--escape-border);
+    background: var(--escape-bg);
+  }
+
+  .step-num {
+    position: absolute;
+    top: 0.65rem; right: 0.85rem;
+    font-variant: small-caps;
+    letter-spacing: 0.18em;
+    font-size: 0.65rem;
+    color: var(--rule-deep);
+  }
+
+  .step.fixed .step-num { color: var(--hot); font-weight: 600; }
+  .step.escape .step-num { color: var(--escape-text); font-weight: 600; }
+
+  .step-current {
+    font-family: 'Didot', 'Bodoni 72', Garamond, serif;
+    font-size: 2rem;
+    color: var(--ink);
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .step.fixed .step-current { color: var(--hot); }
+  .step.escape .step-current { color: var(--escape-text); }
+
+  /* === VARIABLE LABEL ROW (used at all d) === */
+  .var-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 0.6rem 0 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .var-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 2rem;
+  }
+
+  .var-pill .var-digit {
+    font-family: 'Iowan Old Style', Georgia, serif;
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    font-size: 1.15rem;
+    font-weight: 500;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    min-width: 2rem;
+    text-align: center;
+  }
+
+  .var-pill .var-name {
+    font-family: 'Iowan Old Style', Georgia, serif;
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--hot);
+    margin-top: 0.18rem;
+  }
+
+  /* Lifting term (d ≥ 7): c·(p − q) factor */
+  .coef-formula .coef-lift {
+    color: var(--cool);
+  }
+
+  /* === PI MINUS SIGMA SUBTRACTION (d=5, d=6) === */
+  .subtract-block {
+    margin-top: 0.7rem;
+    background: rgba(244, 240, 230, 0.5);
+    border: 1px solid rgba(196, 169, 107, 0.4);
+    border-radius: 3px;
+    padding: 0.7rem 0.85rem;
+    overflow-x: auto;
+  }
+
+  .subtract-line {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Iowan Old Style', Georgia, serif;
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  .subtract-op {
+    width: 1rem;
+    text-align: center;
+    color: var(--hot);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .subtract-num {
+    letter-spacing: 0.18em;
+    color: var(--ink);
+  }
+
+  .subtract-num .var-cell {
+    display: inline-block;
+    margin-right: 0.18em;
+    text-align: center;
+  }
+  .subtract-num .var-cell:last-child { margin-right: 0; }
+
+  .subtract-vars {
+    font-style: italic;
+    font-family: 'Iowan Old Style', Georgia, serif;
+    color: var(--cool);
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    flex-shrink: 0;
+  }
+
+  .subtract-eq {
+    color: var(--soft);
+    font-style: italic;
+    font-size: 0.78rem;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .subtract-rule {
+    height: 0;
+    border-bottom: 1.5px solid var(--ink);
+    margin: 0.25rem 0;
+  }
+
+  .subtract-result {
+    color: var(--hot);
+    font-weight: 500;
+  }
+
+  .subtract-meta {
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--soft);
+    margin-bottom: 0.45rem;
+    line-height: 1.5;
+  }
+
+  /* === COEFFICIENT FORM (d ≥ 7) === */
+  .coef-block {
+    margin-top: 0.7rem;
+    background: rgba(244, 240, 230, 0.5);
+    border: 1px solid rgba(196, 169, 107, 0.4);
+    border-radius: 3px;
+    padding: 0.7rem 0.85rem;
+    overflow-x: auto;
+  }
+
+  .coef-formula {
+    font-family: 'Iowan Old Style', Georgia, serif;
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--ink);
+    word-break: break-word;
+  }
+
+  .coef-formula .coef-pos { color: var(--ink); }
+  .coef-formula .coef-neg { color: var(--cool); }
+  .coef-formula .coef-eq { font-style: italic; color: var(--soft); margin: 0 0.3em; }
+  .coef-formula .coef-result {
+    display: block;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--rule);
+    color: var(--hot);
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  /* Coefficient-view collapsible panel: shown beneath the letter-form
+     subtraction so a reader can see the same step in coefficient form. */
+  details.coef-view {
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+  }
+  details.coef-view summary {
+    cursor: pointer;
+    color: var(--soft);
+    font-style: italic;
+    list-style: none;
+    user-select: none;
+  }
+  details.coef-view summary:hover { color: var(--ink); }
+  details.coef-view summary::before {
+    content: '▸ ';
+    display: inline-block;
+    transition: transform 0.15s ease;
+  }
+  details.coef-view[open] summary::before {
+    transform: rotate(90deg);
+  }
+  details.coef-view .coef-block { margin-top: 0.4rem; }
+  details.coef-view .coef-note {
+    margin-top: 0.5rem;
+    font-size: 0.83rem;
+    color: var(--soft);
+    line-height: 1.5;
+  }
+  details.coef-view .coef-note em {
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  /* === LEGACY .arithmetic kept for any leftover (escape banner etc) === */
+  .arithmetic {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.15rem 0.7rem;
+    font-family: 'Iowan Old Style', Georgia, serif;
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    font-size: 1.02rem;
+    color: var(--ink);
+    margin-top: 0.6rem;
+  }
+  .arithmetic .op {
+    font-style: italic;
+    color: var(--soft);
+    text-align: right;
+    font-size: 0.78rem;
+    line-height: 1.6em;
+    align-self: center;
+  }
+  .arithmetic .num-row {
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    letter-spacing: 0.15em;
+  }
+  .arithmetic .desc-row { color: var(--ink); }
+  .arithmetic .asc-row { color: var(--soft); }
+  .arithmetic .result-row {
+    color: var(--hot);
+    border-top: 1px solid var(--rule);
+    padding-top: 0.2rem;
+    margin-top: 0.2rem;
+    font-weight: 500;
+  }
+
+  .step .note {
+    font-style: italic;
+    color: var(--soft);
+    font-size: 0.85rem;
+    margin-top: 0.6rem;
+  }
+  .step.escape .note { color: var(--escape-text); font-style: normal; }
+
+  .fixed-banner {
+    text-align: center;
+    margin: 1rem 0 0;
+    padding: 0.7rem 0;
+    border-top: 1px double var(--rule);
+    border-bottom: 1px double var(--rule);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--rule-deep);
+    letter-spacing: 0.04em;
+  }
+
+  .escape-explainer {
+    background: var(--escape-bg);
+    border: 1px solid var(--escape-border);
+    padding: 1.1rem 1.4rem;
+    margin-top: 1.2rem;
+    border-radius: 2px;
+    color: var(--escape-text);
+    font-size: 0.96rem;
+    line-height: 1.6;
+  }
+  .escape-explainer h3 {
+    font-family: 'Didot', 'Bodoni 72', Garamond, serif;
+    font-weight: 400;
+    font-size: 1.15rem;
+    margin-bottom: 0.7rem;
+    color: var(--escape-text);
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+  }
+  .escape-explainer p { margin-bottom: 0.6rem; }
+  .escape-explainer p:last-child { margin-bottom: 0; }
+  .escape-explainer strong { color: var(--ink); }
+  .escape-explainer .digits {
+    font-family: 'Iowan Old Style', Georgia, serif;
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0.55rem 0.7rem;
+    margin: 0.7rem 0;
+    border-radius: 2px;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  .escape-explainer .digits .block-A { color: var(--hot); font-weight: 600; }
+  .escape-explainer .digits .block-B { color: var(--cool); font-weight: 600; }
+  .escape-explainer .digits .block-C { color: var(--rule-deep); font-weight: 600; }
+  .escape-explainer .digits .block-D { color: var(--escape-text); font-weight: 600; }
+
+  .about {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px double var(--rule);
+    font-size: 0.92rem;
+    color: var(--soft);
+    line-height: 1.65;
+    max-width: 60ch;
+    margin-left: auto; margin-right: auto;
+  }
+  .about p + p { margin-top: 1em; }
+  .about strong { color: var(--ink); font-weight: 600; }
+  .about a {
+    color: var(--rule-deep);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .about a:hover { color: var(--hot); }
+
+  .ornament {
+    text-align: center;
+    color: var(--rule);
+    margin: 2.5rem 0 1.5rem;
+    font-size: 1.2rem;
+    letter-spacing: 0.5em;
+  }
+
+  @media (max-width: 540px) {
+    .frame { padding: 2.5rem 1rem 3rem; }
+    .input-row { flex-direction: column; }
+    button { padding: 0.7rem 1rem; }
+    .step-current { font-size: 1.6rem; }
+    .arithmetic { font-size: 0.92rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<div class="frame">
+
+  <header>
+    <div class="eyebrow">an interactive companion</div>
+    <h1>The Number <span class="num">60714</span></h1>
+    <div class="subtitle">A Kaprekar fixed point at every digit length d ≥ 5. At 7 or more digits, some inputs collapse to 0 instead.</div>
+
+    <div class="lede">
+      <p>Pick any number with at least five digits. Apply the rule for its length. Watch where it goes.</p>
+      <p>The rule depends on the input's digit length: there is one rule at <em>d = 5</em>, another at <em>d = 6</em>, and a recipe that extends them to every longer length. At <em>d = 5</em> and <em>d = 6</em>, every input that is not one repeated digit reaches 60714 (at five digits: 99,990 of 100,000 strings, in at most 30 steps). At <em>d ≥ 7</em>, every input reaches either 60714 or 0. The share that collapses to 0 grows with length: 0.56% of digit collections at 8 digits, about 12% at 24 digits. The calculator shows both outcomes.</p>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="panel-label">Try it</div>
+    <div class="input-row">
+      <input type="text" id="numinput" placeholder="enter a number with 5+ digits" inputmode="numeric" maxlength="20" autocomplete="off">
+      <button id="go" type="button">iterate</button>
+    </div>
+    <div class="controls">
+      <button class="secondary" type="button" data-example="12345">12345</button>
+      <button class="secondary" type="button" data-example="98765">98765</button>
+      <button class="secondary" type="button" data-example="142857">142857</button>
+      <button class="secondary" type="button" data-example="3141592">3141592</button>
+      <button class="secondary" type="button" id="random">random</button>
+      <button class="escape-try" type="button" id="doomed">try a doomed input</button>
+    </div>
+    <div class="hint" id="hint">5 to 20 digits. Try the "doomed input" button to see an input that collapses to 0.</div>
+  </section>
+
+  <div class="trajectory" id="trajectory"></div>
+
+  <div class="about">
+    <p>The number <strong>60714</strong> is a fixed point of an explicit family of permutation-pair rules built from its native rule at <em>d = 5</em>, with the family extending to every higher digit length by appending pairs of coefficients that sum to zero. The fixed-point equation K(60714) = 60714 holds at every d ≥ 5.</p>
+
+    <p><strong>What is shown.</strong> At <strong>d = 5 and d = 6</strong>, by complete computer check, every input that is not one repeated digit reaches 60714. At <strong>d ≥ 7</strong>, every input reaches 60714 or 0. The inputs that reach 0 form the <strong>escape class</strong>: the <strong>block-aligned multisets</strong>, which the rule sends to 0 in one step, and the inputs whose orbits land on them. The escape class is characterized exactly, but it is not small: its share grows with length, from 0.56% of digit collections at 8 digits to about 12% at 24 digits (computed).</p>
+
+    <p>Kaprekar's constant 6174 is reached from every 4-digit input that is not one repeated digit; his rule has no fixed endpoint at 5 digits. If the rule is allowed to change with the length (here, by appending pairs of coefficients that sum to zero), 60714, the digits of 6174 plus a zero, stays a fixed point at every length, with the escape class above at 7 digits and more.</p>
+
+    <p style="font-style: italic; font-size: 0.85em; color: var(--soft); margin-top: 0.5em;">This calculator is a pedagogical companion to the paper, not a formal verifier. It demonstrates the iteration on individual inputs; the formal claims of the paper are established by the Python scripts and proofs in the repository.</p>
+
+    <p>The paper: <a href="paper.pdf">The Digits of 6174 at Every Length (PDF)</a> (Theorem 4.1 and Definition 4.6). More about the result: <a href="./">arbolinea.com/60714</a>.</p>
+  </div>
+
+  <div class="ornament">⁂</div>
+
+</div>
+
+<script>
+'use strict';
+
+function getCoefs(d) {
+  if (d < 5) return null;
+  if (d === 5) return [9900, 9, 90, -9000, -999];
+  if (d === 6) return [9900, 9, 90, -9000, 99000, -99999];
+
+  // Coefficient-preserving lifted rule per Section 4 and Appendix F
+  // ("The ladder, explicitly") of paper_hierarchy.md.
+  // Both ladders use the SAME appended-pair convention:
+  //   Odd  ladder (d = 7, 9, 11, ...): pair appended at length d' is
+  //                                    (+9*10^(d'-2), -9*10^(d'-2)).
+  //   Even ladder (d = 8, 10, 12, ...): pair appended at length d' is
+  //                                    (+9*10^(d'-2), -9*10^(d'-2)).
+  // (An earlier version crossed the even-ladder signs; that is a different
+  // map, with |E_8| = 45 instead of the paper's 137.)
+  // The exponent is d' - 2, where d' is the digit length AT THE STEP
+  // the pair is appended. NOT d' itself.
+  const useBig = d > 15;
+  const NINE = useBig ? 9n : 9;
+  const TEN = useBig ? 10n : 10;
+  const pow = (base, exp) => {
+    let r = useBig ? 1n : 1;
+    for (let i = 0; i < exp; i++) r = r * base;
+    return r;
+  };
+
+  let base;
+  if (d % 2 === 1) {
+    // odd ladder: start from d=5 base, append pairs for d' in 7, 9, ..., d
+    base = useBig
+      ? [9900n, 9n, 90n, -9000n, -999n]
+      : [9900, 9, 90, -9000, -999];
+    for (let dPrime = 7; dPrime <= d; dPrime += 2) {
+      const k = dPrime - 2;
+      const tenK = pow(TEN, k);
+      base.push(NINE * tenK);    // +9*10^(d'-2) first on odd ladder
+      base.push(-NINE * tenK);
+    }
+  } else {
+    // even ladder: start from d=6 base, append pairs for d' in 8, 10, ..., d
+    base = useBig
+      ? [9900n, 9n, 90n, -9000n, 99000n, -99999n]
+      : [9900, 9, 90, -9000, 99000, -99999];
+    for (let dPrime = 8; dPrime <= d; dPrime += 2) {
+      const k = dPrime - 2;
+      const tenK = pow(TEN, k);
+      base.push(NINE * tenK);    // +9*10^(d'-2) first on even ladder too
+      base.push(-NINE * tenK);
+    }
+  }
+  return base;
+}
+
+// getLetterStrings(d): returns {piVar, sigmaVar} as arrays of position
+// indices (0 = a = largest digit, 1 = b = second largest, ..., up to d-1).
+// Mirrors the inductive structure of getCoefs(), so the two representations
+// stay synchronized.
+//
+// Base cases match the ladder table in Appendix F of paper_hierarchy.md:
+//   d=5 (odd root):  π = adcbe = [0,3,2,1,4], σ = deacb = [3,4,0,2,1]
+//   d=6 (even root): π = eadcbf = [4,0,3,2,1,5], σ = fdeacb = [5,3,4,0,2,1]
+//
+// Inductive step (d → d+2): PREPEND two letters to each string, the same
+// way on both ladders: the lower-rank letter leads in π and trails in σ.
+//   prepend (lo, hi) to π, prepend (hi, lo) to σ
+//
+// (At d → d+2, the string length grows by 2; the new highest letters
+// appear on the LEFT because the leftmost digit holds the highest place
+// value when reading π·x and σ·x as integers.)
+function getLetterStrings(d) {
+  if (d < 5) return null;
+
+  let piVar, sigmaVar;
+  if (d % 2 === 1) {
+    // odd ladder: build from d=5 base
+    piVar    = [0, 3, 2, 1, 4];      // adcbe
+    sigmaVar = [3, 4, 0, 2, 1];      // deacb
+    for (let dPrime = 7; dPrime <= d; dPrime += 2) {
+      // appended positions are dPrime-2 (lower) and dPrime-1 (higher)
+      const lo = dPrime - 2;
+      const hi = dPrime - 1;
+      // odd-ladder: prepend (hi, lo) to π, (lo, hi) to σ
+      // Check against Table B.1: d=7 π = "fgadcbe"
+      // If d=5 base π = "adcbe" and d=7 = "fgadcbe", then "fg" was prepended.
+      // f = 5, g = 6. dPrime=7 gives lo=5, hi=6. So prepend [lo, hi] = [5,6] = "fg". ✓
+      // d=7 σ = "gfdeacb", d=5 σ = "deacb", prepended "gf" = [6,5] = [hi, lo]. ✓
+      piVar    = [lo, hi].concat(piVar);
+      sigmaVar = [hi, lo].concat(sigmaVar);
+    }
+  } else {
+    // even ladder: build from d=6 base
+    piVar    = [4, 0, 3, 2, 1, 5];   // eadcbf
+    sigmaVar = [5, 3, 4, 0, 2, 1];   // fdeacb
+    for (let dPrime = 8; dPrime <= d; dPrime += 2) {
+      const lo = dPrime - 2;
+      const hi = dPrime - 1;
+      // even-ladder: d=8 π = "gheadcbf", d=6 π = "eadcbf", prepended "gh" = [6,7] = [lo, hi]
+      // d=8 σ = "hgfdeacb", d=6 σ = "fdeacb", prepended "hg" = [7,6] = [hi, lo]
+      piVar    = [lo, hi].concat(piVar);
+      sigmaVar = [hi, lo].concat(sigmaVar);
+    }
+  }
+  return { piVar, sigmaVar };
+}
+
+// Convert position index 0..25 to letter a..z
+function posToLetter(p) {
+  return String.fromCharCode('a'.charCodeAt(0) + p);
+}
+
+function isBigArr(arr) { return arr.length > 0 && typeof arr[0] === 'bigint'; }
+
+/* Block-aligned detection (Definition 4.6 of paper_hierarchy.md) */
+function isBlockAligned(sortedDescStr, d) {
+  const digits = sortedDescStr.split('').map(c => parseInt(c, 10));
+  if (digits.length !== d) return false;
+  const d_0 = (d % 2 === 1) ? 5 : 6;
+  for (let i = 1; i < d_0; i++) {
+    if (digits[i] !== digits[0]) return false;
+  }
+  for (let i = d_0; i < d; i += 2) {
+    if (i + 1 >= d) break;
+    if (digits[i] !== digits[i + 1]) return false;
+  }
+  return true;
+}
+
+function colorizeBlockAligned(sortedDescStr, d) {
+  const d_0 = (d % 2 === 1) ? 5 : 6;
+  const colors = ['block-A', 'block-B', 'block-C', 'block-D'];
+  let html = '';
+  html += '<span class="' + colors[0] + '">' + sortedDescStr.substring(0, d_0) + '</span>';
+  let colorIdx = 1;
+  for (let i = d_0; i < d; i += 2) {
+    if (i + 1 >= d) break;
+    html += ' <span class="' + colors[colorIdx % colors.length] + '">' + sortedDescStr.substring(i, i + 2) + '</span>';
+    colorIdx++;
+  }
+  return html;
+}
+
+function step(value, d) {
+  const padded = value.toString().padStart(d, '0');
+  const digits = padded.split('').map(c => parseInt(c, 10));
+  const desc = [...digits].sort((a, b) => b - a);
+  const asc  = [...digits].sort((a, b) => a - b);
+  const coefs = getCoefs(d);
+
+  let total;
+  if (isBigArr(coefs)) {
+    let acc = 0n;
+    for (let i = 0; i < d; i++) {
+      acc += coefs[i] * BigInt(desc[i]);
+    }
+    total = acc < 0n ? -acc : acc;
+  } else {
+    let acc = 0;
+    for (let i = 0; i < d; i++) {
+      acc += coefs[i] * desc[i];
+    }
+    total = Math.abs(acc);
+  }
+
+  // For every d ≥ 5, build the rule's display in letter form (π, σ as
+  // permutations of sorted-descending positions). The same construction
+  // works at every d via the inductive recipe in Appendix F of the paper.
+  // No coefficient-form fallback needed; the letter form is the rule.
+  const letters = getLetterStrings(d);
+  let piStr = null, sigmaStr = null, piVarStr = null, sigmaVarStr = null;
+  if (letters) {
+    piStr    = letters.piVar.map(p => desc[p]).join('');
+    sigmaStr = letters.sigmaVar.map(p => desc[p]).join('');
+    piVarStr    = letters.piVar.map(posToLetter).join(' ');
+    sigmaVarStr = letters.sigmaVar.map(posToLetter).join(' ');
+  }
+
+  return {
+    descArr: desc,
+    ascArr: asc,
+    descStr: desc.map(String).join(''),
+    ascStr: asc.map(String).join(''),
+    next: total,
+    piStr: piStr,
+    sigmaStr: sigmaStr,
+    piVarStr: piVarStr,
+    sigmaVarStr: sigmaVarStr,
+    coefs: coefs
+  };
+}
+
+function isRepdigit(s) {
+  return /^(.)\1*$/.test(s);
+}
+
+function iterate(input) {
+  const cleaned = input.replace(/\D/g, '');
+  if (!cleaned) return { error: 'enter a number, please.' };
+  if (cleaned.length < 5) return { error: 'needs at least 5 digits.' };
+  if (cleaned.length > 20) return { error: 'use at most 20 digits.' };
+  if (isRepdigit(cleaned)) return { error: 'a number made of one repeated digit (like 11111) goes to 0 in one step. Try a number with at least two different digits.' };
+
+  const d = cleaned.length;
+  const useBig = d > 15;
+  const target = useBig ? 60714n : 60714;
+  const zero = useBig ? 0n : 0;
+
+  let cur = useBig ? BigInt(cleaned) : parseInt(cleaned, 10);
+  const trail = [];
+  const MAX = 80;
+
+  for (let i = 0; i < MAX; i++) {
+    const r = step(cur, d);
+    const isAtZero = r.next === zero;
+    const reachedFixed = r.next === cur;
+    const isBA = isBlockAligned(r.descStr, d);
+
+    trail.push({
+      stepNum: i,
+      currentStr: cur.toString().padStart(d, '0'),
+      descStr: r.descStr,
+      ascStr: r.ascStr,
+      next: r.next,
+      isFixed: reachedFixed,
+      isBlockAligned: isBA,
+      goesToZero: isAtZero,
+      piStr: r.piStr,
+      sigmaStr: r.sigmaStr,
+      piVarStr: r.piVarStr,
+      sigmaVarStr: r.sigmaVarStr,
+      coefs: r.coefs
+    });
+    if (reachedFixed) break;
+    if (isAtZero) {
+      trail.push({
+        stepNum: i + 1,
+        currentStr: '0'.repeat(d),
+        descStr: '0'.repeat(d),
+        ascStr: '0'.repeat(d),
+        next: zero,
+        isFixed: true,
+        isBlockAligned: false,
+        goesToZero: true,
+        isAbsorbed: true
+      });
+      break;
+    }
+    cur = r.next;
+  }
+
+  const lastStep = trail[trail.length - 1];
+  const finalIs60714 = lastStep.next === target;
+  const finalIs0 = lastStep.next === zero;
+
+  let firstBlockAligned = -1;
+  for (let i = 0; i < trail.length; i++) {
+    if (trail[i].isBlockAligned) {
+      firstBlockAligned = i;
+      break;
+    }
+  }
+
+  return {
+    trail,
+    d,
+    finalIs60714,
+    finalIs0,
+    firstBlockAligned,
+    isEscape: finalIs0
+  };
+}
+
+const trajectoryEl = document.getElementById('trajectory');
+const hintEl = document.getElementById('hint');
+const inputEl = document.getElementById('numinput');
+
+function render(result) {
+  trajectoryEl.innerHTML = '';
+  hintEl.classList.remove('error', 'escape');
+
+  if (result.error) {
+    hintEl.textContent = result.error;
+    hintEl.classList.add('error');
+    return;
+  }
+
+  if (result.isEscape) {
+    hintEl.textContent = 'digit length d = ' + result.d + ', this input belongs to the escape class; see explanation below';
+    hintEl.classList.add('escape');
+  } else {
+    const stepCount = result.trail.length - 1;
+    hintEl.textContent = 'digit length d = ' + result.d + ', ' + stepCount + ' iteration' + (stepCount === 1 ? '' : 's') + ' to converge';
+  }
+
+  const target = result.d > 15 ? 60714n : 60714;
+
+  result.trail.forEach((t, idx) => {
+    const div = document.createElement('div');
+    let stepClass = 'step';
+    if (t.isFixed && t.next === target) stepClass += ' fixed';
+    else if (t.isFixed && t.goesToZero) stepClass += ' escape';
+    else if (t.isBlockAligned) stepClass += ' escape';
+    div.className = stepClass;
+    div.style.animationDelay = (idx * 0.06) + 's';
+
+    const cleanCurrent = t.currentStr.replace(/^0+(?=\d)/, '') || '0';
+
+    let html = '<div class="step-num">step ' + t.stepNum + '</div>';
+    html += '<div class="step-current">' + formatNumber(cleanCurrent) + '</div>';
+
+    if (!t.isFixed) {
+      const nextStr = t.next.toString();
+
+      // Every d ≥ 5 displays the same way: π − σ subtraction in letter form,
+      // optionally with a coefficient-view panel below it.
+      const dHere = t.descStr.length;
+      const desc = t.descStr.split('').map(c => parseInt(c, 10));
+      const LETTERS = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t'];
+
+      // Helper: convert a digit string (e.g. "51130") to spaced cells
+      const spaceDigits = (s) => {
+        return '<span class="var-cell">' + s.split('').join('</span><span class="var-cell">') + '</span>';
+      };
+
+      const piVarsLabel = '= ' + t.piVarStr.replace(/ /g, '');
+      const sigmaVarsLabel = '= ' + t.sigmaVarStr.replace(/ /g, '');
+
+      html += '<div class="subtract-meta">Sort digits descending and label them <em>' +
+              LETTERS.slice(0, dHere).join(', ') +
+              '</em>. Apply the rule:</div>';
+
+      // Variable pills row
+      let varRowHtml = '<div class="var-row">';
+      for (let k = 0; k < dHere; k++) {
+        varRowHtml += '<div class="var-pill">' +
+                        '<span class="var-digit">' + desc[k] + '</span>' +
+                        '<span class="var-name">' + LETTERS[k] + '</span>' +
+                      '</div>';
+      }
+      varRowHtml += '</div>';
+      html += varRowHtml;
+
+      html += '<div class="subtract-block">';
+      html += '<div class="subtract-line">' +
+                '<span class="subtract-op"></span>' +
+                '<span class="subtract-num">' + spaceDigits(t.piStr) + '</span>' +
+                '<span class="subtract-eq">' + piVarsLabel + '</span>' +
+              '</div>';
+      html += '<div class="subtract-line">' +
+                '<span class="subtract-op">−</span>' +
+                '<span class="subtract-num">' + spaceDigits(t.sigmaStr) + '</span>' +
+                '<span class="subtract-eq">' + sigmaVarsLabel + '</span>' +
+              '</div>';
+      html += '<div class="subtract-rule"></div>';
+      html += '<div class="subtract-line">' +
+                '<span class="subtract-op"></span>' +
+                '<span class="subtract-num subtract-result">' + spaceDigits(nextStr.padStart(dHere, '0')) + '</span>' +
+                '<span class="subtract-eq">= ' + formatNumber(nextStr) + '</span>' +
+              '</div>';
+      html += '</div>';
+
+      // Coefficient-view panel: show the same step as Σ c_i · x_i.
+      // The two representations describe the same operation; this panel
+      // makes that explicit by listing the coefficients alongside the
+      // letter-form display above.
+      const useBig = isBigArr(t.coefs);
+      const fmtCoef = (c) => {
+        const cn = useBig ? (c < 0n ? -c : c) : Math.abs(c);
+        return cn.toLocaleString('en-US');
+      };
+      const isNeg = (c) => useBig ? c < 0n : c < 0;
+      const isZero = (c) => useBig ? c === 0n : c === 0;
+
+      let coefFormula = '';
+      let firstTerm = true;
+      for (let k = 0; k < dHere; k++) {
+        if (isZero(t.coefs[k])) continue;
+        const neg = isNeg(t.coefs[k]);
+        const cls = neg ? 'coef-neg' : 'coef-pos';
+        const sign = neg
+          ? (firstTerm ? '−\u202F' : ' − ')
+          : (firstTerm ? '' : ' + ');
+        coefFormula += '<span class="' + cls + '">' + sign +
+                       fmtCoef(t.coefs[k]) + '·' + LETTERS[k] + '</span>';
+        firstTerm = false;
+      }
+      html += '<details class="coef-view"><summary>Same step as a coefficient sum</summary>' +
+              '<div class="coef-block"><div class="coef-formula">' +
+              '|&nbsp;' + coefFormula + '&nbsp;| = ' + formatNumber(nextStr) +
+              '</div><div class="coef-note">Each coefficient is <em>c<sub>i</sub> = 10<sup>π<sub>i</sub></sup> − 10<sup>σ<sub>i</sub></sup></em>, derived from the position assignments above. The two views describe the same operation.</div></div></details>';
+
+      if (t.isBlockAligned) {
+        html += '<div class="note">⚠ this multiset is <strong>block-aligned</strong>: the rule annihilates it on the next step.</div>';
+      }
+    } else if (t.next === target) {
+      html += '<div class="note">fixed point reached. K(60714) = 60714.</div>';
+    } else if (t.goesToZero) {
+      html += '<div class="note">absorbed at zero. The rule\'s coefficients cancel completely on this input.</div>';
+    }
+
+    div.innerHTML = html;
+    trajectoryEl.appendChild(div);
+  });
+
+  if (result.finalIs60714) {
+    const banner = document.createElement('div');
+    banner.className = 'fixed-banner';
+    banner.style.animationDelay = (result.trail.length * 0.06) + 's';
+    banner.innerHTML = 'This input reaches 60714 at d = ' + result.d + ' (Theorem 4.1 of the paper).';
+    trajectoryEl.appendChild(banner);
+  } else if (result.isEscape) {
+    const explainer = document.createElement('div');
+    explainer.className = 'escape-explainer';
+
+    let baStep = null;
+    if (result.firstBlockAligned >= 0) {
+      baStep = result.trail[result.firstBlockAligned];
+    }
+
+    const d = result.d;
+    const d_0 = (d % 2 === 1) ? 5 : 6;
+    const numPairs = Math.floor((d - d_0) / 2);
+
+    let baExplanation = '';
+    if (baStep) {
+      const descColored = colorizeBlockAligned(baStep.descStr, d);
+      const stepLabel = baStep.stepNum === 0 ? 'Your input itself, sorted descending, has this structure:' : 'At step ' + baStep.stepNum + ', the orbit reached this multiset (sorted descending):';
+      baExplanation = '<p>' + stepLabel + '</p><div class="digits">' + descColored + '</div>';
+    }
+
+    let ruleExplanation;
+    if (numPairs === 0) {
+      ruleExplanation = '<p>Sorted descending, the top <strong>' + d_0 + '</strong> digits are all the same.</p>';
+    } else {
+      const pairWord = numPairs === 1 ? 'pair' : 'pairs';
+      ruleExplanation = '<p>Sorted descending, the top <strong>' + d_0 + ' digits are all the same</strong>, and the remaining ' + (2 * numPairs) + ' digits split into <strong>' + numPairs + ' ' + pairWord + '</strong> of equal digits.</p>';
+    }
+
+    const e1 = closedFormE1(d);
+
+    explainer.innerHTML =
+      '<h3>Why this input goes to zero</h3>' +
+      '<p>At digit length d = ' + d + ', the rule sends a class of inputs to zero instead of 60714, and that class grows as a share of all inputs as d grows. ' +
+      (baStep && baStep.stepNum > 0 ? 'Your input\'s orbit landed on one of them.' : 'Your input is one of them.') +
+      '</p>' +
+      baExplanation +
+      ruleExplanation +
+      '<p>The rule is built from a base of <strong>' + d_0 + ' coefficients summing to zero</strong>, plus ' + numPairs + ' appended ' + (numPairs === 1 ? 'pair' : 'pairs') + ' each summing to zero. When all ' + d_0 + ' top digits are equal AND each pair has equal digits, every coefficient pairs with a digit-equal partner, every contribution cancels, and the result is exactly zero.</p>' +
+      '<p style="font-style: italic; font-size: 0.88em; margin-top: 0.8rem;">This is a <strong>block-aligned multiset</strong> (Definition 4.6 in the paper). At d = ' + d + ' there are exactly ' + e1 + ' such multisets that collapse in one step, plus the inputs whose orbits land on one of them.</p>';
+    trajectoryEl.appendChild(explainer);
+  }
+}
+
+function closedFormE1(d) {
+  if (d < 7) return 0;
+  const d_0 = (d % 2 === 1) ? 5 : 6;
+  const k = 1 + Math.floor((d - d_0) / 2);
+  let c = 1;
+  for (let i = 1; i <= k; i++) {
+    c = c * (10 + k - 1 - (i - 1)) / i;
+  }
+  return Math.round(c) - 10;
+}
+
+function formatNumber(s) {
+  if (s.length <= 4) return s;
+  const reversed = s.split('').reverse();
+  const grouped = [];
+  for (let i = 0; i < reversed.length; i++) {
+    if (i > 0 && i % 3 === 0) grouped.push(',');
+    grouped.push(reversed[i]);
+  }
+  return grouped.reverse().join('');
+}
+
+function go() {
+  const result = iterate(inputEl.value);
+  render(result);
+}
+
+document.getElementById('go').addEventListener('click', go);
+
+inputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') go();
+});
+
+document.querySelectorAll('button[data-example]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    inputEl.value = btn.dataset.example;
+    go();
+  });
+});
+
+document.getElementById('random').addEventListener('click', () => {
+  const len = 5 + Math.floor(Math.random() * 5);
+  let s;
+  do {
+    s = '';
+    s += String(1 + Math.floor(Math.random() * 9));
+    for (let i = 1; i < len; i++) s += String(Math.floor(Math.random() * 10));
+  } while (isRepdigit(s));
+  inputEl.value = s;
+  go();
+});
+
+/* "Try a doomed input" picks a curated block-aligned multiset.
+   The top-block digit (the digit repeated d_0 times at the start)
+   is drawn from {1,2,3,4,5,7,8,9}, avoiding 6, which would create
+   visual collision with 60714's leading digit.
+   All examples below are verified block-aligned and verified to
+   collapse to 0 under the constructed rule. */
+document.getElementById('doomed').addEventListener('click', () => {
+  const examples = [
+    // d = 7  (top block of 5 + one pair of 2)
+    '1111100', '2222200', '3333300', '4444400', '5555500',
+    '7777700', '8888800', '9999900',
+    '3333311', '4444411', '5555511', '7777711', '8888811', '9999911',
+    // d = 8  (top block of 6 + one pair of 2)
+    '11111100', '22222200', '33333300', '44444400', '55555500',
+    '77777700', '88888800', '99999900',
+    '33333311', '44444411', '55555511', '77777711', '88888811', '99999911',
+    // d = 9  (top block of 5 + two pairs of 2)
+    '111110000', '222220000', '333330000', '444440000', '555550000',
+    '777770000', '888880000', '999990000',
+    '444443333', '555554444', '777776666', '888887777', '999998888',
+    // d = 10 (top block of 6 + two pairs of 2)
+    '1111110000', '2222220000', '3333330000', '4444440000', '5555550000',
+    '7777770000', '8888880000', '9999990000',
+    '4444443333', '5555554444', '7777776666', '8888887777', '9999998888',
+  ];
+
+  const sortedStr = examples[Math.floor(Math.random() * examples.length)];
+  inputEl.value = sortedStr;
+  go();
+});
+
+inputEl.addEventListener('input', () => {
+  hintEl.classList.remove('error', 'escape');
+  hintEl.textContent = '5 to 20 digits. Try the "doomed input" button to see an input that collapses to 0.';
+});
+
+inputEl.value = '12345';
+go();
+
+</script>
+
+</body>
+</html>
