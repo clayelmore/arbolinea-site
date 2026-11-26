@@ -1,15 +1,22 @@
-/* The 60714 page: a zoomable tree of every five-digit start, and a histogram of step counts.
-   Plain SVG and vanilla JavaScript, no libraries. Data comes from tree-data.json, written by
-   build_tree_data.py. Without JavaScript the page keeps the static tree.svg picture. */
+/* The 60714 page: a zoomable tree of every start, and a histogram of step counts.
+   Two trees share this code: 60714 at five digits (tree-data.json) and 146070 at six digits
+   (tree-data-146070.json), both written by build_tree_data.py. The page opens on 60714; the
+   six-digit file is fetched only when the reader picks it. Plain SVG and vanilla JavaScript,
+   no libraries. Without JavaScript the page keeps the static tree.svg picture. */
 (function () {
   "use strict";
 
   var NS = "http://www.w3.org/2000/svg";
-  var TARGET = "60714";
   var treeHost = document.getElementById("tree-view");
   var stepsHost = document.getElementById("steps-chart");
   if (!treeHost && !stepsHost) return;
   if (!window.fetch || !document.createElementNS) return;
+
+  var SETS = [
+    { id: "60714", file: "tree-data.json", digits: 5, word: "five", example: "58196", label: "60714 (five digits)" },
+    { id: "146070", file: "tree-data-146070.json", digits: 6, word: "six", example: "124598", label: "146070 (six digits)" }
+  ];
+  var cache = {};
 
   function el(name, attrs, parent) {
     var e = document.createElementNS(NS, name);
@@ -25,22 +32,85 @@
   }
   function fmt(n) { return n.toLocaleString("en-US"); }
   function plural(n, one, many) { return fmt(n) + " " + (n === 1 ? one : many); }
+  function setText(id, text) { var e = document.getElementById(id); if (e) e.textContent = text; }
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  fetch("tree-data.json")
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (data) {
-      if (treeHost) buildTree(data);
-      if (stepsHost) buildSteps(data);
-    })
-    .catch(function () { /* keep the static picture */ });
+  function load(set) {
+    if (!cache[set.id]) {
+      cache[set.id] = fetch(set.file)
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .catch(function (err) { delete cache[set.id]; throw err; });
+    }
+    return cache[set.id];
+  }
+
+  /* ---------- the switch between the two trees ---------- */
+  var current = null, wanted = null, switchBtns = [], teardownTree = null, teardownSteps = null;
+  var treeApi = null;
+
+  function show(set, data) {
+    current = set;
+    switchBtns.forEach(function (b, k) { b.setAttribute("aria-pressed", SETS[k] === set ? "true" : "false"); });
+    if (treeHost) buildTree(data, set);
+    if (stepsHost) buildSteps(data, set);
+    updateText(data, set);
+  }
+
+  function updateText(data, set) {
+    var T = data.target, max = data.maxSteps;
+    setText("tree-caption-lead", "Every " + set.word + "-digit start flowing into " + T + ". Each dot is one collection of " +
+      set.word + " digits, in any order, because the rule sorts the digits first.");
+    setText("tree-caption-tail", "The picture is drawn from a complete computer check of all " + fmt(data.strings) + " starts.");
+    setText("steps-intro", "For each number of steps from 0 to " + max + ", how many of the " + fmt(data.strings) + " " +
+      set.word + "-digit starts reach " + T + " in exactly that many. Only " + T + " itself takes 0.");
+    var sec = document.getElementById("tree-section");
+    if (sec) sec.setAttribute("aria-label", "Every " + set.word + "-digit start");
+  }
+
+  function pick(set) {
+    if (set === current && !wanted) return;
+    wanted = set;
+    switchBtns.forEach(function (b, k) { b.setAttribute("aria-pressed", SETS[k] === set ? "true" : "false"); });
+    if (treeApi) treeApi.busy("Loading the " + set.word + "-digit tree...");
+    load(set).then(function (data) {
+      if (wanted !== set) return;
+      wanted = null;
+      show(set, data);
+    }).catch(function () {
+      if (wanted !== set) return;
+      wanted = null;
+      switchBtns.forEach(function (b, k) { b.setAttribute("aria-pressed", SETS[k] === current ? "true" : "false"); });
+      if (treeApi) treeApi.busy("The " + set.word + "-digit tree did not load. Check the connection and try again.");
+    });
+  }
+
+  load(SETS[0]).then(function (data) {
+    if (treeHost) {
+      var group = h("div", { "class": "tree-switch", role: "group", "aria-labelledby": "tree-switch-label" });
+      group.appendChild(h("span", { id: "tree-switch-label", "class": "tree-switch-label" }, "Show the tree for"));
+      var row = h("div", { "class": "tree-switch-row" });
+      SETS.forEach(function (set) {
+        var b = h("button", { type: "button", "class": "tree-switch-btn", "aria-pressed": "false", "aria-controls": "tree-view steps-chart" }, set.label);
+        b.addEventListener("click", function () { pick(set); });
+        switchBtns.push(b);
+        row.appendChild(b);
+      });
+      group.appendChild(row);
+      treeHost.parentNode.insertBefore(group, treeHost);
+    }
+    show(SETS[0], data);
+  }).catch(function () { /* keep the static picture */ });
 
   /* ===================================================================== */
   /* Tree                                                                   */
   /* ===================================================================== */
-  function buildTree(data) {
+  function buildTree(data, set) {
+    if (teardownTree) { teardownTree(); teardownTree = null; }
+    var TARGET = data.target, DIG = set.digits, WORD = set.word;
     var W = 1000, C = 500, R = 455, DM = data.maxDepth;
-    var MIN_S = 1, MAX_S = 80, LABEL_PX = 40, MAX_LABELS = 350;
+    // Labels need room for every digit: 40 px at five digits, 48 at six.
+    var MIN_S = 1, MAX_S = 80, LABEL_PX = 8 * DIG, MAX_LABELS = 350;
+    var CORE_FS = 46 * Math.min(1, 5 / DIG);
     var nodes = data.nodes, byKey = {}, root = null;
     var i, n;
 
@@ -93,21 +163,21 @@
     var form = h("form", { "class": "tree-search", role: "search" });
     var flabel = h("label", { "for": "tree-find" }, "Find a number");
     var finput = h("input", { id: "tree-find", type: "text", inputmode: "numeric", autocomplete: "off",
-      maxlength: "5", placeholder: "58196", pattern: "[0-9]{1,5}", enterkeyhint: "search" });
+      maxlength: String(DIG), placeholder: set.example, pattern: "[0-9]{1," + DIG + "}", enterkeyhint: "search" });
     var fgo = h("button", { type: "submit", "class": "tree-btn tree-btn-wide" }, "Find");
     form.appendChild(flabel); form.appendChild(finput); form.appendChild(fgo);
     bar.appendChild(zin); bar.appendChild(zout); bar.appendChild(zreset); bar.appendChild(form);
 
     var frame = h("div", { "class": "tree-frame" });
     var svg = el("svg", { viewBox: "0 0 1000 1000", "class": "tree-svg", tabindex: "0", role: "img",
-      "aria-label": "Zoomable tree of every five-digit start flowing into 60714 at the center. Use the plus and minus keys to zoom and the arrow keys to move." }, frame);
+      "aria-label": "Zoomable tree of every " + WORD + "-digit start flowing into " + TARGET + " at the center. Use the plus and minus keys to zoom and the arrow keys to move." }, frame);
     el("rect", { width: W, height: W, fill: "#000" }, svg);
     var world = el("g", null, svg);
     var gLinks = el("g", { "class": "tree-links" }, world);
     var gDots = el("g", { "class": "tree-dots" }, world);
     var gHl = el("g", { "class": "tree-hl" }, world);
     var core = el("circle", { cx: C, cy: C, r: 80.5, fill: "#000", stroke: "#5fd68a", "stroke-width": 4, "vector-effect": "non-scaling-stroke" }, world);
-    var coreText = el("text", { x: C, y: C + 15.6, "text-anchor": "middle", "class": "tree-core-text" }, world);
+    var coreText = el("text", { x: C, y: C + CORE_FS * 0.34, "text-anchor": "middle", "class": "tree-core-text" }, world);
     coreText.textContent = TARGET;
     var gLabels = el("g", { "class": "tree-labels", "aria-hidden": "true" }, svg);
 
@@ -116,29 +186,34 @@
     panel.textContent = idleText;
 
     var linkEls = [];
+    var dotFrag = document.createDocumentFragment(), linkFrag = document.createDocumentFragment();
     for (i = 0; i < nodes.length; i++) {
       n = nodes[i];
       if (n !== root) {
         n.w = 0.5 + 5.5 * Math.sqrt(n.through / root.through);
-        n.link = el("path", { d: linkPath(n), stroke: color(n.depth), "vector-effect": "non-scaling-stroke" }, gLinks);
+        n.link = el("path", { d: linkPath(n), stroke: color(n.depth), "vector-effect": "non-scaling-stroke" }, linkFrag);
         linkEls.push(n);
       }
-      el("circle", { cx: n.x, cy: n.y, r: 1.6, fill: color(n.depth) }, gDots);
+      el("circle", { cx: n.x, cy: n.y, r: 1.6, fill: color(n.depth) }, dotFrag);
     }
+    gLinks.appendChild(linkFrag);
+    gDots.appendChild(dotFrag);
 
     treeHost.textContent = "";
     treeHost.appendChild(bar);
     treeHost.appendChild(frame);
     treeHost.appendChild(panel);
     treeHost.classList.add("is-live");
+    treeHost.removeAttribute("aria-busy");
     var howto = document.querySelector(".tree-howto");
     if (howto) howto.hidden = false;
 
     /* ---------- view state ---------- */
-    var s = 1, tx = 0, ty = 0, pxPerUnit = 0.72, dirty = false, anim = null;
+    var s = 1, tx = 0, ty = 0, pxPerUnit = 0.72, dirty = false, anim = null, alive = true;
     var hoverNode = null, selNode = null, selNumber = null;
 
     function measure() {
+      if (!alive) return;
       var w = svg.getBoundingClientRect().width || 720;
       pxPerUnit = w / W;
       var k = Math.max(pxPerUnit, 0.45);
@@ -150,7 +225,7 @@
       tx = Math.min(0, Math.max(W - W * s, tx));
       ty = Math.min(0, Math.max(W - W * s, ty));
     }
-    function schedule() { if (!dirty) { dirty = true; requestAnimationFrame(render); } }
+    function schedule() { if (!dirty && alive) { dirty = true; requestAnimationFrame(render); } }
 
     var labelPool = [];
     function labelAt(idx) {
@@ -162,17 +237,18 @@
 
     function render() {
       dirty = false;
+      if (!alive) return;
       if (anim) stepAnim();
       world.setAttribute("transform", "translate(" + tx.toFixed(2) + " " + ty.toFixed(2) + ") scale(" + s.toFixed(4) + ")");
       var unit = 1 / pxPerUnit;                    // drawing units per screen pixel at s = 1
       var dotPx = Math.min(4, 1.3 * Math.sqrt(s));
       gDots.style.setProperty("--dr", (dotPx * unit / s).toFixed(4) + "px");
       gHl.style.setProperty("--dr", (dotPx * 1.9 * unit / s).toFixed(4) + "px");
-      // 60714's circle keeps its on-screen size once zoomed, so the inner rings come out from under it.
+      // The target's circle keeps its on-screen size once zoomed, so the inner rings come out from under it.
       var coreScale = 1 / s;
       core.setAttribute("r", (80.5 * coreScale).toFixed(3));
-      coreText.setAttribute("font-size", (46 * coreScale).toFixed(3));
-      coreText.setAttribute("y", (C + 15.6 * coreScale).toFixed(3));
+      coreText.setAttribute("font-size", (CORE_FS * coreScale).toFixed(3));
+      coreText.setAttribute("y", (C + CORE_FS * 0.34 * coreScale).toFixed(3));
 
       // Labels: only nodes inside the view with enough room around them at this zoom.
       var fs = 11 * unit, cand = [], j, nd, sx, sy, roomPx;
@@ -272,21 +348,21 @@
         tx = drag.tx + mx * k; ty = drag.ty + my * k; clampView(); schedule();
         return;
       }
-      var nd = pick(e.clientX, e.clientY, 10);
-      if (nd !== hoverNode) { hoverNode = nd; show(); }
+      var nd = pickNode(e.clientX, e.clientY, 10);
+      if (nd !== hoverNode) { hoverNode = nd; showNode(); }
     });
     function endDrag(e) {
       if (!drag) return;
       var wasClick = !drag.moved;
       drag = null;
       svg.classList.remove("is-dragging");
-      if (wasClick && e.type === "pointerup") select(pick(e.clientX, e.clientY, 10), null);
+      if (wasClick && e.type === "pointerup") select(pickNode(e.clientX, e.clientY, 10), null);
     }
     svg.addEventListener("pointerup", endDrag);
     svg.addEventListener("pointercancel", endDrag);
     svg.addEventListener("pointerleave", function (e) {
       if (e.pointerType === "touch") return;
-      if (hoverNode) { hoverNode = null; show(); }
+      if (hoverNode) { hoverNode = null; showNode(); }
     });
 
     /* Touch: two fingers pinch, one finger pans once zoomed in. Fully zoomed out, one finger
@@ -334,13 +410,13 @@
       var ch = e.changedTouches[0];
       if (!touch.moved && Date.now() - touch.t < 600 && ch) {
         e.preventDefault();                        // no extra mouse events after a tap
-        select(pick(ch.clientX, ch.clientY, 22), null);
+        select(pickNode(ch.clientX, ch.clientY, 22), null);
       }
       touch = null;
     }, { passive: false });
     svg.addEventListener("touchcancel", function () { touch = null; });
 
-    function pick(clientX, clientY, radiusPx) {
+    function pickNode(clientX, clientY, radiusPx) {
       var u = toUnits(clientX, clientY), wx = (u[0] - tx) / s, wy = (u[1] - ty) / s;
       if (Math.hypot(wx - C, wy - C) * s * pxPerUnit <= 80.5 * pxPerUnit) return root;
       var best = null, bd = Infinity, lim = radiusPx / (pxPerUnit * s);
@@ -354,11 +430,11 @@
     /* ---------- selection, path and panel ---------- */
     function select(nd, number) {
       selNode = nd; selNumber = nd ? number : null;
-      show();
+      showNode();
     }
-    function clearSelection() { selNode = null; selNumber = null; hoverNode = null; show(); }
+    function clearSelection() { selNode = null; selNumber = null; hoverNode = null; showNode(); }
 
-    function show() {
+    function showNode() {
       var nd = hoverNode || selNode, number = hoverNode && hoverNode !== selNode ? null : selNumber;
       while (gHl.firstChild) gHl.removeChild(gHl.firstChild);
       pathSet = {};
@@ -385,28 +461,28 @@
       ul.appendChild(h("li", null, number ? "Your number: " + number : "For example " + example));
       ul.appendChild(h("li", null, "Becomes " + nd.next + " after one step"));
       if (isRoot && !number) {
-        ul.appendChild(h("li", null, "60714 is already there. Its other 119 arrangements reach 60714 in 1 step"));
+        ul.appendChild(h("li", null, TARGET + " is already there. Its other " + fmt(nd.strings - 1) + " arrangements reach " + TARGET + " in 1 step"));
       } else {
-        ul.appendChild(h("li", null, steps === 0 ? "This is 60714 itself, so it takes 0 steps" : "Reaches 60714 in " + plural(steps, "step", "steps")));
+        ul.appendChild(h("li", null, steps === 0 ? "This is " + TARGET + " itself, so it takes 0 steps" : "Reaches " + TARGET + " in " + plural(steps, "step", "steps")));
       }
-      ul.appendChild(h("li", null, "Stands for " + plural(nd.strings, "five-digit number", "five-digit numbers")));
+      ul.appendChild(h("li", null, "Stands for " + plural(nd.strings, WORD + "-digit number", WORD + "-digit numbers")));
       panel.appendChild(ul);
     }
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var raw = finput.value.replace(/\s/g, "");
-      if (!/^[0-9]{1,5}$/.test(raw)) {
-        hoverNode = null; selNode = null; show();
-        panel.textContent = "Type a number with up to five digits, like 58196.";
+      if (!new RegExp("^[0-9]{1," + DIG + "}$").test(raw)) {
+        hoverNode = null; selNode = null; showNode();
+        panel.textContent = "Type a number with up to " + WORD + " digits, like " + set.example + ".";
         return;
       }
-      var num = ("00000" + raw).slice(-5);
+      var num = (new Array(DIG + 1).join("0") + raw).slice(-DIG);
       var key = num.split("").sort().reverse().join("");
       hoverNode = null;
-      if (key[0] === key[4]) {
-        selNode = null; show();
-        panel.textContent = num + " is one repeated digit. It goes to 0 after one step and stays there, so it never reaches 60714.";
+      if (key[0] === key[DIG - 1]) {
+        selNode = null; showNode();
+        panel.textContent = num + " is one repeated digit. It goes to 0 after one step and stays there, so it never reaches " + TARGET + ".";
         return;
       }
       var nd = byKey[key];
@@ -416,27 +492,37 @@
       animateTo(need, nd.x, nd.y);
     });
 
-    window.__tree60714 = { state: function () { return { s: s, tx: tx, ty: ty, transform: world.getAttribute("transform"), links: gLinks.childNodes.length, path: Object.keys(pathSet) }; } };
+    treeApi = {
+      busy: function (msg) { treeHost.setAttribute("aria-busy", "true"); panel.textContent = msg; }
+    };
+    window.__tree60714 = { state: function () { return { target: TARGET, s: s, tx: tx, ty: ty, transform: world.getAttribute("transform"), links: gLinks.childNodes.length, dots: gDots.childNodes.length, labels: labelPool.filter(function (t) { return t.style.display !== "none"; }).length, path: Object.keys(pathSet), panel: panel.textContent }; } };
 
-    if (window.ResizeObserver) new ResizeObserver(measure).observe(svg);
+    var ro = null;
+    if (window.ResizeObserver) { ro = new ResizeObserver(measure); ro.observe(svg); }
     else window.addEventListener("resize", measure);
+    teardownTree = function () {
+      alive = false;
+      if (ro) ro.disconnect(); else window.removeEventListener("resize", measure);
+    };
     measure();
   }
 
   /* ===================================================================== */
   /* Histogram: how many steps does it take?                                */
   /* ===================================================================== */
-  function buildSteps(data) {
+  function buildSteps(data, set) {
+    if (teardownSteps) { teardownSteps(); teardownSteps = null; }
+    var TARGET = data.target;
     var counts = data.stepCounts, total = counts.reduce(function (a, b) { return a + b; }, 0);
     var maxStep = counts.length - 1;
 
-    // Median of all starts, from the counts.
+    // Median of all starts, from the counts (the generator writes the same number as medianSteps).
     function nth(k) { var c = 0; for (var j = 0; j < counts.length; j++) { c += counts[j]; if (c >= k) return j; } return maxStep; }
     var lo = nth(Math.floor((total + 1) / 2)), hi = nth(Math.ceil((total + 1) / 2));
     var summary = document.getElementById("steps-summary");
     if (summary) {
       summary.textContent = (lo === hi
-        ? "The median is " + plural(lo, "step", "steps") + ": half of the " + fmt(total) + " starting numbers reach 60714 in " + fmt(lo) + " steps or fewer"
+        ? "The median is " + plural(lo, "step", "steps") + ": half of the " + fmt(total) + " starting numbers reach " + TARGET + " in " + fmt(lo) + " steps or fewer"
         : "The median falls between " + fmt(lo) + " and " + plural(hi, "step", "steps")) +
         ", and the slowest take " + plural(maxStep, "step", "steps") + ".";
     }
@@ -450,7 +536,10 @@
     // Table fallback.
     var det = document.getElementById("steps-table");
     if (det) {
+      var old = det.querySelector("table");
+      if (old) det.removeChild(old);
       var tbl = h("table");
+      tbl.appendChild(h("caption", { "class": "steps-caption" }, "Steps to " + TARGET + ", " + set.word + "-digit starts"));
       var thead = h("thead"), trh = h("tr");
       trh.appendChild(h("th", { scope: "col" }, "Steps")); trh.appendChild(h("th", { scope: "col" }, "Starting numbers"));
       thead.appendChild(trh); tbl.appendChild(thead);
@@ -486,7 +575,7 @@
       box.textContent = "";
       bars = [];
       var svg = el("svg", { viewBox: "0 0 " + Wd + " " + Hd, width: Wd, height: Hd, "class": "steps-svg", role: "img",
-        "aria-label": "Bar chart of how many of the " + fmt(total) + " starting numbers need each number of steps, from 0 to " + maxStep + ". The table below has every count." });
+        "aria-label": "Bar chart of how many of the " + fmt(total) + " " + set.word + "-digit starting numbers need each number of steps to reach " + TARGET + ", from 0 to " + maxStep + ". The table below has every count." });
       box.appendChild(svg);
       var y = function (v) { return mt + ph - v / ymax * ph; };
       for (var v = 0; v <= ymax + 1e-9; v += st) {
@@ -523,8 +612,10 @@
       var w = Math.round(box.getBoundingClientRect().width);
       if (w && w !== lastW) { lastW = w; draw(); }
     }
-    if (window.ResizeObserver) new ResizeObserver(maybeDraw).observe(box);
+    var ro = null;
+    if (window.ResizeObserver) { ro = new ResizeObserver(maybeDraw); ro.observe(box); }
     else window.addEventListener("resize", maybeDraw);
+    teardownSteps = function () { if (ro) ro.disconnect(); else window.removeEventListener("resize", maybeDraw); };
     draw();
   }
 })();

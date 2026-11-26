@@ -139,10 +139,11 @@
           <li><span class="fact-tag">Computed</span> It is not the only number of this kind. A November 2026 search of all six-letter rules extended the same way found 551 that send every start to one number at every length checked (up to 20 digits), 75 of them starting at six digits. 146070 is the only one with exactly four nonzero digits that are all different: 7, 6, 4, 1, the digits of 6174.</li>
           <li><span class="fact-tag fact-tag-open">Not refereed</span> An argument that this holds at every length from six digits up is written out with the source code. It relies on a computer check of a fixed, finite set of cases, and it has been reviewed by AI only, most recently with independently written code that reproduced its counts.</li>
         </ul>
+        <p>The tree and the step chart below can show all six-digit starts for 146070, and the <a href="calculator.html?n=146070">calculator</a> can follow it at any length from 6 to 20 digits.</p>
       </div>
     </section>
 
-    <section class="section" aria-label="Every five-digit start">
+    <section class="section" id="tree-section" aria-label="Every five-digit start">
       <div class="wrap">
         <figure class="tree-figure">
           <!-- tree.js replaces this picture with a zoomable one drawn from tree-data.json
@@ -150,7 +151,7 @@
           <div class="tree-view" id="tree-view">
             <img src="tree.svg" width="1000" height="1000" loading="lazy" alt="A round tree on a black background. 60714 sits in a green circle at the center, and thousands of thin colored branches curve inward from the edge, each one a path that ends at 60714.">
           </div>
-          <figcaption>Every five-digit start flowing into 60714. Each dot is one collection of five digits, in any order, because the rule sorts the digits first. Each line is one step of the rule, from a collection to the one it turns into. The farther a dot sits from the center, the more steps it takes to arrive. <span class="tree-howto" hidden>Zoom with the plus and minus buttons, the mouse wheel, or two fingers, and drag to move around. Zoom in far enough and the digits appear. Point at or tap a dot to see its numbers and its path to the center, or type a number in the box to find it.</span> The picture is drawn from a complete computer check of all 99,990 starts.</figcaption>
+          <figcaption><span id="tree-caption-lead">Every five-digit start flowing into 60714. Each dot is one collection of five digits, in any order, because the rule sorts the digits first.</span> Each line is one step of the rule, from a collection to the one it turns into. The farther a dot sits from the center, the more steps it takes to arrive. <span class="tree-howto" hidden>Zoom with the plus and minus buttons, the mouse wheel, or two fingers, and drag to move around. Zoom in far enough and the digits appear. Point at or tap a dot to see its numbers and its path to the center, or type a number in the box to find it.</span> <span id="tree-caption-tail">The picture is drawn from a complete computer check of all 99,990 starts.</span></figcaption>
         </figure>
       </div>
     </section>
@@ -158,7 +159,7 @@
     <section class="section policy" aria-labelledby="steps-heading">
       <div class="wrap">
         <h2 id="steps-heading">How many steps does it take?</h2>
-        <p>For each number of steps from 0 to 30, how many of the 99,990 five-digit starts reach 60714 in exactly that many. Only 60714 itself takes 0.</p>
+        <p id="steps-intro">For each number of steps from 0 to 30, how many of the 99,990 five-digit starts reach 60714 in exactly that many. Only 60714 itself takes 0.</p>
         <div class="steps-chart" id="steps-chart">
           <noscript><p>The chart is drawn by JavaScript. The counts are in <a href="tree-data.json">tree-data.json</a>, under stepCounts.</p></noscript>
         </div>
@@ -179,7 +180,7 @@
         <a class="research" href="calculator.html">
           <span class="kicker">Calculator</span>
           <span class="title">Try the calculator</span>
-          <span class="desc">Type a number from 5 to 20 digits long and watch each step until it reaches 60714 or 0.</span>
+          <span class="desc">Type a number from 5 to 20 digits long and watch each step until it reaches 60714 or 0. It can follow 146070 too.</span>
         </a>
         <a class="research" href="https://youtu.be/8B35aQmRqBg" target="_blank" rel="noopener">
           <span class="kicker">Video</span>

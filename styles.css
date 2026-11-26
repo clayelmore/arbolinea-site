@@ -599,6 +599,28 @@ footer { background: var(--bg); border-top: 1px solid var(--hairline); }
 .tree-figure { max-width: 720px; }
 .tree-figure img { width: 100%; height: auto; background: #000; border: 1px solid var(--hairline); border-radius: var(--radius); }
 /* Interactive tree (tree.js). The picture stays black with the site's radius. */
+/* Switch between the 60714 and 146070 trees; it also drives the step chart. */
+.tree-switch { margin-bottom: 16px; }
+.tree-switch-label { display: block; margin-bottom: 8px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted); }
+.tree-switch-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.tree-switch-btn {
+  flex: 1 1 140px;
+  max-width: 240px;
+  min-height: 44px;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+  background: var(--panel);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  cursor: pointer;
+}
+@media (max-width: 420px) { .tree-switch-btn { padding: 8px; font-size: 12px; letter-spacing: 0; } }
+.tree-switch-btn:hover { border-color: var(--ice-deep); color: var(--ice); }
+.tree-switch-btn[aria-pressed="true"] { color: var(--bg); background: var(--ice); border-color: var(--ice); }
+.tree-view[aria-busy="true"] .tree-frame { opacity: 0.5; }
 .tree-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
 .tree-btn {
   min-width: 44px;
@@ -668,6 +690,7 @@ footer { background: var(--bg); border-top: 1px solid var(--hairline); }
 .steps-table th, .steps-table td { padding: 4px 18px 4px 0; text-align: right; border-bottom: 1px solid var(--hairline); }
 .steps-table th { font-weight: 500; color: var(--muted); }
 .steps-total td { color: var(--text); }
+.steps-table caption { caption-side: top; padding-bottom: 6px; text-align: left; font-size: 12px; letter-spacing: 0.04em; color: var(--muted); }
 .tree-figure figcaption { margin-top: 14px; max-width: 68ch; font-size: 15px; line-height: 1.6; color: var(--muted); }
 .links-60714 { margin-top: 0; }
 .policy .source-line { margin-top: 40px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted); }
