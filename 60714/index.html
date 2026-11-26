@@ -117,6 +117,31 @@
       </div>
     </section>
 
+    <section class="section policy" aria-labelledby="companion-heading">
+      <div class="wrap">
+        <h2 id="companion-heading">A companion: 146070</h2>
+        <p>From seven digits up, the 60714 rules lose a growing share of starts to 0. A second number, built from the same digits with one more zero, does not have that problem.</p>
+        <ol>
+          <li>Sort the six digits from biggest to smallest and call them A, B, C, D, E, F.</li>
+          <li>Write two numbers from those letters, BFADCE and CBDEAF, and subtract.</li>
+          <li>Take the positive difference and keep six digits. Repeat with the new number.</li>
+        </ol>
+        <p>An example: 124598 → 235161 → 164070 → 146070.</p>
+        <ul class="worked">
+          <li>124598 sorts to 985421, and 819452 − 584291 = 235161.</li>
+          <li>235161 sorts to 653211, and 516231 − 352161 = 164070.</li>
+          <li>164070 sorts to 764100, and 607140 − 461070 = 146070.</li>
+          <li>146070 sorts to 764100 again, so from here it stays at 146070.</li>
+        </ul>
+        <ul class="facts">
+          <li><span class="fact-tag">Computed</span> At every length from 6 to 30 digits, with the rule extended to that length, every start that is not a single repeated digit reaches 146070. None collapses to 0 and none falls into a loop. The longest trip is 42 steps.</li>
+          <li><span class="fact-tag">Computed</span> Every digit takes part in the rule at every length.</li>
+          <li><span class="fact-tag">Computed</span> It is not the only number of this kind. A November 2026 search of all six-letter rules extended the same way found 551 that send every start to one number at every length checked (up to 20 digits), 75 of them starting at six digits. 146070 is the only one with exactly four nonzero digits that are all different: 7, 6, 4, 1, the digits of 6174.</li>
+          <li><span class="fact-tag fact-tag-open">Not refereed</span> An argument that this holds at every length from six digits up is written out with the source code. It relies on a computer check of a fixed, finite set of cases, and it has been reviewed by AI only, most recently with independently written code that reproduced its counts.</li>
+        </ul>
+      </div>
+    </section>
+
     <section class="section" aria-label="Every five-digit start">
       <div class="wrap">
         <figure class="tree-figure">
